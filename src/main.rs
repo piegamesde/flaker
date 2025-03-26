@@ -1,14 +1,16 @@
 use clap::{Parser, Subcommand};
 use color_eyre::eyre::{self, eyre, Context, Result};
 use enumset::EnumSetType;
-use futures::{Stream, StreamExt};
+use futures::{Stream, StreamExt, TryStreamExt};
+use regex::Regex;
 use reqwest::IntoUrl;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
+use std::io::BufRead;
 use std::path::{Path, PathBuf};
-use std::process::Stdio;
+use std::process::{ExitStatus, Stdio};
 use std::str::FromStr;
-use tracing::Instrument;
+use tracing::{warn, Instrument};
 use url::Url;
 
 /// Helper method to build you a client.
@@ -175,7 +177,7 @@ async fn build_index(sources: enumset::EnumSet<SourceSet>, out: PathBuf) -> Resu
     async {
         let out = &out;
         let mut fh = std::fs::File::create(out)
-            .with_context(move || format!("Failed to open {} for writing.", out.display()))?;
+            .with_context(|| format!("Failed to open {} for writing.", out.display()))?;
         serde_json::to_writer_pretty(&mut fh, &pins.to_value_versioned())?;
         use std::io::Write;
         fh.write_all(b"\n")?;
@@ -188,10 +190,24 @@ async fn build_index(sources: enumset::EnumSet<SourceSet>, out: PathBuf) -> Resu
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct ParserDiff {}
+struct Diff<T> {
+    result_a: T,
+    result_b: T,
+}
+#[derive(Debug, Serialize, Deserialize, Default)]
+struct ParserDiff {
+    // if both sides passed, otherwise info which didn't pass
+    pass_eq: Option<Diff<bool>>,
+    // exit code difference
+    exit_eq: Option<Diff<Option<i32>>>,
+    stdout_eq: Option<Diff<Message>>,
+    err_eq: Option<Diff<Vec<Message>>>,
+    warn_eq: Option<Diff<Vec<Message>>>,
+    trace_eq: Option<Diff<Vec<Message>>>,
+}
 
 #[tracing::instrument(skip(nix_a, nix_b))]
-async fn diff_file(file: &Path, nix_a: &Path, nix_b: &Path) -> Result<()> {
+async fn diff_file(file: &Path, nix_a: &Path, nix_b: &Path) -> Result<Option<ParserDiff>> {
     let result_a = tokio::process::Command::new(nix_a)
         .arg0("nix-instantiate")
         .arg("--parse")
@@ -212,12 +228,80 @@ async fn diff_file(file: &Path, nix_a: &Path, nix_b: &Path) -> Result<()> {
         .output()
         .instrument(tracing::info_span!("[nix_b] Executing `nix-instantiate --parse`", file = %file.display()))
         .await?;
-    dbg!(&result_a, &result_b);
-    if result_a != result_b {
-        //dbg!("at the disco");
-        //panic!("At the disco");
-    }
-    Ok(())
+    let res = if result_a != result_b {
+        //dbg!(&result_a, &result_b);
+        let pass = result_a.status.success() && result_b.status.success();
+        let exit = result_a.status == result_b.status;
+        let stdout = result_a.stdout == result_b.stdout;
+        let (err, warn, trace) = if result_a.stderr != result_b.stderr {
+            let (err_a, wrn_a, trc_a) = split_stderr(String::from_utf8(result_a.stderr)?);
+            let (err_b, wrn_b, trc_b) = split_stderr(String::from_utf8(result_b.stderr)?);
+            //TODO: Compare message sets (and count?) and only pass diffs into result
+            // potentially split at first \n of err, and map line to list of at symbols (rest of line)
+            // that would keep track of count, positions and types
+            (
+                if err_a == err_b {
+                    None
+                } else {
+                    Some(Diff {
+                        result_a: err_a,
+                        result_b: err_b,
+                    })
+                },
+                if wrn_a == wrn_b {
+                    None
+                } else {
+                    Some(Diff {
+                        result_a: wrn_a,
+                        result_b: wrn_b,
+                    })
+                },
+                if trc_a == trc_b {
+                    None
+                } else {
+                    Some(Diff {
+                        result_a: trc_a,
+                        result_b: trc_b,
+                    })
+                },
+            )
+        } else {
+            (None, None, None)
+        };
+
+        Some(ParserDiff {
+            pass_eq: if pass {
+                None
+            } else {
+                Some(Diff {
+                    result_a: result_a.status.success(),
+                    result_b: result_b.status.success(),
+                })
+            },
+            exit_eq: if exit {
+                None
+            } else {
+                Some(Diff {
+                    result_a: result_a.status.code(),
+                    result_b: result_b.status.code(),
+                })
+            },
+            stdout_eq: if stdout {
+                None
+            } else {
+                Some(Diff {
+                    result_a: String::from_utf8(result_a.stdout)?,
+                    result_b: String::from_utf8(result_b.stdout)?,
+                })
+            },
+            err_eq: err,
+            warn_eq: warn,
+            trace_eq: trace,
+        })
+    } else {
+        None
+    };
+    Ok(res)
 }
 
 async fn diff_parsers(folder: PathBuf, nix_a: PathBuf, nix_b: PathBuf) -> Result<()> {
@@ -240,15 +324,49 @@ async fn diff_parsers(folder: PathBuf, nix_a: PathBuf, nix_b: PathBuf) -> Result
                     .ends_with(".nix")
         });
 
-    futures::stream::iter(files)
+    let diffs = futures::stream::iter(files)
         .then(|file| {
             let nix_a = &nix_a;
             let nix_b = &nix_b;
             async move { diff_file(file.path(), nix_a, nix_b).await }
         })
-        .count()
+        .filter_map(|res| async move { res.unwrap_or_else(|_| None) })
+        .for_each(|diff| {
+            //TODO: Print with origin file
+            tracing::warn!(?diff);
+            futures::future::ready(())
+        })
         .await;
     Ok(())
+}
+
+type Message = String;
+type ErrLog = Vec<Message>;
+type WarnLog = Vec<Message>;
+type TraceLog = Vec<Message>;
+
+fn split_stderr(stderr: String) -> (ErrLog, WarnLog, TraceLog) {
+    let mut errmsgs: ErrLog = vec![];
+    let mut warnmsgs: WarnLog = vec![];
+    let mut tracemsgs: TraceLog = vec![];
+    let re = Regex::new(r"\n\w").unwrap();
+    re.split(stderr.as_str()).for_each(|line| {
+        match line.get(1..3) {
+            //First letter consumed by split, sadly lookahead is not supported.
+            //Check for letter required, to not have to deal with indention lines
+            //
+            //e rr or
+            Some("rr") => errmsgs.push(String::from(line)),
+            //w ar ning
+            Some("ar") => warnmsgs.push(String::from(line)),
+            //t ra ce
+            Some("ra") => tracemsgs.push(String::from(line)),
+            Some(_) => unreachable!("unknown message type"),
+            None => {}
+        }
+    });
+
+    (errmsgs, warnmsgs, tracemsgs)
 }
 
 #[tokio::main]
