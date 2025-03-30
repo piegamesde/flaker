@@ -216,8 +216,7 @@ async fn diff_file(file: &Path, nix_a: &Path, nix_b: &Path) -> Result<Option<Par
         // Cancellation safety
         .kill_on_drop(true)
         .output()
-        .instrument(tracing::info_span!("[nix_a] Executing `nix-instantiate --parse`", file = %file.display()))
-        .await?;
+        .instrument(tracing::info_span!("[nix_a] Executing `nix-instantiate --parse`", file = %file.display()));
     let result_b = tokio::process::Command::new(nix_b)
         .arg0("nix-instantiate")
         .arg("--parse")
@@ -226,10 +225,12 @@ async fn diff_file(file: &Path, nix_a: &Path, nix_b: &Path) -> Result<Option<Par
         // Cancellation safety
         .kill_on_drop(true)
         .output()
-        .instrument(tracing::info_span!("[nix_b] Executing `nix-instantiate --parse`", file = %file.display()))
-        .await?;
+        .instrument(tracing::info_span!("[nix_b] Executing `nix-instantiate --parse`", file = %file.display()));
+    let (result_a, result_b) = futures::join!(result_a, result_b);
+    let (result_a, result_b) = (result_a?, result_b?);
+
     let res = if result_a != result_b {
-        //dbg!(&result_a, &result_b);
+        dbg!(&result_a, &result_b);
         let pass = result_a.status.success() && result_b.status.success();
         let exit = result_a.status == result_b.status;
         let stdout = result_a.stdout == result_b.stdout;
@@ -240,60 +241,36 @@ async fn diff_file(file: &Path, nix_a: &Path, nix_b: &Path) -> Result<Option<Par
             // potentially split at first \n of err, and map line to list of at symbols (rest of line)
             // that would keep track of count, positions and types
             (
-                if err_a == err_b {
-                    None
-                } else {
-                    Some(Diff {
-                        result_a: err_a,
-                        result_b: err_b,
-                    })
-                },
-                if wrn_a == wrn_b {
-                    None
-                } else {
-                    Some(Diff {
-                        result_a: wrn_a,
-                        result_b: wrn_b,
-                    })
-                },
-                if trc_a == trc_b {
-                    None
-                } else {
-                    Some(Diff {
-                        result_a: trc_a,
-                        result_b: trc_b,
-                    })
-                },
+                (err_a == err_b).then_some(Diff {
+                    result_a: err_a,
+                    result_b: err_b,
+                }),
+                (wrn_a == wrn_b).then_some(Diff {
+                    result_a: wrn_a,
+                    result_b: wrn_b,
+                }),
+                (trc_a == trc_b).then_some(Diff {
+                    result_a: trc_a,
+                    result_b: trc_b,
+                }),
             )
         } else {
             (None, None, None)
         };
 
         Some(ParserDiff {
-            pass_eq: if pass {
-                None
-            } else {
-                Some(Diff {
-                    result_a: result_a.status.success(),
-                    result_b: result_b.status.success(),
-                })
-            },
-            exit_eq: if exit {
-                None
-            } else {
-                Some(Diff {
-                    result_a: result_a.status.code(),
-                    result_b: result_b.status.code(),
-                })
-            },
-            stdout_eq: if stdout {
-                None
-            } else {
-                Some(Diff {
-                    result_a: String::from_utf8(result_a.stdout)?,
-                    result_b: String::from_utf8(result_b.stdout)?,
-                })
-            },
+            pass_eq: !pass.then_some(Diff {
+                result_a: result_a.status.success(),
+                result_b: result_b.status.success(),
+            }),
+            exit_eq: !exit.then_some(Diff {
+                result_a: result_a.status.code(),
+                result_b: result_b.status.code(),
+            }),
+            stdout_eq: !stdout.then_some(Diff {
+                result_a: String::from_utf8(result_a.stdout)?,
+                result_b: String::from_utf8(result_b.stdout)?,
+            }),
             err_eq: err,
             warn_eq: warn,
             trace_eq: trace,
