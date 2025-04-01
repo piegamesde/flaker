@@ -1,6 +1,7 @@
 use clap::{Parser, Subcommand};
 use color_eyre::eyre::{self, eyre, Context, Result};
 use enumset::EnumSetType;
+use futures::future::err;
 use futures::{Stream, StreamExt, TryStreamExt};
 use regex::Regex;
 use reqwest::IntoUrl;
@@ -127,7 +128,7 @@ async fn build_index(sources: enumset::EnumSet<SourceSet>, out: PathBuf) -> Resu
                 let NIXPKGS_URL = Url::parse("https://github.com/NixOS/Nixpkgs").unwrap();
                 pins.pins.insert(
                     NIXPKGS_URL.to_string(),
-                    fetch_pin(&NIXPKGS_URL, Some("master".into()), false)
+                    fetch_pin(&NIXPKGS_URL, Some("release-24.05".into()), false)
                         .await
                         .map_err(|err| {
                             eyre!(Box::<dyn std::error::Error + Send + Sync + 'static>::from(
@@ -201,9 +202,9 @@ struct ParserDiff {
     // exit code difference
     exit_eq: Option<Diff<Option<i32>>>,
     stdout_eq: Option<Diff<Message>>,
-    err_eq: Option<Diff<Vec<Message>>>,
-    warn_eq: Option<Diff<Vec<Message>>>,
-    trace_eq: Option<Diff<Vec<Message>>>,
+    err_eq: Option<Diff<Vec<LogEntry>>>,
+    warn_eq: Option<Diff<Vec<LogEntry>>>,
+    trace_eq: Option<Diff<Vec<LogEntry>>>,
 }
 
 #[tracing::instrument(skip(nix_a, nix_b))]
@@ -211,6 +212,8 @@ async fn diff_file(file: &Path, nix_a: &Path, nix_b: &Path) -> Result<Option<Par
     let result_a = tokio::process::Command::new(nix_a)
         .arg0("nix-instantiate")
         .arg("--parse")
+        .arg("--log-format")
+        .arg("internal-json")
         .arg(file)
         .stdin(Stdio::null())
         // Cancellation safety
@@ -220,6 +223,8 @@ async fn diff_file(file: &Path, nix_a: &Path, nix_b: &Path) -> Result<Option<Par
     let result_b = tokio::process::Command::new(nix_b)
         .arg0("nix-instantiate")
         .arg("--parse")
+        .arg("--log-format")
+        .arg("internal-json")
         .arg(file)
         .stdin(Stdio::null())
         // Cancellation safety
@@ -229,8 +234,8 @@ async fn diff_file(file: &Path, nix_a: &Path, nix_b: &Path) -> Result<Option<Par
     let (result_a, result_b) = futures::join!(result_a, result_b);
     let (result_a, result_b) = (result_a?, result_b?);
 
+    dbg!(&result_a, &result_b);
     let res = if result_a != result_b {
-        dbg!(&result_a, &result_b);
         let pass = result_a.status.success() && result_b.status.success();
         let exit = result_a.status == result_b.status;
         let stdout = result_a.stdout == result_b.stdout;
@@ -241,15 +246,15 @@ async fn diff_file(file: &Path, nix_a: &Path, nix_b: &Path) -> Result<Option<Par
             // potentially split at first \n of err, and map line to list of at symbols (rest of line)
             // that would keep track of count, positions and types
             (
-                (err_a == err_b).then_some(Diff {
+                (err_a != err_b).then_some(Diff {
                     result_a: err_a,
                     result_b: err_b,
                 }),
-                (wrn_a == wrn_b).then_some(Diff {
+                (wrn_a != wrn_b).then_some(Diff {
                     result_a: wrn_a,
                     result_b: wrn_b,
                 }),
-                (trc_a == trc_b).then_some(Diff {
+                (trc_a != trc_b).then_some(Diff {
                     result_a: trc_a,
                     result_b: trc_b,
                 }),
@@ -259,15 +264,15 @@ async fn diff_file(file: &Path, nix_a: &Path, nix_b: &Path) -> Result<Option<Par
         };
 
         Some(ParserDiff {
-            pass_eq: !pass.then_some(Diff {
+            pass_eq: (!pass).then_some(Diff {
                 result_a: result_a.status.success(),
                 result_b: result_b.status.success(),
             }),
-            exit_eq: !exit.then_some(Diff {
+            exit_eq: (!exit).then_some(Diff {
                 result_a: result_a.status.code(),
                 result_b: result_b.status.code(),
             }),
-            stdout_eq: !stdout.then_some(Diff {
+            stdout_eq: (!stdout).then_some(Diff {
                 result_a: String::from_utf8(result_a.stdout)?,
                 result_b: String::from_utf8(result_b.stdout)?,
             }),
@@ -318,32 +323,77 @@ async fn diff_parsers(folder: PathBuf, nix_a: PathBuf, nix_b: PathBuf) -> Result
 }
 
 type Message = String;
-type ErrLog = Vec<Message>;
-type WarnLog = Vec<Message>;
-type TraceLog = Vec<Message>;
+type ErrLog = Vec<LogEntry>;
+type WarnLog = Vec<LogEntry>;
+type TraceLog = Vec<LogEntry>;
+
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+struct LogEntry {
+    action: String,
+    line: i16,
+    column: i16,
+    file: String,
+    level: i16,
+    msg: Message,
+    raw_msg: Message,
+}
 
 fn split_stderr(stderr: String) -> (ErrLog, WarnLog, TraceLog) {
     let mut errmsgs: ErrLog = vec![];
     let mut warnmsgs: WarnLog = vec![];
     let mut tracemsgs: TraceLog = vec![];
-    let re = Regex::new(r"\n\w").unwrap();
+    let mut logs: Vec<LogEntry> = vec![];
+    let re = Regex::new(r"\n").unwrap();
     re.split(stderr.as_str()).for_each(|line| {
-        match line.get(1..3) {
-            //First letter consumed by split, sadly lookahead is not supported.
-            //Check for letter required, to not have to deal with indention lines
-            //
-            //e rr or
-            Some("rr") => errmsgs.push(String::from(line)),
-            //w ar ning
-            Some("ar") => warnmsgs.push(String::from(line)),
-            //t ra ce
-            Some("ra") => tracemsgs.push(String::from(line)),
-            Some(_) => unreachable!("unknown message type"),
+        match line.get(0..4) {
+            Some("@nix") => {
+                //throw away the @nix part, otherwise its invalid json
+                let j = line.get(5..).unwrap();
+                match serde_json::from_str::<LogEntry>(j) {
+                    Ok(v) => {
+                        if v.action != "msg" {
+                            todo!("new action type: {}", v.action);
+                        }
+                        logs.push(v)
+                    }
+                    Err(e) => tracing::error!("error parsing json: {}", e),
+                }
+            }
+            Some(t) => {
+                todo!("new type: {}", t)
+            }
             None => {}
         }
     });
-
+    for log in logs {
+        dbg!(&log);
+        if log.level == 0 {
+            errmsgs.push(log);
+        } else if log.level == 1 {
+            warnmsgs.push(log);
+        } else {
+            tracemsgs.push(log);
+        }
+    }
+    dbg!(dedup_log(errmsgs.clone()));
     (errmsgs, warnmsgs, tracemsgs)
+}
+
+#[derive(Default, Debug)]
+struct Finds {
+    positions: HashSet<String>,
+}
+
+fn dedup_log(entries: Vec<LogEntry>) -> HashMap<Message, Finds> {
+    // entries.into_iter().map(|le| {(le.raw_msg, le.file)}).into_group_map();
+    let mut hm: HashMap<Message, Finds> = HashMap::new();
+    for entr in entries {
+        hm.entry(entr.raw_msg)
+            .or_insert(Default::default())
+            .positions
+            .insert(entr.file);
+    }
+    hm
 }
 
 #[tokio::main]
