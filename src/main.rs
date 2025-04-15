@@ -56,7 +56,7 @@ async fn main() -> Result<()> {
     use tracing_subscriber::prelude::*;
     tracing_subscriber::registry()
         .with(tracing_subscriber::filter::LevelFilter::from_level(
-            tracing::Level::INFO,
+            tracing::Level::DEBUG,
         ))
         .with(
             tracing_subscriber::fmt::layer()

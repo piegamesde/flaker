@@ -148,6 +148,51 @@ impl Diff<CompLog> {
             result_b: in_b_but_not_in_a,
         }
     }
+
+    fn merge(&mut self, b: Diff<CompLog>) {
+        self.result_a.extend(b.result_a);
+        self.result_b.extend(b.result_b);
+    }
+}
+
+macro_rules! merge_complog {
+    ($a: expr, $b: expr) => {
+        match ($a.as_mut(), $b) {
+            (Some(a), Some(b)) => a.merge(b),
+            (None, b) => $a = b,
+            _ => (),
+        }
+    };
+}
+
+impl ParserDiff {
+    fn merge(&mut self, other: ParserDiff) {
+        match (self.pass_eq.is_none(), other.pass_eq) {
+            (true, Some(s)) => {
+                self.pass_eq.replace(s);
+            }
+            _ => (),
+        };
+        match (self.exit_eq.is_none(), other.exit_eq) {
+            (true, Some(s)) => {
+                self.exit_eq.replace(s);
+            }
+            _ => (),
+        }
+
+        self.stdout_eq = match (self.stdout_eq.take(), other.stdout_eq) {
+            (Some(_), Some(_)) => Some(Diff {
+                result_a: "Multiple given".to_string(),
+                result_b: "Multiple given".to_string(),
+            }),
+            (None, b) => b,
+            (a, None) => a,
+        };
+
+        merge_complog!(self.err_eq, other.err_eq);
+        merge_complog!(self.warn_eq, other.warn_eq);
+        merge_complog!(self.trace_eq, other.trace_eq);
+    }
 }
 
 fn diff_stderr(
@@ -165,18 +210,9 @@ fn diff_stderr(
         // potentially split at first \n of err, and map line to list of at symbols (rest of line)
         // that would keep track of count, positions and types
         (
-            (err_a != err_b).then_some(Diff {
-                result_a: err_a,
-                result_b: err_b,
-            }),
-            (wrn_a != wrn_b).then_some(Diff {
-                result_a: wrn_a,
-                result_b: wrn_b,
-            }),
-            (trc_a != trc_b).then_some(Diff {
-                result_a: trc_a,
-                result_b: trc_b,
-            }),
+            (err_a != err_b).then_some(Diff::from(err_a, err_b)),
+            (wrn_a != wrn_b).then_some(Diff::from(wrn_a, wrn_b)),
+            (trc_a != trc_b).then_some(Diff::from(trc_a, trc_b)),
         )
     } else {
         (None, None, None)
@@ -242,6 +278,38 @@ async fn diff_file(
     Ok(res)
 }
 
+fn report(mut diffs: Vec<ParserDiff>) {
+    if diffs.is_empty() {
+        tracing::info!("All Clear!");
+        return;
+    }
+
+    tracing::error!("Parsers differ!");
+    let total_cnt = diffs.len();
+    let err_cnt = diffs.iter().filter(|d| d.err_eq.is_some()).count();
+    let wrn_cnt = diffs.iter().filter(|d| d.warn_eq.is_some()).count();
+    let trc_cnt = diffs.iter().filter(|d| d.trace_eq.is_some()).count();
+
+    tracing::info!(
+        "{} outputs differ; {} error, {} warn and {} trace diffs",
+        total_cnt,
+        err_cnt,
+        wrn_cnt,
+        trc_cnt
+    );
+
+    diffs.iter().for_each(|diff| {
+        tracing::debug!(?diff);
+    });
+
+    let rep = diffs.into_iter().reduce(|mut acc, diff| {
+        acc.merge(diff);
+        acc
+    });
+
+    tracing::info!(?rep);
+}
+
 pub async fn diff_parsers(
     folder: PathBuf,
     nix_a: PathBuf,
@@ -274,11 +342,8 @@ pub async fn diff_parsers(
         })
         .buffer_unordered(10)
         .filter_map(|res| async move { res.unwrap_or_else(|_| None) })
-        .for_each(|diff| {
-            //TODO: Print with origin file
-            tracing::warn!(?diff);
-            futures::future::ready(())
-        })
+        .collect::<Vec<ParserDiff>>()
         .await;
+    report(diffs);
     Ok(())
 }
