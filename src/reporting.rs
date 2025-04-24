@@ -1,73 +1,41 @@
-use crate::diffing::{Diff, ParserDiff};
+use crate::diffing::DiffResult;
+use crate::indexing::SourceSet;
+use crate::reporting::ReportVerbosity::Auto;
+use serde::{Deserialize, Serialize};
+use std::fs::File;
+use std::path::PathBuf;
+use std::str::FromStr;
 
-macro_rules! merge_complog {
-    ($a: expr, $b: expr) => {
-        match ($a.as_mut(), $b) {
-            (Some(a), Some(b)) => a.merge(b),
-            (None, b) => $a = b,
-            _ => (),
-        }
-    };
+#[derive(Debug, Clone, Copy)]
+pub enum ReportVerbosity {
+    Summary,
+    Detailed,
+    Auto,
 }
 
-impl ParserDiff {
-    fn merge(&mut self, other: ParserDiff) {
-        match (self.pass_eq.is_none(), other.pass_eq) {
-            (true, Some(s)) => {
-                self.pass_eq.replace(s);
-            }
-            _ => (),
-        };
-        match (self.exit_eq.is_none(), other.exit_eq) {
-            (true, Some(s)) => {
-                self.exit_eq.replace(s);
-            }
-            _ => (),
+impl FromStr for ReportVerbosity {
+    type Err = ();
+    fn from_str(s: &str) -> std::result::Result<Self, ()> {
+        match s {
+            "summary" => Ok(ReportVerbosity::Summary),
+            "detailed" => Ok(ReportVerbosity::Detailed),
+            "auto" => Ok(ReportVerbosity::Auto),
+            "0" => Ok(ReportVerbosity::Summary),
+            "1" => Ok(ReportVerbosity::Detailed),
+            "" => Ok(ReportVerbosity::Auto),
+            _ => Err(()),
         }
-
-        self.stdout_eq = match (self.stdout_eq.take(), other.stdout_eq) {
-            (Some(_), Some(_)) => Some(Diff {
-                result_a: "Multiple given".to_string(),
-                result_b: "Multiple given".to_string(),
-            }),
-            (None, b) => b,
-            (a, None) => a,
-        };
-
-        merge_complog!(self.err_eq, other.err_eq);
-        merge_complog!(self.warn_eq, other.warn_eq);
-        merge_complog!(self.trace_eq, other.trace_eq);
     }
 }
 
-pub fn report(mut diffs: Vec<ParserDiff>) {
-    if diffs.is_empty() {
-        tracing::info!("All Clear!");
-        return;
+pub fn report(reports: Vec<PathBuf>, verbosity: ReportVerbosity) {
+    for pb in reports {
+        tracing::info!("{}", pb.to_str().unwrap());
     }
 
-    tracing::error!("Parsers differ!");
-    let total_cnt = diffs.len();
-    let err_cnt = diffs.iter().filter(|d| d.err_eq.is_some()).count();
-    let wrn_cnt = diffs.iter().filter(|d| d.warn_eq.is_some()).count();
-    let trc_cnt = diffs.iter().filter(|d| d.trace_eq.is_some()).count();
-
-    tracing::info!(
-        "{} outputs differ; {} error, {} warn and {} trace diffs",
-        total_cnt,
-        err_cnt,
-        wrn_cnt,
-        trc_cnt
-    );
-
-    diffs.iter().for_each(|diff| {
-        tracing::debug!(?diff);
-    });
-
-    let rep = diffs.into_iter().reduce(|mut acc, diff| {
-        acc.merge(diff);
-        acc
-    });
-
-    tracing::info!(?rep);
+    // let mut report_file = File::open(report_path)?;
+    // let mut content = String::new();
+    // report_file.read_to_string(&mut content)?;
+    // let diff_result: DiffResult = serde_json::from_str(content.as_str())?;
+    //tracing::info!(?result);
 }

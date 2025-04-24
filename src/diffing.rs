@@ -1,9 +1,7 @@
 use crate::reporting;
 use futures::StreamExt;
-use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
-use std::future::Future;
 use std::path::{Path, PathBuf};
 use std::process::{Output, Stdio};
 use tracing::instrument::Instrumented;
@@ -98,10 +96,11 @@ mod parsing {
 }
 
 type Message = String;
+pub type Position = String;
 
 #[derive(Default, Debug, PartialEq, Serialize, Deserialize)]
-pub struct Finds {
-    positions: HashSet<String>,
+struct Finds {
+    positions: HashSet<Position>,
 }
 
 type CompLog = HashMap<Message, Finds>;
@@ -110,22 +109,22 @@ type ErrLog = CompLog;
 type WarnLog = CompLog;
 type TraceLog = CompLog;
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Diff<T> {
-    pub result_a: T,
-    pub result_b: T,
+#[derive(Debug, Serialize, Deserialize, Default)]
+struct Diff<T> {
+    result_a: T,
+    result_b: T,
 }
 
 #[derive(Debug, Serialize, Deserialize, Default)]
-pub struct ParserDiff {
+struct ParserDiff {
     // if both sides passed, otherwise info which didn't pass
-    pub pass_eq: Option<Diff<bool>>,
+    pass_eq: Option<Diff<bool>>,
     // exit code difference
-    pub exit_eq: Option<Diff<Option<i32>>>,
-    pub stdout_eq: Option<Diff<Message>>,
-    pub err_eq: Option<Diff<ErrLog>>,
-    pub warn_eq: Option<Diff<WarnLog>>,
-    pub trace_eq: Option<Diff<TraceLog>>,
+    exit_eq: Option<Diff<Option<i32>>>,
+    stdout_eq: Option<Diff<Message>>,
+    err_eq: Option<Diff<ErrLog>>,
+    warn_eq: Option<Diff<WarnLog>>,
+    trace_eq: Option<Diff<TraceLog>>,
 }
 
 impl Diff<CompLog> {
@@ -166,6 +165,45 @@ impl Diff<CompLog> {
     pub fn merge(&mut self, b: Diff<CompLog>) {
         self.result_a.extend(b.result_a);
         self.result_b.extend(b.result_b);
+    }
+}
+macro_rules! merge_complog {
+    ($a: expr, $b: expr) => {
+        match ($a.as_mut(), $b) {
+            (Some(a), Some(b)) => a.merge(b),
+            (None, b) => $a = b,
+            _ => (),
+        }
+    };
+}
+
+impl ParserDiff {
+    fn merge(&mut self, other: ParserDiff) {
+        match (self.pass_eq.is_none(), other.pass_eq) {
+            (true, Some(s)) => {
+                self.pass_eq.replace(s);
+            }
+            _ => (),
+        };
+        match (self.exit_eq.is_none(), other.exit_eq) {
+            (true, Some(s)) => {
+                self.exit_eq.replace(s);
+            }
+            _ => (),
+        }
+
+        self.stdout_eq = match (self.stdout_eq.take(), other.stdout_eq) {
+            (Some(_), Some(_)) => Some(Diff {
+                result_a: "Multiple given".to_string(),
+                result_b: "Multiple given".to_string(),
+            }),
+            (None, b) => b,
+            (a, None) => a,
+        };
+
+        merge_complog!(self.err_eq, other.err_eq);
+        merge_complog!(self.warn_eq, other.warn_eq);
+        merge_complog!(self.trace_eq, other.trace_eq);
     }
 }
 
@@ -254,11 +292,55 @@ async fn diff_file(
     Ok(res)
 }
 
+#[derive(Default, Debug, Serialize, Deserialize)]
+pub struct DiffResult {
+    err_diff: HashMap<Message, Diff<HashSet<Position>>>,
+    wrn_diff: HashMap<Message, Diff<HashSet<Position>>>,
+    trc_diff: HashMap<Message, Diff<HashSet<Position>>>,
+}
+
+impl DiffResult {
+    fn from(diffs: Vec<ParserDiff>) -> DiffResult {
+        if diffs.len() == 0 {
+            return Default::default();
+        }
+        let rep = diffs
+            .into_iter()
+            .reduce(|mut acc, diff| {
+                acc.merge(diff);
+                acc
+            })
+            .unwrap();
+
+        fn propagate_msg(log: Option<Diff<CompLog>>) -> HashMap<Message, Diff<HashSet<Position>>> {
+            let mut hm: HashMap<Message, Diff<HashSet<Position>>> = HashMap::default();
+            if log.is_none() {
+                return hm;
+            }
+            let log = log.unwrap();
+            for (msg, poss) in log.result_a {
+                hm.entry(msg).or_insert(Default::default()).result_a = poss.positions;
+            }
+            for (msg, poss) in log.result_b {
+                hm.entry(msg).or_insert(Default::default()).result_b = poss.positions;
+            }
+
+            hm
+        }
+
+        DiffResult {
+            err_diff: propagate_msg(rep.err_eq),
+            wrn_diff: propagate_msg(rep.warn_eq),
+            trc_diff: propagate_msg(rep.trace_eq),
+        }
+    }
+}
+
 pub async fn diff_parsers(
     folder: PathBuf,
     nix_a: PathBuf,
     nix_b: PathBuf,
-) -> color_eyre::Result<()> {
+) -> color_eyre::Result<DiffResult> {
     let files = walkdir::WalkDir::new(folder)
         .follow_links(false)
         .follow_root_links(true)
@@ -288,6 +370,7 @@ pub async fn diff_parsers(
         .filter_map(|res| async move { res.unwrap_or_else(|_| None) })
         .collect::<Vec<ParserDiff>>()
         .await;
-    reporting::report(diffs);
-    Ok(())
+    let result = DiffResult::from(diffs);
+    tracing::info!(?result);
+    Ok(result)
 }

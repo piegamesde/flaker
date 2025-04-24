@@ -1,3 +1,4 @@
 /target
 .direnv
 .pre-commit-config.yaml
+report.json
