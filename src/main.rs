@@ -1,5 +1,6 @@
 mod diffing;
 mod indexing;
+mod reporting;
 
 use clap::{Parser, Subcommand};
 use color_eyre::eyre::{self, eyre, Context, Result};
