@@ -1,8 +1,10 @@
 use crate::diffing::DiffResult;
 use crate::indexing::SourceSet;
-use crate::reporting::ReportVerbosity::Auto;
+use crate::reporting::ReportVerbosity::{Auto, Detailed, Summary};
+use color_eyre::eyre::{eyre, Context, Result};
 use serde::{Deserialize, Serialize};
 use std::fs::File;
+use std::io::Read;
 use std::path::PathBuf;
 use std::str::FromStr;
 
@@ -28,10 +30,31 @@ impl FromStr for ReportVerbosity {
     }
 }
 
-pub fn report(reports: Vec<PathBuf>, verbosity: ReportVerbosity) {
-    for pb in reports {
-        tracing::info!("{}", pb.to_str().unwrap());
+impl DiffResult {
+    fn from(path: PathBuf) -> Result<Self> {
+        let mut report_file = File::open(path)?;
+        let mut content = String::new();
+        report_file.read_to_string(&mut content)?;
+        let res = serde_json::from_str(content.as_str())?;
+        res
     }
+}
+
+pub fn report(reports: Vec<PathBuf>, verbosity: ReportVerbosity) {
+    // for pb in reports {
+    //     tracing::info!("{}", pb.to_str().unwrap());
+    // }
+
+    let verbosity = match verbosity {
+        Auto => {
+            if reports.len() == 1 {
+                Detailed
+            } else {
+                Summary
+            }
+        }
+        v => v,
+    };
 
     // let mut report_file = File::open(report_path)?;
     // let mut content = String::new();
