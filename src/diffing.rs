@@ -14,6 +14,8 @@ mod parsing {
     use regex::Regex;
     use serde::{Deserialize, Serialize};
     use std::collections::HashMap;
+    use std::path::Path;
+    use std::sync::LazyLock;
 
     #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
     struct LogEntry {
@@ -24,23 +26,34 @@ mod parsing {
         raw_msg: Option<Message>,
     }
 
-    fn dedup_log(entries: Vec<LogEntry>) -> CompLog {
+    static DEP_FINDER_RE: LazyLock<Regex> = LazyLock::new(|| {
+        Regex::new(r"--extra-deprecated-features (?<feature_name>[\w-]+)\b").unwrap()
+    });
+
+    fn simplify_msg(msg: Message) -> Message {
+        let m = DEP_FINDER_RE.captures(msg.as_str());
+        match m {
+            Some(name) => "Deprecated Feature: ".to_string() + name["feature_name"].as_ref(),
+            None => msg,
+        }
+    }
+
+    fn dedup_log(entries: Vec<LogEntry>, file: &Path) -> CompLog {
         // entries.into_iter().map(|le| {(le.raw_msg, le.file)}).into_group_map();
         let mut hm: HashMap<Message, Finds> = HashMap::new();
+        let fp: String = file.to_str().map(|s| s.to_string()).unwrap();
         for entr in entries {
-            if entr.raw_msg.is_some() {
-                hm.entry(entr.raw_msg.unwrap())
-                    .or_insert(Default::default())
-                    .positions
-                    .insert(entr.file.unwrap());
-            } else {
-                hm.entry(entr.msg).or_insert(Default::default());
-            }
+            let key = entr.raw_msg.unwrap_or(entr.msg);
+            let key = simplify_msg(key);
+            hm.entry(key)
+                .or_insert(Default::default())
+                .positions
+                .insert(entr.file.unwrap_or(fp.clone()));
         }
         hm
     }
 
-    pub fn split_stderr(stderr: String) -> (ErrLog, WarnLog, TraceLog) {
+    pub fn split_stderr(stderr: String, file: &Path) -> (ErrLog, WarnLog, TraceLog) {
         let mut errmsgs: Vec<LogEntry> = vec![];
         let mut warnmsgs: Vec<LogEntry> = vec![];
         let mut tracemsgs: Vec<LogEntry> = vec![];
@@ -77,9 +90,9 @@ mod parsing {
             }
         }
         (
-            dedup_log(errmsgs),
-            dedup_log(warnmsgs),
-            dedup_log(tracemsgs),
+            dedup_log(errmsgs, file),
+            dedup_log(warnmsgs, file),
+            dedup_log(tracemsgs, file),
         )
     }
 }
@@ -150,7 +163,7 @@ impl Diff<CompLog> {
         }
     }
 
-    fn merge(&mut self, b: Diff<CompLog>) {
+    pub fn merge(&mut self, b: Diff<CompLog>) {
         self.result_a.extend(b.result_a);
         self.result_b.extend(b.result_b);
     }
@@ -159,14 +172,15 @@ impl Diff<CompLog> {
 fn diff_stderr(
     err_a: String,
     err_b: String,
+    file: &Path,
 ) -> (
     Option<Diff<ErrLog>>,
     Option<Diff<WarnLog>>,
     Option<Diff<TraceLog>>,
 ) {
     if err_a != err_b {
-        let (err_a, wrn_a, trc_a) = parsing::split_stderr(err_a);
-        let (err_b, wrn_b, trc_b) = parsing::split_stderr(err_b);
+        let (err_a, wrn_a, trc_a) = parsing::split_stderr(err_a, file);
+        let (err_b, wrn_b, trc_b) = parsing::split_stderr(err_b, file);
         //TODO: Compare message sets (and count?) and only pass diffs into result
         // potentially split at first \n of err, and map line to list of at symbols (rest of line)
         // that would keep track of count, positions and types
@@ -214,6 +228,7 @@ async fn diff_file(
         let (err, warn, trace) = diff_stderr(
             String::from_utf8(result_a.stderr)?,
             String::from_utf8(result_b.stderr)?,
+            file,
         );
 
         Some(ParserDiff {
