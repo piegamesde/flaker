@@ -98,7 +98,11 @@ async fn main() -> Result<()> {
             output_file,
         } => {
             let result = diffing::diff_parsers(folder, nix_a, nix_b).await?;
-            let mut out_file = File::create(output_file)?;
+            let mut out_file_attempt = File::create(output_file);
+            let mut out_file = out_file_attempt.unwrap_or_else(|e| {
+                tracing::error!("Error creating file; writing to ./report.json; {}", e);
+                File::create("./report.json").unwrap()
+            });
             out_file.write_all(
                 serde_json::to_string_pretty(&result)?
                     .into_bytes()

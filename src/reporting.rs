@@ -88,22 +88,22 @@ fn print_report(report: Report, verbosity: ReportVerbosity) {
             Detailed => format!("{:#?}", out_diffs),
             _ => unreachable!(),
         };
-        tracing::info!("\t|-{}: {}", repo, content);
+        tracing::info!("\t|- \"{}\": {}", repo, content);
     }
 
     let print_log_report = |description: &str, log: MessageAnalysis| {
         if log.iter().any(|(_, d)| !d.is_empty()) {
-            tracing::info!(description);
+            tracing::info!("{}", description);
         }
         for (msg, repo_info) in log {
-            tracing::info!("\t|-{}:", msg);
+            tracing::info!("\t|- `{}`:", msg);
             for (repo, diffs) in repo_info {
                 let content = match verbosity {
                     Summary => format!("a: {} b: {}", diffs.result_a.len(), diffs.result_b.len()),
                     Detailed => format!("{:#?}", diffs),
                     _ => unreachable!(),
                 };
-                tracing::info!("\t|\t|-{}: {}", repo, content);
+                tracing::info!("\t|\t|- {}: {}", repo, content);
             }
         }
     };
@@ -129,7 +129,7 @@ pub fn report(reports: Vec<PathBuf>, verbosity: ReportVerbosity) -> Result<()> {
         .iter()
         .map(|path| {
             (
-                path.file_name()
+                path.file_stem()
                     .unwrap()
                     .to_os_string()
                     .into_string()
