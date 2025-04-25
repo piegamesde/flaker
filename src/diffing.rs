@@ -1,4 +1,3 @@
-use crate::reporting;
 use futures::StreamExt;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
@@ -219,9 +218,6 @@ fn diff_stderr(
     if err_a != err_b {
         let (err_a, wrn_a, trc_a) = parsing::split_stderr(err_a, file);
         let (err_b, wrn_b, trc_b) = parsing::split_stderr(err_b, file);
-        //TODO: Compare message sets (and count?) and only pass diffs into result
-        // potentially split at first \n of err, and map line to list of at symbols (rest of line)
-        // that would keep track of count, positions and types
         (
             (err_a != err_b).then_some(Diff::from(err_a, err_b)),
             (wrn_a != wrn_b).then_some(Diff::from(wrn_a, wrn_b)),
