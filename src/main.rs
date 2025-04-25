@@ -2,7 +2,6 @@ mod diffing;
 mod indexing;
 mod reporting;
 
-use crate::diffing::DiffResult;
 use crate::reporting::{report, ReportVerbosity};
 use clap::{Parser, Subcommand};
 use color_eyre::eyre::{eyre, Context, Result};
@@ -112,7 +111,7 @@ async fn main() -> Result<()> {
         } => {
             let verbosity = ReportVerbosity::from_str(verbosity.as_str())
                 .map_err(move |()| eyre!("Invalid verbosity '{}'", verbosity))?;
-            report(report_paths, verbosity);
+            report(report_paths, verbosity)?;
         }
     }
     Ok(())

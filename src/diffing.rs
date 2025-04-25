@@ -95,7 +95,7 @@ mod parsing {
     }
 }
 
-type Message = String;
+pub type Message = String;
 pub type Position = String;
 
 #[derive(Default, Debug, PartialEq, Serialize, Deserialize)]
@@ -109,10 +109,10 @@ type ErrLog = CompLog;
 type WarnLog = CompLog;
 type TraceLog = CompLog;
 
-#[derive(Debug, Serialize, Deserialize, Default)]
-struct Diff<T> {
-    result_a: T,
-    result_b: T,
+#[derive(Debug, Serialize, Deserialize, Default, Hash, Eq, PartialEq, Clone, Copy)]
+pub struct Diff<T> {
+    pub result_a: T,
+    pub result_b: T,
 }
 
 #[derive(Debug, Serialize, Deserialize, Default)]
@@ -292,11 +292,14 @@ async fn diff_file(
     Ok(res)
 }
 
+pub type MessageOccurrences = HashMap<Message, Diff<HashSet<Position>>>;
+
 #[derive(Default, Debug, Serialize, Deserialize)]
 pub struct DiffResult {
-    err_diff: HashMap<Message, Diff<HashSet<Position>>>,
-    wrn_diff: HashMap<Message, Diff<HashSet<Position>>>,
-    trc_diff: HashMap<Message, Diff<HashSet<Position>>>,
+    pub stdout_diff: HashSet<Diff<Message>>,
+    pub err_diff: MessageOccurrences,
+    pub wrn_diff: MessageOccurrences,
+    pub trc_diff: MessageOccurrences,
 }
 
 impl DiffResult {
@@ -304,6 +307,15 @@ impl DiffResult {
         if diffs.len() == 0 {
             return Default::default();
         }
+
+        let mut out_diffs = HashSet::new();
+
+        for diff in &diffs {
+            if diff.pass_eq.is_none() && diff.stdout_eq.is_some() {
+                out_diffs.insert(diff.stdout_eq.clone().unwrap());
+            }
+        }
+
         let rep = diffs
             .into_iter()
             .reduce(|mut acc, diff| {
@@ -329,6 +341,7 @@ impl DiffResult {
         }
 
         DiffResult {
+            stdout_diff: out_diffs,
             err_diff: propagate_msg(rep.err_eq),
             wrn_diff: propagate_msg(rep.warn_eq),
             trc_diff: propagate_msg(rep.trace_eq),
