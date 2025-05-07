@@ -19,3 +19,4 @@ tokio = { version = "1.43.0", features = ["macros", "rt-multi-thread", "process"
 anyhow = "1.0.97"
 futures = { version = "0.3.31" }
 walkdir = "2.5.0"
+regex = "1.11.1"

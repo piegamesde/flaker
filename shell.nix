@@ -31,6 +31,7 @@ pkgs.mkShell {
       nix-prefetch-git
       git
       npins
+      just
     ]
     ++ (lib.optionals stdenv.isDarwin [
       pkgs.libiconv
