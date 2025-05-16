@@ -4,7 +4,20 @@
       "type": "Channel",
       "name": "nixpkgs-unstable",
       "url": "https://releases.nixos.org/nixpkgs/nixpkgs-25.05pre776128.eb0e0f21f15c/nixexprs.tar.xz",
-      "hash": "0l04lkdi3slwwlgwyr8x0argzxcxm16a4hkijfxbjhlj44y1bkif"
+      "hash": "sha256-Ls4VPCGSQrm6k3FCokyonfX/sgIdZc8f5ZzqEdukBFA="
+    },
+    "npins": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "andir",
+        "repo": "npins"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "233a758651aa6f7027cdbcf98b92677c8ae0a901",
+      "url": "https://github.com/andir/npins/archive/233a758651aa6f7027cdbcf98b92677c8ae0a901.tar.gz",
+      "hash": "sha256-FcNAb8w9jK4e1kkDrlnjqyMxAVaxc1jOs7lxdf3hfzM="
     },
     "pre-commit-hooks.nix": {
       "type": "Git",
@@ -17,8 +30,8 @@
       "submodules": false,
       "revision": "dcf5072734cb576d2b0c59b2ac44f5050b5eac82",
       "url": "https://github.com/cachix/pre-commit-hooks.nix/archive/dcf5072734cb576d2b0c59b2ac44f5050b5eac82.tar.gz",
-      "hash": "1jmdxmx29xghjiaks6f5amnxld8w3kmxb2zv8lk2yzpgp6kr60qg"
+      "hash": "sha256-DwOTp7nvfi8mRfuL1escHDXabVXFGT1VlPD1JHrtrco="
     }
   },
-  "version": 5
+  "version": 6
 }
