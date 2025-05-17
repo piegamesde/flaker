@@ -3,6 +3,10 @@ use color_eyre::eyre::{self, eyre, Context};
 use enumset::EnumSetType;
 use futures::future::err;
 use futures::{Stream, StreamExt, TryStreamExt};
+use npins::NixPins;
+use octorust::auth::Credentials;
+use octorust::types::{Order, SearchCodeSort};
+use octorust::{Client, ClientError};
 use regex::Regex;
 use reqwest::IntoUrl;
 use serde::{Deserialize, Serialize};
@@ -11,7 +15,9 @@ use std::io::BufRead;
 use std::path::{Path, PathBuf};
 use std::process::{ExitStatus, Stdio};
 use std::str::FromStr;
-use tracing::{warn, Instrument};
+use std::thread::sleep;
+use std::time::{Duration, Instant};
+use tracing::{debug, error, info, warn, Instrument};
 use url::Url;
 
 /// Helper method to build you a client.
@@ -87,6 +93,7 @@ impl FromStr for SourceSet {
 
 pub async fn build_index(
     sources: enumset::EnumSet<SourceSet>,
+    auth_token: String,
     out: PathBuf,
 ) -> color_eyre::Result<()> {
     let mut pins = npins::NixPins::default();
@@ -141,7 +148,84 @@ pub async fn build_index(
                     color_eyre::Result::<(), eyre::Report>::Ok(())
                 }.instrument(tracing::info_span!("Scraping NUR")).await?;
             }
-            SourceSet::Github => {}
+            SourceSet::Github => {
+                info!("Fetching Github repos...");
+                let gh_client = Client::new(
+                    String::from("flaker-indexer"),
+                    Credentials::Token(auth_token.clone()),
+                )?;
+                let s = octorust::search::Search { client: gh_client };
+                let mut collected_all = false;
+                let mut repos = HashSet::new();
+                let mut page = 1;
+                while !collected_all {
+                    debug!("Fetching page {}...", page);
+                    let search_result = s
+                        .code(
+                            "filename:flake.nix",
+                            SearchCodeSort::Noop,
+                            Order::Noop,
+                            100,
+                            page,
+                        )
+                        .await;
+                    match search_result {
+                        Err(e) => match e {
+                            ClientError::RateLimited { duration } => {
+                                if page == 1 && duration == 60 {
+                                    error!("Possibly invalid token provided!");
+                                    return Err(eyre!(Box::<
+                                        dyn std::error::Error + Send + Sync + 'static,
+                                    >::from(
+                                        "Possibly invalid token!"
+                                    )));
+                                }
+                                info!("Got rate limited for the next {}s; fetching pins in the meanwhile", duration);
+                                let start = Instant::now();
+
+                                fetch_github_pins(&mut repos, &mut pins).await?;
+                                let remaining = Instant::now().duration_since(start);
+                                sleep(Duration::from_secs(duration + 2).abs_diff(remaining));
+                            }
+                            ClientError::HttpError {
+                                status: stat,
+                                headers: _,
+                                error: _,
+                            } => {
+                                if stat == 404 {
+                                    info!("Collected all available repos! or page wasn't found");
+                                    collected_all = true
+                                } else {
+                                    error!("Http error!");
+                                    Err(eyre!(
+                                        Box::<dyn std::error::Error + Send + Sync + 'static>::from(
+                                            e
+                                        )
+                                    ))?
+                                }
+                            }
+                            _ => {
+                                error!("unknown error");
+                                Err(eyre!(
+                                    Box::<dyn std::error::Error + Send + Sync + 'static>::from(e)
+                                ))?
+                            }
+                        },
+                        Ok(res) => {
+                            info!("OK response! with {} results", res.body.items.len());
+                            for code_result in res.body.items {
+                                debug!("new repo: {}", code_result.repository.url);
+                                repos.insert(code_result.repository.url.replace(
+                                    "https://api.github.com/repos/",
+                                    "https://github.com/",
+                                ));
+                            }
+                            page += 1;
+                        }
+                    }
+                }
+                fetch_github_pins(&mut repos, &mut pins).await?;
+            }
         }
     }
 
@@ -157,5 +241,28 @@ pub async fn build_index(
     .instrument(tracing::info_span!("Writing pins", out_path = ?out.display()))
     .await?;
 
+    Ok(())
+}
+
+async fn fetch_github_pins(
+    repos: &mut HashSet<String>,
+    pins: &mut NixPins,
+) -> color_eyre::Result<()> {
+    for repo in repos.drain() {
+        pins.pins.insert(
+            String::from("gh-") + repo.as_str(),
+            fetch_pin(
+                &Url::parse(repo.as_str())?,
+                None, //Some("master".to_string()),
+                false,
+            )
+            .await
+            .map_err(|err| {
+                eyre!(Box::<dyn std::error::Error + Send + Sync + 'static>::from(
+                    err
+                ))
+            })?,
+        );
+    }
     Ok(())
 }

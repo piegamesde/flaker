@@ -30,6 +30,8 @@ enum Command {
         /// Comma separated list. Available source sets: `nixpkgs`, `nur`, `github`
         #[arg(long, default_value = "*")]
         sources: String,
+        #[arg(long, default_value = "")]
+        auth_token: String,
         #[arg()]
         out: PathBuf,
     },
@@ -65,7 +67,7 @@ async fn main() -> Result<()> {
     use tracing_subscriber::prelude::*;
     tracing_subscriber::registry()
         .with(tracing_subscriber::filter::LevelFilter::from_level(
-            tracing::Level::DEBUG,
+            tracing::Level::INFO,
         ))
         .with(
             tracing_subscriber::fmt::layer()
@@ -78,7 +80,11 @@ async fn main() -> Result<()> {
     color_eyre::install()?;
 
     match Command::parse() {
-        Command::BuildIndex { sources, out } => {
+        Command::BuildIndex {
+            sources,
+            auth_token,
+            out,
+        } => {
             use crate::indexing;
             let sources = if sources.contains('*') {
                 enumset::EnumSet::all()
@@ -89,7 +95,7 @@ async fn main() -> Result<()> {
                     .collect::<std::result::Result<_, ()>>()
                     .map_err(move |()| eyre!("Invalid source set '{}'", sources))?
             };
-            indexing::build_index(sources, out).await?;
+            indexing::build_index(sources, auth_token, out).await?;
         }
         Command::NixParse {
             folder,
