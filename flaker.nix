@@ -21,7 +21,8 @@ rustPlatform.buildRustPackage {
     lockFile = src + "/Cargo.lock";
 
     outputHashes = {
-      "npins-0.3.0" = "sha256-/FTE/lDICJnXr4JbxaA+9mwM0sSF5++/XaYR+S2pFdA=";
+      "npins-0.3.1" = "sha256-WQxAZYj7wFA46X2L0IuA3syzr8CopmoXA8eePyhnE0o=";
+      "nix-compat-0.1.0" = "sha256-4K3J3slOOZYZCo3OF66yQ2QkBlF6uMQXQirXoYznwbQ=";
     };
   };
 

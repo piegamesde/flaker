@@ -51,8 +51,8 @@ async fn fetch_pin(
 ) -> anyhow::Result<npins::Pin> {
     // Always fetch default branch as a small first sanity check for the repo
     let default_branch = npins::git::fetch_default_branch(url).await?;
-    let mut pin: npins::Pin = npins::git::GitPin::git(
-        url.clone(),
+    let mut pin: npins::Pin = npins::git::GitPin::new(
+        npins::git::Repository::git(url.clone()),
         branch.clone().unwrap_or(default_branch),
         submodules,
     )

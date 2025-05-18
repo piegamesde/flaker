@@ -41,7 +41,7 @@ rec {
         nixB
       ];
       buildPhase = ''
-        flaker nix-parse pin ${nixA} ${nixB}
+        flaker nix-parse . ${nixA}/bin/nix ${nixB}/bin/nix
       '';
       installPhase = "cp report.json $out";
     }
