@@ -1,5 +1,7 @@
+use anyhow::{anyhow, Error};
 use clap::{Parser, Subcommand};
 use color_eyre::eyre::{self, eyre, Context};
+use color_eyre::Report;
 use enumset::EnumSetType;
 use futures::future::err;
 use futures::{Stream, StreamExt, TryStreamExt};
@@ -15,8 +17,10 @@ use std::io::BufRead;
 use std::path::{Path, PathBuf};
 use std::process::{ExitStatus, Stdio};
 use std::str::FromStr;
-use std::thread::sleep;
 use std::time::{Duration, Instant};
+use tokio::spawn;
+use tokio::sync::mpsc::{channel, unbounded_channel, Sender, UnboundedSender};
+use tokio::time::sleep;
 use tracing::{debug, error, info, warn, Instrument};
 use url::Url;
 
@@ -97,6 +101,7 @@ pub async fn build_index(
     out: PathBuf,
 ) -> color_eyre::Result<()> {
     let mut pins = npins::NixPins::default();
+    let mut errs = Vec::new();
 
     tracing::info!(sources = ?sources, "Scraping sources");
     for source in sources {
@@ -150,81 +155,25 @@ pub async fn build_index(
             }
             SourceSet::Github => {
                 info!("Fetching Github repos...");
-                let gh_client = Client::new(
-                    String::from("flaker-indexer"),
-                    Credentials::Token(auth_token.clone()),
-                )?;
-                let s = octorust::search::Search { client: gh_client };
-                let mut collected_all = false;
-                let mut repos = HashSet::new();
-                let mut page = 1;
-                while !collected_all {
-                    debug!("Fetching page {}...", page);
-                    let search_result = s
-                        .code(
-                            "filename:flake.nix",
-                            SearchCodeSort::Noop,
-                            Order::Noop,
-                            100,
-                            page,
-                        )
-                        .await;
-                    match search_result {
-                        Err(e) => match e {
-                            ClientError::RateLimited { duration } => {
-                                if page == 1 && duration == 60 {
-                                    error!("Possibly invalid token provided!");
-                                    return Err(eyre!(Box::<
-                                        dyn std::error::Error + Send + Sync + 'static,
-                                    >::from(
-                                        "Possibly invalid token!"
-                                    )));
-                                }
-                                info!("Got rate limited for the next {}s; fetching pins in the meanwhile", duration);
-                                let start = Instant::now();
-
-                                fetch_github_pins(&mut repos, &mut pins).await?;
-                                let remaining = Instant::now().duration_since(start);
-                                sleep(Duration::from_secs(duration + 2).abs_diff(remaining));
+                let (sender, receiver) = unbounded_channel();
+                spawn(search_github(auth_token.clone(), sender));
+                receiver
+                    .and_then(|url_string| async {
+                        let url = Url::parse(url_string)?;
+                        let pin = fetch_pin(&url, None, false).await?;
+                        Ok((url, pin))
+                    })
+                    .for_each(|itm| async {
+                        match itm {
+                            Ok((url, pin)) => {
+                                pins.pins.insert(format!("gh-{}", url), pin);
                             }
-                            ClientError::HttpError {
-                                status: stat,
-                                headers: _,
-                                error: _,
-                            } => {
-                                if stat == 404 {
-                                    info!("Collected all available repos! or page wasn't found");
-                                    collected_all = true
-                                } else {
-                                    error!("Http error!");
-                                    Err(eyre!(
-                                        Box::<dyn std::error::Error + Send + Sync + 'static>::from(
-                                            e
-                                        )
-                                    ))?
-                                }
+                            Err(e) => {
+                                errs.push(e);
                             }
-                            _ => {
-                                error!("unknown error");
-                                Err(eyre!(
-                                    Box::<dyn std::error::Error + Send + Sync + 'static>::from(e)
-                                ))?
-                            }
-                        },
-                        Ok(res) => {
-                            info!("OK response! with {} results", res.body.items.len());
-                            for code_result in res.body.items {
-                                debug!("new repo: {}", code_result.repository.url);
-                                repos.insert(code_result.repository.url.replace(
-                                    "https://api.github.com/repos/",
-                                    "https://github.com/",
-                                ));
-                            }
-                            page += 1;
                         }
-                    }
-                }
-                fetch_github_pins(&mut repos, &mut pins).await?;
+                    })
+                    .await;
             }
         }
     }
@@ -240,6 +189,93 @@ pub async fn build_index(
     }
     .instrument(tracing::info_span!("Writing pins", out_path = ?out.display()))
     .await?;
+    if errs.len() > 0 {
+        Err(eyre!("some errors occurred"))
+    } else {
+        Ok(())
+    }
+}
+
+async fn search_github(
+    auth_token: String,
+    sender: UnboundedSender<Result<String, ClientError>>,
+) -> color_eyre::Result<()> {
+    let gh_client = Client::new(
+        String::from("flaker-indexer"),
+        Credentials::Token(auth_token),
+    )?;
+    let s = octorust::search::Search { client: gh_client };
+    let mut expected_total_pages = "?".to_string();
+    let mut page = 1;
+    let mut collected_what_github_calls_all = false;
+
+    while !collected_what_github_calls_all {
+        info!("Fetching page {} of {}...", page, expected_total_pages);
+        let search_result = s
+            .code(
+                "filename:flake.nix",
+                SearchCodeSort::Noop,
+                Order::Noop,
+                100,
+                page,
+            )
+            .await;
+        match search_result {
+            Err(e) => match &e {
+                ClientError::RateLimited { ref duration } => {
+                    if page == 1 && *duration == 60 {
+                        error!("Possibly invalid token provided!");
+                        return Err(eyre!(
+                            Box::<dyn std::error::Error + Send + Sync + 'static>::from(
+                                "Possibly invalid token!"
+                            )
+                        ));
+                    }
+                    info!("Got rate limited, waiting for {} seconds...", duration);
+                    sleep(Duration::from_secs(*duration)).await;
+                }
+                ClientError::HttpError {
+                    status,
+                    headers: _,
+                    error,
+                } => {
+                    if *status == 422 && error == "Cannot access beyond the first 1000 results" {
+                        collected_what_github_calls_all = true;
+                    }
+                    let err_msg = format!("HTTP Error: {} {}", status, error);
+                    warn!(err_msg);
+                    sender.send(Err(e))?;
+                }
+                _ => {
+                    let err_msg = "unknown error while fetching";
+                    warn!(err_msg);
+                    sender.send(Err(e))?;
+                    // Kill because we don't know if it is sensible to continue...
+                    collected_what_github_calls_all = true;
+                }
+            },
+            Ok(response) => {
+                if expected_total_pages == "?" {
+                    expected_total_pages = format!("{}", response.body.total_count / 100);
+                }
+
+                if response.body.items.len() == 0 {
+                    collected_what_github_calls_all = true;
+                    continue;
+                }
+
+                for code_result in response.body.items {
+                    let repo_url_string = code_result
+                        .repository
+                        .url
+                        .replace("https://api.github.com/repos/", "https://github.com/");
+                    debug!("new repo: {}", repo_url_string);
+                    sender.send(Ok(repo_url_string))?;
+                }
+                page += 1;
+            }
+        }
+    }
 
     Ok(())
 }
