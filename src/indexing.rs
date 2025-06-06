@@ -1,36 +1,21 @@
 use crate::errors::{AddErrorResult, ErrorGroup, StrError};
 use crate::GithubOptions;
-use anyhow::{anyhow, format_err};
-use clap::{Parser, Subcommand};
 use color_eyre::eyre::{self, eyre, Context, OptionExt};
-use color_eyre::Report;
-use color_eyre::Section;
 use enumset::EnumSetType;
-use futures::future::err;
-use futures::{Stream, StreamExt, TryStreamExt};
+use futures::{StreamExt, TryStreamExt};
 use npins::NixPins;
 use octorust::auth::Credentials;
-use octorust::git::Git;
-use octorust::types::{GitHubApp, Order, SearchCodeSort};
+use octorust::types::{Order, SearchCodeSort};
 use octorust::{Client, ClientError};
-use regex::Regex;
 use reqwest::IntoUrl;
-use serde::{Deserialize, Serialize};
-use std::any::{type_name_of_val, Any};
+use serde::Deserialize;
 use std::borrow::BorrowMut;
-use std::collections::{HashMap, HashSet};
-use std::error::Error;
-use std::fmt::Formatter;
-use std::io::BufRead;
-use std::ops::Deref;
-use std::path::{Path, PathBuf};
-use std::process::{ExitStatus, Stdio};
+use std::collections::HashMap;
+use std::path::PathBuf;
 use std::str::FromStr;
-use std::time::{Duration, Instant};
-use std::{fmt, future};
-use thiserror::Error;
+use std::time::Duration;
 use tokio::spawn;
-use tokio::sync::mpsc::{unbounded_channel, Sender, UnboundedSender};
+use tokio::sync::mpsc::{unbounded_channel, UnboundedSender};
 use tokio::time::sleep;
 use tokio_stream::wrappers::UnboundedReceiverStream;
 use tracing::{debug, error, info, warn, Instrument};
@@ -166,10 +151,10 @@ async fn index_source_set(
 ) -> Result<(), Box<dyn std::error::Error + Send + Sync + 'static>> {
     match source {
         SourceSet::Nixpkgs => {
-            let NIXPKGS_URL = Url::parse("https://github.com/NixOS/Nixpkgs").unwrap();
+            let nixpkgs_url = Url::parse("https://github.com/NixOS/Nixpkgs").unwrap();
             pins.pins.insert(
-                NIXPKGS_URL.to_string(),
-                fetch_pin(&NIXPKGS_URL, Some("master".into()), false)
+                nixpkgs_url.to_string(),
+                fetch_pin(&nixpkgs_url, Some("master".into()), false)
                     .await
                     .map_err(|err| err)?,
             );
@@ -211,7 +196,7 @@ async fn index_source_set(
         SourceSet::Github => {
             info!("Fetching Github repos...");
             let errors: ErrorGroup = "Scraping Github failed with Errors: ".into();
-            let (sender, mut receiver) = unbounded_channel();
+            let (sender, receiver) = unbounded_channel();
             let fetcher = spawn(search_github(options, sender));
             let (ps, error_group) = UnboundedReceiverStream::new(receiver)
                 .map_err(|err| {
@@ -336,28 +321,5 @@ async fn search_github(
         }
     }
     info!("Finished gathering Repos");
-    Ok(())
-}
-
-async fn fetch_github_pins(
-    repos: &mut HashSet<String>,
-    pins: &mut NixPins,
-) -> color_eyre::Result<()> {
-    for repo in repos.drain() {
-        pins.pins.insert(
-            String::from("gh-") + repo.as_str(),
-            fetch_pin(
-                &Url::parse(repo.as_str())?,
-                None, //Some("master".to_string()),
-                false,
-            )
-            .await
-            .map_err(|err| {
-                eyre!(Box::<dyn std::error::Error + Send + Sync + 'static>::from(
-                    err
-                ))
-            })?,
-        );
-    }
     Ok(())
 }

@@ -1,7 +1,6 @@
 use crate::diffing::{Diff, DiffResult, Message, MessageOccurrences, Position};
-use crate::indexing::SourceSet;
 use crate::reporting::ReportVerbosity::{Auto, Detailed, Summary};
-use color_eyre::eyre::{eyre, Context, Result};
+use color_eyre::eyre::Result;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 use std::fs::File;
@@ -58,7 +57,7 @@ impl Report {
     fn add(&mut self, diff_result: DiffResult, name: String) {
         let propagate_msg = |log: &mut MessageAnalysis, occ: MessageOccurrences| {
             for (msg, d) in occ {
-                let mut di = log
+                let di = log
                     .entry(msg.clone())
                     .or_insert(Default::default())
                     .entry(name.clone())

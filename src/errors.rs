@@ -96,6 +96,7 @@ where
 }
 
 pub trait AddError {
+    #[allow(dead_code)]
     fn add_error_to(self, group: &mut ErrorGroup) -> &mut ErrorGroup;
 }
 

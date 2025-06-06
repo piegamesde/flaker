@@ -4,15 +4,12 @@ mod indexing;
 mod reporting;
 
 use crate::reporting::{report, ReportVerbosity};
-use clap::{Args, Parser, Subcommand};
-use color_eyre::eyre::{eyre, Context, Result};
-use enumset::EnumSetType;
-use futures::Stream;
+use clap::{Args, Parser};
+use color_eyre::eyre::{eyre, Result};
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::PathBuf;
 use std::str::FromStr;
-use tracing::Instrument;
 
 #[derive(Args, Debug, Clone)]
 pub struct GithubOptions {
@@ -115,7 +112,7 @@ async fn main() -> Result<()> {
             output_file,
         } => {
             let result = diffing::diff_parsers(folder, nix_a, nix_b).await?;
-            let mut out_file_attempt = File::create(output_file);
+            let out_file_attempt = File::create(output_file);
             let mut out_file = out_file_attempt.unwrap_or_else(|e| {
                 tracing::error!("Error creating file; writing to ./report.json; {}", e);
                 File::create("./report.json").unwrap()
