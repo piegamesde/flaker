@@ -1,4 +1,5 @@
 use crate::errors::{AddErrorResult, ErrorGroup, StrError};
+use crate::GithubOptions;
 use anyhow::{anyhow, format_err};
 use clap::{Parser, Subcommand};
 use color_eyre::eyre::{self, eyre, Context, OptionExt};
@@ -9,7 +10,8 @@ use futures::future::err;
 use futures::{Stream, StreamExt, TryStreamExt};
 use npins::NixPins;
 use octorust::auth::Credentials;
-use octorust::types::{Order, SearchCodeSort};
+use octorust::git::Git;
+use octorust::types::{GitHubApp, Order, SearchCodeSort};
 use octorust::{Client, ClientError};
 use regex::Regex;
 use reqwest::IntoUrl;
@@ -20,6 +22,7 @@ use std::collections::{HashMap, HashSet};
 use std::error::Error;
 use std::fmt::Formatter;
 use std::io::BufRead;
+use std::ops::Deref;
 use std::path::{Path, PathBuf};
 use std::process::{ExitStatus, Stdio};
 use std::str::FromStr;
@@ -116,7 +119,7 @@ impl FromStr for SourceSet {
 
 pub async fn build_index(
     sources: enumset::EnumSet<SourceSet>,
-    auth_token: String,
+    options: GithubOptions,
     out: PathBuf,
 ) -> color_eyre::Result<()> {
     let mut pins = npins::NixPins::default();
@@ -129,7 +132,7 @@ pub async fn build_index(
             source.as_str()
         )
         .into();
-        let _ = index_source_set(auth_token.clone(), &mut pins, source)
+        let _ = index_source_set(options.clone(), &mut pins, source)
             .await
             .add_error_to(sourceset_errors.borrow_mut());
         sourceset_errors.add_error_to(global_errors.borrow_mut());
@@ -157,7 +160,7 @@ pub async fn build_index(
 }
 
 async fn index_source_set(
-    auth_token: String,
+    options: GithubOptions,
     pins: &mut NixPins,
     source: SourceSet,
 ) -> Result<(), Box<dyn std::error::Error + Send + Sync + 'static>> {
@@ -209,7 +212,7 @@ async fn index_source_set(
             info!("Fetching Github repos...");
             let errors: ErrorGroup = "Scraping Github failed with Errors: ".into();
             let (sender, mut receiver) = unbounded_channel();
-            let fetcher = spawn(search_github(auth_token.clone(), sender));
+            let fetcher = spawn(search_github(options, sender));
             let (ps, error_group) = UnboundedReceiverStream::new(receiver)
                 .map_err(|err| {
                     Into::<Box<dyn std::error::Error + Send + Sync + 'static>>::into(StrError(err))
@@ -249,19 +252,20 @@ async fn index_source_set(
 }
 
 async fn search_github(
-    auth_token: String,
+    options: GithubOptions,
     sender: UnboundedSender<Result<String, String>>,
 ) -> color_eyre::Result<()> {
     let gh_client = Client::new(
         String::from("flaker-indexer"),
-        Credentials::Token(auth_token),
+        Credentials::Token(options.auth_token.clone()),
     )?;
     let s = octorust::search::Search { client: gh_client };
     let mut expected_total_pages = "?".to_string();
-    let mut page = 1;
+    let start_page = options.start_page;
+    let mut page = start_page;
     let mut collected_what_github_calls_all = false;
 
-    while !collected_what_github_calls_all {
+    while !collected_what_github_calls_all && options.end_page.map(|mp| page < mp).unwrap_or(true) {
         info!("Fetching page {} of {}...", page, expected_total_pages);
         let search_result = s
             .code(
@@ -269,13 +273,13 @@ async fn search_github(
                 SearchCodeSort::Noop,
                 Order::Noop,
                 100,
-                page,
+                page as i64,
             )
             .await;
         match search_result {
             Err(e) => match &e {
                 ClientError::RateLimited { ref duration } => {
-                    if page == 1 && *duration == 60 {
+                    if page == start_page && *duration == 60 {
                         error!("Possibly invalid token provided!");
                         return Err(eyre!(
                             Box::<dyn std::error::Error + Send + Sync + 'static>::from(

@@ -4,7 +4,7 @@ mod indexing;
 mod reporting;
 
 use crate::reporting::{report, ReportVerbosity};
-use clap::{Parser, Subcommand};
+use clap::{Args, Parser, Subcommand};
 use color_eyre::eyre::{eyre, Context, Result};
 use enumset::EnumSetType;
 use futures::Stream;
@@ -13,6 +13,16 @@ use std::io::prelude::*;
 use std::path::PathBuf;
 use std::str::FromStr;
 use tracing::Instrument;
+
+#[derive(Args, Debug, Clone)]
+pub struct GithubOptions {
+    #[arg(long, default_value = "")]
+    auth_token: String,
+    #[arg(long, default_value_t = 1)]
+    start_page: usize,
+    #[arg(long)]
+    end_page: Option<usize>,
+}
 
 #[derive(Parser, Debug)]
 #[command(
@@ -31,8 +41,8 @@ enum Command {
         /// Comma separated list. Available source sets: `nixpkgs`, `nur`, `github`
         #[arg(long, default_value = "*")]
         sources: String,
-        #[arg(long, default_value = "")]
-        auth_token: String,
+        #[command(flatten)]
+        github_options: GithubOptions,
         #[arg()]
         out: PathBuf,
     },
@@ -83,7 +93,7 @@ async fn main() -> Result<()> {
     match Command::parse() {
         Command::BuildIndex {
             sources,
-            auth_token,
+            github_options,
             out,
         } => {
             use crate::indexing;
@@ -96,7 +106,7 @@ async fn main() -> Result<()> {
                     .collect::<std::result::Result<_, ()>>()
                     .map_err(move |()| eyre!("Invalid source set '{}'", sources))?
             };
-            indexing::build_index(sources, auth_token, out).await?;
+            indexing::build_index(sources, github_options, out).await?;
         }
         Command::NixParse {
             folder,
