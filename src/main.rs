@@ -3,9 +3,11 @@ mod errors;
 mod indexing;
 mod reporting;
 
+use crate::indexing::SourceSet;
 use crate::reporting::{report, ReportVerbosity};
 use clap::{Args, Parser};
 use color_eyre::eyre::{eyre, Result};
+use enumset::EnumSet;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::PathBuf;
@@ -13,10 +15,13 @@ use std::str::FromStr;
 
 #[derive(Args, Debug, Clone)]
 pub struct GithubOptions {
-    #[arg(long, default_value = "")]
-    auth_token: String,
+    /// Authentification Token used to search github
+    #[arg(long)]
+    auth_token: Option<String>,
+    /// On which page to start the search
     #[arg(long, default_value_t = 1)]
     start_page: usize,
+    /// On which page to end early
     #[arg(long)]
     end_page: Option<usize>,
 }
@@ -35,11 +40,11 @@ enum Command {
     /// Build an index of repositories based on source sets
     BuildIndex {
         /// Which source sets to include.
-        /// Comma separated list. Available source sets: `nixpkgs`, `nur`, `github`
-        #[arg(long, default_value = "*")]
-        sources: String,
+        #[arg(long, value_enum)]
+        sources: Vec<SourceSet>,
         #[command(flatten)]
         github_options: GithubOptions,
+        /// Where to write the npins lock file
         #[arg()]
         out: PathBuf,
     },
@@ -93,15 +98,10 @@ async fn main() -> Result<()> {
             github_options,
             out,
         } => {
-            use crate::indexing;
-            let sources = if sources.contains('*') {
-                enumset::EnumSet::all()
+            let sources = if sources.len() == 0 {
+                EnumSet::all()
             } else {
-                sources
-                    .split(',')
-                    .map(indexing::SourceSet::from_str)
-                    .collect::<std::result::Result<_, ()>>()
-                    .map_err(move |()| eyre!("Invalid source set '{}'", sources))?
+                EnumSet::from_iter(sources)
             };
             indexing::build_index(sources, github_options, out).await?;
         }

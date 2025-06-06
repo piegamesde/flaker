@@ -1,5 +1,6 @@
 use crate::errors::{AddErrorResult, ErrorGroup, StrError};
 use crate::GithubOptions;
+use clap::ValueEnum;
 use color_eyre::eyre::{self, eyre, Context, OptionExt};
 use enumset::EnumSetType;
 use futures::{StreamExt, TryStreamExt};
@@ -69,7 +70,7 @@ async fn fetch_pin(
     Ok(pin)
 }
 
-#[derive(EnumSetType, Debug)]
+#[derive(EnumSetType, Debug, ValueEnum)]
 pub enum SourceSet {
     /// The Nixpkgs repo
     Nixpkgs,
@@ -240,10 +241,13 @@ async fn search_github(
     options: GithubOptions,
     sender: UnboundedSender<Result<String, String>>,
 ) -> color_eyre::Result<()> {
-    let gh_client = Client::new(
-        String::from("flaker-indexer"),
-        Credentials::Token(options.auth_token.clone()),
-    )?;
+    let token = match options.auth_token {
+        Some(t) => Ok(t),
+        None => Err(StrError(
+            "Authentification token required to search Github".to_string(),
+        )),
+    }?;
+    let gh_client = Client::new(String::from("flaker-indexer"), Credentials::Token(token))?;
     let s = octorust::search::Search { client: gh_client };
     let mut expected_total_pages = "?".to_string();
     let start_page = options.start_page;
