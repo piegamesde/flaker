@@ -1,7 +1,9 @@
-use anyhow::{anyhow, Error};
+use crate::errors::{AddErrorResult, ErrorGroup, StrError};
+use anyhow::{anyhow, format_err};
 use clap::{Parser, Subcommand};
-use color_eyre::eyre::{self, eyre, Context};
+use color_eyre::eyre::{self, eyre, Context, OptionExt};
 use color_eyre::Report;
+use color_eyre::Section;
 use enumset::EnumSetType;
 use futures::future::err;
 use futures::{Stream, StreamExt, TryStreamExt};
@@ -12,15 +14,22 @@ use octorust::{Client, ClientError};
 use regex::Regex;
 use reqwest::IntoUrl;
 use serde::{Deserialize, Serialize};
+use std::any::{type_name_of_val, Any};
+use std::borrow::BorrowMut;
 use std::collections::{HashMap, HashSet};
+use std::error::Error;
+use std::fmt::Formatter;
 use std::io::BufRead;
 use std::path::{Path, PathBuf};
 use std::process::{ExitStatus, Stdio};
 use std::str::FromStr;
 use std::time::{Duration, Instant};
+use std::{fmt, future};
+use thiserror::Error;
 use tokio::spawn;
-use tokio::sync::mpsc::{channel, unbounded_channel, Sender, UnboundedSender};
+use tokio::sync::mpsc::{unbounded_channel, Sender, UnboundedSender};
 use tokio::time::sleep;
+use tokio_stream::wrappers::UnboundedReceiverStream;
 use tracing::{debug, error, info, warn, Instrument};
 use url::Url;
 
@@ -83,6 +92,16 @@ pub enum SourceSet {
     Github,
 }
 
+impl SourceSet {
+    fn as_str(&self) -> &'static str {
+        match self {
+            SourceSet::Nixpkgs => "Nixpkgs",
+            SourceSet::Nur => "NUR",
+            SourceSet::Github => "Github",
+        }
+    }
+}
+
 impl FromStr for SourceSet {
     type Err = ();
     fn from_str(s: &str) -> std::result::Result<Self, ()> {
@@ -101,87 +120,28 @@ pub async fn build_index(
     out: PathBuf,
 ) -> color_eyre::Result<()> {
     let mut pins = npins::NixPins::default();
-    let mut errs = Vec::new();
+    let mut global_errors: ErrorGroup = "Building Index failed with errors: ".into();
 
     tracing::info!(sources = ?sources, "Scraping sources");
     for source in sources {
-        match source {
-            SourceSet::Nixpkgs => {
-                let NIXPKGS_URL = Url::parse("https://github.com/NixOS/Nixpkgs").unwrap();
-                pins.pins.insert(
-                    NIXPKGS_URL.to_string(),
-                    fetch_pin(&NIXPKGS_URL, Some("release-24.05".into()), false)
-                        .await
-                        .map_err(|err| {
-                            eyre!(Box::<dyn std::error::Error + Send + Sync + 'static>::from(
-                                err
-                            ))
-                        })?,
-                );
-            }
-            SourceSet::Nur => {
-                #[derive(Debug, Deserialize)]
-                struct Repo {
-                    url: url::Url,
-                    branch: Option<String>,
-                    #[serde(default)]
-                    submodules: bool,
-                }
-                #[derive(Debug, Deserialize)]
-                struct Repos {
-                    repos: HashMap<String, Repo>,
-                }
-                async {
-                    // <https://github.com/nix-community/NUR/blob/main/repos.json>
-                    let Repos { repos } = get_and_deserialize("https://raw.githubusercontent.com/nix-community/NUR/refs/heads/main/repos.json").await?;
-                    let stream = futures::stream::iter(repos)
-                        .map(|(_, Repo { url, branch, submodules })| async move {
-                            match fetch_pin(&url, branch, submodules).await {
-                                Ok(pin) => Some((url.to_string(), pin)),
-                                Err(err) => {
-                                    tracing::warn!(err = ?err, %url, "Failed to fetch pin, ignoring");
-                                    None
-                                }
-                            }
-                        })
-                        .buffer_unordered(20)
-                        .filter_map(|val| async {val});
-                    futures::pin_mut!(stream);
-                    while let Some((k, v)) = stream.next().await {
-                        pins.pins.insert(k, v);
-                    }
-                    color_eyre::Result::<(), eyre::Report>::Ok(())
-                }.instrument(tracing::info_span!("Scraping NUR")).await?;
-            }
-            SourceSet::Github => {
-                info!("Fetching Github repos...");
-                let (sender, receiver) = unbounded_channel();
-                spawn(search_github(auth_token.clone(), sender));
-                receiver
-                    .and_then(|url_string| async {
-                        let url = Url::parse(url_string)?;
-                        let pin = fetch_pin(&url, None, false).await?;
-                        Ok((url, pin))
-                    })
-                    .for_each(|itm| async {
-                        match itm {
-                            Ok((url, pin)) => {
-                                pins.pins.insert(format!("gh-{}", url), pin);
-                            }
-                            Err(e) => {
-                                errs.push(e);
-                            }
-                        }
-                    })
-                    .await;
-            }
-        }
+        let mut sourceset_errors: ErrorGroup = format!(
+            "Indexing SourceSet {} failed with errors: ",
+            source.as_str()
+        )
+        .into();
+        let _ = index_source_set(auth_token.clone(), &mut pins, source)
+            .await
+            .add_error_to(sourceset_errors.borrow_mut());
+        sourceset_errors.add_error_to(global_errors.borrow_mut());
     }
 
     async {
         let out = &out;
+        let parent = out.parent().ok_or_eyre("cant go higher than root")?;
+        std::fs::create_dir_all(parent)?;
         let mut fh = std::fs::File::create(out)
-            .with_context(|| format!("Failed to open {} for writing.", out.display()))?;
+            .with_context(|| format!("Failed to open {} for writing.", out.display()))
+            .or(std::fs::File::create("./index.json"))?;
         serde_json::to_writer_pretty(&mut fh, &pins.to_value_versioned())?;
         use std::io::Write;
         fh.write_all(b"\n")?;
@@ -189,16 +149,108 @@ pub async fn build_index(
     }
     .instrument(tracing::info_span!("Writing pins", out_path = ?out.display()))
     .await?;
-    if errs.len() > 0 {
-        Err(eyre!("some errors occurred"))
+    if global_errors.has_content() {
+        Err(eyre!(global_errors))
     } else {
         Ok(())
     }
 }
 
+async fn index_source_set(
+    auth_token: String,
+    pins: &mut NixPins,
+    source: SourceSet,
+) -> Result<(), Box<dyn std::error::Error + Send + Sync + 'static>> {
+    match source {
+        SourceSet::Nixpkgs => {
+            let NIXPKGS_URL = Url::parse("https://github.com/NixOS/Nixpkgs").unwrap();
+            pins.pins.insert(
+                NIXPKGS_URL.to_string(),
+                fetch_pin(&NIXPKGS_URL, Some("master".into()), false)
+                    .await
+                    .map_err(|err| err)?,
+            );
+        }
+        SourceSet::Nur => {
+            #[derive(Debug, Deserialize)]
+            struct Repo {
+                url: url::Url,
+                branch: Option<String>,
+                #[serde(default)]
+                submodules: bool,
+            }
+            #[derive(Debug, Deserialize)]
+            struct Repos {
+                repos: HashMap<String, Repo>,
+            }
+            async {
+                // <https://github.com/nix-community/NUR/blob/main/repos.json>
+                let Repos { repos } = get_and_deserialize("https://raw.githubusercontent.com/nix-community/NUR/refs/heads/main/repos.json").await?;
+                let stream = futures::stream::iter(repos)
+                    .map(|(_, Repo { url, branch, submodules })| async move {
+                        match fetch_pin(&url, branch, submodules).await {
+                            Ok(pin) => Some((url.to_string(), pin)),
+                            Err(err) => {
+                                tracing::warn!(err = ?err, %url, "Failed to fetch pin, ignoring");
+                                None
+                            }
+                        }
+                    })
+                    .buffer_unordered(20)
+                    .filter_map(|val| async { val });
+                futures::pin_mut!(stream);
+                while let Some((k, v)) = stream.next().await {
+                    pins.pins.insert(k, v);
+                }
+                color_eyre::Result::<(), eyre::Report>::Ok(())
+            }.instrument(tracing::info_span!("Scraping NUR")).await?;
+        }
+        SourceSet::Github => {
+            info!("Fetching Github repos...");
+            let errors: ErrorGroup = "Scraping Github failed with Errors: ".into();
+            let (sender, mut receiver) = unbounded_channel();
+            let fetcher = spawn(search_github(auth_token.clone(), sender));
+            let (ps, error_group) = UnboundedReceiverStream::new(receiver)
+                .map_err(|err| {
+                    Into::<Box<dyn std::error::Error + Send + Sync + 'static>>::into(StrError(err))
+                })
+                .and_then(|url_string| async move {
+                    let url = Url::parse(url_string.as_str())?;
+                    let pin = fetch_pin(&url, None, false).await?;
+                    Ok((url, pin))
+                })
+                .fold(
+                    (Vec::new(), errors),
+                    |(mut ps, mut eg),
+                     itm: Result<
+                        (Url, npins::Pin),
+                        Box<dyn std::error::Error + Send + Sync + 'static>,
+                    >| async move {
+                        match itm {
+                            Ok((url, pin)) => {
+                                ps.push((format!("gh-{}", url), pin));
+                            }
+                            Err(e) => {
+                                eg.add(e);
+                            }
+                        };
+                        (ps, eg)
+                    },
+                )
+                .await;
+            fetcher.await??;
+            for (name, pin) in ps {
+                pins.pins.insert(name, pin);
+            }
+            error_group.to_result()?;
+        }
+    };
+    Ok(())
+}
+
 async fn search_github(
     auth_token: String,
-    sender: UnboundedSender<Result<String, ClientError>>,
+    sender: UnboundedSender<Result<String, String>>,
 ) -> color_eyre::Result<()> {
     let gh_client = Client::new(
         String::from("flaker-indexer"),
@@ -213,7 +265,7 @@ async fn search_github(
         info!("Fetching page {} of {}...", page, expected_total_pages);
         let search_result = s
             .code(
-                "filename:flake.nix",
+                "filename:flake.nix path:/",
                 SearchCodeSort::Noop,
                 Order::Noop,
                 100,
@@ -232,24 +284,27 @@ async fn search_github(
                         ));
                     }
                     info!("Got rate limited, waiting for {} seconds...", duration);
-                    sleep(Duration::from_secs(*duration)).await;
+                    sleep(Duration::from_secs(*duration + 2)).await;
                 }
                 ClientError::HttpError {
                     status,
                     headers: _,
                     error,
                 } => {
-                    if *status == 422 && error == "Cannot access beyond the first 1000 results" {
+                    if *status == 422
+                        && error.contains("Cannot access beyond the first 1000 results")
+                    {
                         collected_what_github_calls_all = true;
+                        continue;
                     }
                     let err_msg = format!("HTTP Error: {} {}", status, error);
                     warn!(err_msg);
-                    sender.send(Err(e))?;
+                    sender.send(Err(err_msg))?;
                 }
                 _ => {
                     let err_msg = "unknown error while fetching";
                     warn!(err_msg);
-                    sender.send(Err(e))?;
+                    sender.send(Err(err_msg.to_string()))?;
                     // Kill because we don't know if it is sensible to continue...
                     collected_what_github_calls_all = true;
                 }
@@ -276,7 +331,7 @@ async fn search_github(
             }
         }
     }
-
+    info!("Finished gathering Repos");
     Ok(())
 }
 

@@ -1,4 +1,5 @@
 mod diffing;
+mod errors;
 mod indexing;
 mod reporting;
 
