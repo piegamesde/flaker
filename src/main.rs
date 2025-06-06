@@ -5,13 +5,12 @@ mod reporting;
 
 use crate::indexing::SourceSet;
 use crate::reporting::{report, ReportVerbosity};
+use anyhow::Result;
 use clap::{Args, Parser};
-use color_eyre::eyre::{eyre, Result};
 use enumset::EnumSet;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::PathBuf;
-use std::str::FromStr;
 
 #[derive(Args, Debug, Clone)]
 pub struct GithubOptions {
@@ -67,8 +66,8 @@ enum Command {
     /// Default: auto (detailed with single file, summary for multiple
     Report {
         /// In which level of detail to print
-        #[arg(long, short, default_value = "")]
-        verbosity: String,
+        #[arg(long, short, value_enum, default_value = "auto")]
+        verbosity: ReportVerbosity,
         /// Path to the report file
         #[arg(num_args = 1..)]
         report_paths: Vec<PathBuf>,
@@ -89,8 +88,6 @@ async fn main() -> Result<()> {
         )
         .with(tracing_error::ErrorLayer::default())
         .init();
-
-    color_eyre::install()?;
 
     match Command::parse() {
         Command::BuildIndex {
@@ -127,8 +124,6 @@ async fn main() -> Result<()> {
             verbosity,
             report_paths,
         } => {
-            let verbosity = ReportVerbosity::from_str(verbosity.as_str())
-                .map_err(move |()| eyre!("Invalid verbosity '{}'", verbosity))?;
             report(report_paths, verbosity)?;
         }
     }

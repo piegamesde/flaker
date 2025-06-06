@@ -1,7 +1,7 @@
 use crate::errors::{AddErrorResult, ErrorGroup, StrError};
 use crate::GithubOptions;
+use anyhow::{Context, Result};
 use clap::ValueEnum;
-use color_eyre::eyre::{self, eyre, Context, OptionExt};
 use enumset::EnumSetType;
 use futures::{StreamExt, TryStreamExt};
 use npins::NixPins;
@@ -24,7 +24,7 @@ use url::Url;
 
 /// Helper method to build you a client.
 // TODO make injectable via a configuration mechanism
-pub fn build_client() -> color_eyre::Result<reqwest::Client, reqwest::Error> {
+pub fn build_client() -> Result<reqwest::Client, reqwest::Error> {
     reqwest::Client::builder()
         .user_agent(concat!(
             env!("CARGO_PKG_NAME"),
@@ -36,7 +36,7 @@ pub fn build_client() -> color_eyre::Result<reqwest::Client, reqwest::Error> {
 
 /// Helper method for doing various API calls
 #[tracing::instrument]
-async fn get_and_deserialize<T, U>(url: U) -> color_eyre::Result<T>
+async fn get_and_deserialize<T, U>(url: U) -> Result<T>
 where
     T: for<'a> Deserialize<'a> + 'static,
     U: IntoUrl + std::fmt::Debug,
@@ -52,11 +52,7 @@ where
 }
 
 #[tracing::instrument(fields(url = %url), skip_all)]
-async fn fetch_pin(
-    url: &Url,
-    branch: Option<String>,
-    submodules: bool,
-) -> anyhow::Result<npins::Pin> {
+async fn fetch_pin(url: &Url, branch: Option<String>, submodules: bool) -> Result<npins::Pin> {
     // Always fetch default branch as a small first sanity check for the repo
     let default_branch = npins::git::fetch_default_branch(url).await?;
     let mut pin: npins::Pin = npins::git::GitPin::git(
@@ -76,8 +72,8 @@ pub enum SourceSet {
     Nixpkgs,
     /// All NUR repositories
     Nur,
-    /// All GitHub repositories with a flake.lock
-    /// <https://github.com/search?q=path%3A**%2F**%2Fflake.lock&type=code&ref=advsearch&p=3>
+    /// All GitHub repositories with a flake.nix file
+    /// <https://github.com/search?q=path%3A**%2F**%2Fflake.nix&type=code&ref=advsearch&p=3>
     Github,
 }
 
@@ -103,15 +99,27 @@ impl FromStr for SourceSet {
     }
 }
 
+#[derive(Debug, Deserialize)]
+struct NurRepo {
+    url: Url,
+    branch: Option<String>,
+    #[serde(default)]
+    submodules: bool,
+}
+#[derive(Debug, Deserialize)]
+struct NurRepos {
+    repos: HashMap<String, NurRepo>,
+}
+
 pub async fn build_index(
     sources: enumset::EnumSet<SourceSet>,
     options: GithubOptions,
     out: PathBuf,
-) -> color_eyre::Result<()> {
-    let mut pins = npins::NixPins::default();
+) -> Result<()> {
+    let mut pins = NixPins::default();
     let mut global_errors: ErrorGroup = "Building Index failed with errors: ".into();
 
-    tracing::info!(sources = ?sources, "Scraping sources");
+    info!(sources = ?sources, "Scraping sources");
     for source in sources {
         let mut sourceset_errors: ErrorGroup = format!(
             "Indexing SourceSet {} failed with errors: ",
@@ -124,25 +132,31 @@ pub async fn build_index(
         sourceset_errors.add_error_to(global_errors.borrow_mut());
     }
 
-    async {
-        let out = &out;
-        let parent = out.parent().ok_or_eyre("cant go higher than root")?;
-        std::fs::create_dir_all(parent)?;
-        let mut fh = std::fs::File::create(out)
-            .with_context(|| format!("Failed to open {} for writing.", out.display()))
-            .or(std::fs::File::create("./index.json"))?;
-        serde_json::to_writer_pretty(&mut fh, &pins.to_value_versioned())?;
-        use std::io::Write;
-        fh.write_all(b"\n")?;
-        color_eyre::Result::<(), eyre::Report>::Ok(())
-    }
-    .instrument(tracing::info_span!("Writing pins", out_path = ?out.display()))
-    .await?;
+    let _ = write_file(&out, &mut pins)
+        .instrument(tracing::info_span!("Writing pins", out_path = ?out.display()))
+        .await
+        .add_error_to(&mut global_errors);
+
     if global_errors.has_content() {
-        Err(eyre!(global_errors))
+        Err(global_errors)?
     } else {
         Ok(())
     }
+}
+
+async fn write_file(out: &PathBuf, pins: &mut NixPins) -> Result<()> {
+    let out = out;
+    let parent = out
+        .parent()
+        .ok_or(StrError("cant go higher than root".to_string()))?;
+    std::fs::create_dir_all(parent)?;
+    let mut fh = std::fs::File::create(out)
+        .with_context(|| format!("Failed to open {} for writing.", out.display()))
+        .or(std::fs::File::create("./index.json"))?;
+    serde_json::to_writer_pretty(&mut fh, &pins.to_value_versioned())?;
+    use std::io::Write;
+    fh.write_all(b"\n")?;
+    Ok(())
 }
 
 async fn index_source_set(
@@ -161,38 +175,9 @@ async fn index_source_set(
             );
         }
         SourceSet::Nur => {
-            #[derive(Debug, Deserialize)]
-            struct Repo {
-                url: url::Url,
-                branch: Option<String>,
-                #[serde(default)]
-                submodules: bool,
-            }
-            #[derive(Debug, Deserialize)]
-            struct Repos {
-                repos: HashMap<String, Repo>,
-            }
-            async {
-                // <https://github.com/nix-community/NUR/blob/main/repos.json>
-                let Repos { repos } = get_and_deserialize("https://raw.githubusercontent.com/nix-community/NUR/refs/heads/main/repos.json").await?;
-                let stream = futures::stream::iter(repos)
-                    .map(|(_, Repo { url, branch, submodules })| async move {
-                        match fetch_pin(&url, branch, submodules).await {
-                            Ok(pin) => Some((url.to_string(), pin)),
-                            Err(err) => {
-                                tracing::warn!(err = ?err, %url, "Failed to fetch pin, ignoring");
-                                None
-                            }
-                        }
-                    })
-                    .buffer_unordered(20)
-                    .filter_map(|val| async { val });
-                futures::pin_mut!(stream);
-                while let Some((k, v)) = stream.next().await {
-                    pins.pins.insert(k, v);
-                }
-                color_eyre::Result::<(), eyre::Report>::Ok(())
-            }.instrument(tracing::info_span!("Scraping NUR")).await?;
+            index_nur(pins)
+                .instrument(tracing::info_span!("Scraping NUR"))
+                .await?;
         }
         SourceSet::Github => {
             info!("Fetching Github repos...");
@@ -237,10 +222,44 @@ async fn index_source_set(
     Ok(())
 }
 
+async fn index_nur(pins: &mut NixPins) -> Result<()> {
+    // <https://github.com/nix-community/NUR/blob/main/repos.json>
+    let NurRepos { repos } = get_and_deserialize(
+        "https://raw.githubusercontent.com/nix-community/NUR/refs/heads/main/repos.json",
+    )
+    .await?;
+    let stream = futures::stream::iter(repos)
+        .map(
+            |(
+                _,
+                NurRepo {
+                    url,
+                    branch,
+                    submodules,
+                },
+            )| async move {
+                match fetch_pin(&url, branch, submodules).await {
+                    Ok(pin) => Some((url.to_string(), pin)),
+                    Err(err) => {
+                        warn!(err = ?err, %url, "Failed to fetch pin, ignoring");
+                        None
+                    }
+                }
+            },
+        )
+        .buffer_unordered(20)
+        .filter_map(|val| async { val });
+    futures::pin_mut!(stream);
+    while let Some((k, v)) = stream.next().await {
+        pins.pins.insert(k, v);
+    }
+    Ok(())
+}
+
 async fn search_github(
     options: GithubOptions,
     sender: UnboundedSender<Result<String, String>>,
-) -> color_eyre::Result<()> {
+) -> Result<()> {
     let token = match options.auth_token {
         Some(t) => Ok(t),
         None => Err(StrError(
@@ -270,11 +289,7 @@ async fn search_github(
                 ClientError::RateLimited { ref duration } => {
                     if page == start_page && *duration == 60 {
                         error!("Possibly invalid token provided!");
-                        return Err(eyre!(
-                            Box::<dyn std::error::Error + Send + Sync + 'static>::from(
-                                "Possibly invalid token!"
-                            )
-                        ));
+                        Err(StrError("Possibly invalid Token!".to_string()))?;
                     }
                     info!("Got rate limited, waiting for {} seconds...", duration);
                     sleep(Duration::from_secs(*duration + 2)).await;

@@ -1,3 +1,4 @@
+use anyhow::Result;
 use futures::StreamExt;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
@@ -228,11 +229,7 @@ fn diff_stderr(
 }
 
 #[tracing::instrument(skip(nix_a, nix_b))]
-async fn diff_file(
-    file: &Path,
-    nix_a: &Path,
-    nix_b: &Path,
-) -> color_eyre::Result<Option<ParserDiff>> {
+async fn diff_file(file: &Path, nix_a: &Path, nix_b: &Path) -> Result<Option<ParserDiff>> {
     /* Execute the parsers */
     let run = |nix: &Path, runner: &str| {
         tokio::process::Command::new(nix)
@@ -344,11 +341,7 @@ impl DiffResult {
     }
 }
 
-pub async fn diff_parsers(
-    folder: PathBuf,
-    nix_a: PathBuf,
-    nix_b: PathBuf,
-) -> color_eyre::Result<DiffResult> {
+pub async fn diff_parsers(folder: PathBuf, nix_a: PathBuf, nix_b: PathBuf) -> Result<DiffResult> {
     let files = walkdir::WalkDir::new(folder)
         .follow_links(false)
         .follow_root_links(true)

@@ -1,3 +1,4 @@
+use anyhow::Result;
 use std::fmt;
 use std::fmt::Formatter;
 use thiserror::Error;
@@ -7,7 +8,7 @@ use thiserror::Error;
 #[error("{0}")]
 pub struct StrError(pub String);
 
-#[derive(Debug)]
+#[derive(Debug, Error)]
 pub struct ErrorGroup {
     msg: String,
     errors: Vec<Box<dyn std::error::Error + Send + Sync>>,
@@ -27,8 +28,6 @@ impl fmt::Display for ErrorGroup {
         Ok(())
     }
 }
-
-impl std::error::Error for ErrorGroup {}
 
 impl ErrorGroup {
     pub fn add(&mut self, error: Box<dyn std::error::Error + Send + Sync>) {
@@ -80,7 +79,7 @@ pub trait AddErrorResult<T, E> {
     fn add_error_to(self, group: &mut ErrorGroup) -> Result<T, &mut ErrorGroup>;
 }
 
-impl<T, E> AddErrorResult<T, E> for std::result::Result<T, E>
+impl<T, E> AddErrorResult<T, E> for Result<T, E>
 where
     E: Into<Box<dyn std::error::Error + Send + Sync>>,
 {
