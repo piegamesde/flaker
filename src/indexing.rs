@@ -1,6 +1,6 @@
-use crate::errors::{AddErrorResult, ErrorGroup, StrError};
+use crate::errors::{AddErrorResult, ErrorGroup};
 use crate::GithubOptions;
-use anyhow::{Context, Result};
+use anyhow::{anyhow, Context, Error, Result};
 use clap::ValueEnum;
 use enumset::EnumSetType;
 use futures::{StreamExt, TryStreamExt};
@@ -146,9 +146,7 @@ pub async fn build_index(
 
 async fn write_file(out: &PathBuf, pins: &mut NixPins) -> Result<()> {
     let out = out;
-    let parent = out
-        .parent()
-        .ok_or(StrError("cant go higher than root".to_string()))?;
+    let parent = out.parent().ok_or(anyhow!("cant go higher than root"))?;
     std::fs::create_dir_all(parent)?;
     let mut fh = std::fs::File::create(out)
         .with_context(|| format!("Failed to open {} for writing.", out.display()))
@@ -163,7 +161,7 @@ async fn index_source_set(
     options: GithubOptions,
     pins: &mut NixPins,
     source: SourceSet,
-) -> Result<(), Box<dyn std::error::Error + Send + Sync + 'static>> {
+) -> Result<()> {
     match source {
         SourceSet::Nixpkgs => {
             let nixpkgs_url = Url::parse("https://github.com/NixOS/Nixpkgs").unwrap();
@@ -185,9 +183,6 @@ async fn index_source_set(
             let (sender, receiver) = unbounded_channel();
             let fetcher = spawn(search_github(options, sender));
             let (ps, error_group) = UnboundedReceiverStream::new(receiver)
-                .map_err(|err| {
-                    Into::<Box<dyn std::error::Error + Send + Sync + 'static>>::into(StrError(err))
-                })
                 .and_then(|url_string| async move {
                     let url = Url::parse(url_string.as_str())?;
                     let pin = fetch_pin(&url, None, false).await?;
@@ -195,11 +190,8 @@ async fn index_source_set(
                 })
                 .fold(
                     (Vec::new(), errors),
-                    |(mut ps, mut eg),
-                     itm: Result<
-                        (Url, npins::Pin),
-                        Box<dyn std::error::Error + Send + Sync + 'static>,
-                    >| async move {
+                    |(mut ps, mut eg): (Vec<(String, npins::Pin)>, ErrorGroup),
+                     itm: Result<(Url, npins::Pin), Error>| async move {
                         match itm {
                             Ok((url, pin)) => {
                                 ps.push((format!("gh-{}", url), pin));
@@ -258,13 +250,11 @@ async fn index_nur(pins: &mut NixPins) -> Result<()> {
 
 async fn search_github(
     options: GithubOptions,
-    sender: UnboundedSender<Result<String, String>>,
+    sender: UnboundedSender<Result<String>>,
 ) -> Result<()> {
     let token = match options.auth_token {
         Some(t) => Ok(t),
-        None => Err(StrError(
-            "Authentification token required to search Github".to_string(),
-        )),
+        None => Err(anyhow!("Authentification token required to search Github")),
     }?;
     let gh_client = Client::new(String::from("flaker-indexer"), Credentials::Token(token))?;
     let s = octorust::search::Search { client: gh_client };
@@ -289,7 +279,7 @@ async fn search_github(
                 ClientError::RateLimited { ref duration } => {
                     if page == start_page && *duration == 60 {
                         error!("Possibly invalid token provided!");
-                        Err(StrError("Possibly invalid Token!".to_string()))?;
+                        Err(anyhow!("Possibly invalid Token!"))?;
                     }
                     info!("Got rate limited, waiting for {} seconds...", duration);
                     sleep(Duration::from_secs(*duration + 2)).await;
@@ -305,14 +295,10 @@ async fn search_github(
                         collected_what_github_calls_all = true;
                         continue;
                     }
-                    let err_msg = format!("HTTP Error: {} {}", status, error);
-                    warn!(err_msg);
-                    sender.send(Err(err_msg))?;
+                    sender.send(Err(Error::new(e).context("Unexpected HTTP Error")))?;
                 }
                 _ => {
-                    let err_msg = "unknown error while fetching";
-                    warn!(err_msg);
-                    sender.send(Err(err_msg.to_string()))?;
+                    sender.send(Err(Error::new(e).context("unknown error type")))?;
                     // Kill because we don't know if it is sensible to continue...
                     collected_what_github_calls_all = true;
                 }
