@@ -1,0 +1,4913 @@
+{
+  "pins": {
+    "https://codeberg.org/AndrewKvalheim/configuration": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://codeberg.org/AndrewKvalheim/configuration"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "e31eb42e0a538be07fcbeab67301f539802cc638",
+      "url": null,
+      "hash": "sha256-kaIlaOgP5grUo5QCeq9FH5jeITOGODyowBDPizUt6Kw="
+    },
+    "https://codeberg.org/FedericoSchonborn/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://codeberg.org/FedericoSchonborn/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "4c5bfe63f0adffedf89e7b5375717dd234d99a76",
+      "url": null,
+      "hash": "sha256-3cr1xDeMUuliFQOq2psIT9GLj+TiGwiLouutJ5RtXwo="
+    },
+    "https://codeberg.org/eownerdead/flakes": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://codeberg.org/eownerdead/flakes"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "2f216eb544f967c8b1f2b1aa20e5ec8bc9c87a85",
+      "url": null,
+      "hash": "sha256-7ziTVLxiB6c13aiKVSEP6U/Q+9LPn7I+aLVZhSDNYB8="
+    },
+    "https://codeberg.org/wolfangaukang/nix-agordoj.git": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://codeberg.org/wolfangaukang/nix-agordoj.git"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "00b4b2d62eed0324ad2407c63c325f18b6ed6539",
+      "url": null,
+      "hash": "sha256-QJfP/mLNWfMISiCqFBs9cZOOmghKCQ6kE+wzawZzyUc="
+    },
+    "https://git.alanpearce.eu/nix-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://git.alanpearce.eu/nix-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "87edeb951c192be55d2d912873183aefce8670c0",
+      "url": null,
+      "hash": "sha256-stpcdrlVOSJ07fEWgVfhJha8P5NDf5oTUlzHRD3IEGg="
+    },
+    "https://git.catgirl.cloud/999eagle/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://git.catgirl.cloud/999eagle/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "317ddc57fd360d809ae4f36ae8e9ca37bd47d89a",
+      "url": null,
+      "hash": "sha256-epuI8LgNxzmT4moCA036gpCBcNiqCvDy5E+UmUXbXYE="
+    },
+    "https://git.dodsorf.as/Dandellion/NUR": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://git.dodsorf.as/Dandellion/NUR"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "7e85f62e40cd585ce81fa1f3debd5385bb0cad03",
+      "url": null,
+      "hash": "sha256-2ywoy3wUvFAyxDTw7VPlz5TGh9mk/um2AWOjhJqJxNQ="
+    },
+    "https://git.immae.eu/perso/Immae/Config/Nix/NUR.git": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://git.immae.eu/perso/Immae/Config/Nix/NUR.git"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "9951b235a76800a572ea30793126b7dd8cdf3f0d",
+      "url": null,
+      "hash": "sha256-jdH6xIElnSxvDEaJago0HfN8maDABcvIngwqMw7rORY="
+    },
+    "https://git.marvid.fr/eeva/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://git.marvid.fr/eeva/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "4cf38e3602f0e5925695140c676d1378b40734e4",
+      "url": null,
+      "hash": "sha256-CChJ8/STp8ijzvk4CN6yFwTt2RulG+awVj+BJpB0Aqk="
+    },
+    "https://git.project-insanity.org/onny/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://git.project-insanity.org/onny/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "fd235f64549e38c399006f2a29b25fa810e76415",
+      "url": null,
+      "hash": "sha256-+yTrxdBBayQXNL76P89nWZB1jNg7lP77vM+Sz1Ssc0g="
+    },
+    "https://git.sr.ht/~aasg/nixexprs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://git.sr.ht/~aasg/nixexprs"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "159f12cd8855fc005d045897d715ceb6ab20425a",
+      "url": null,
+      "hash": "sha256-5TvU1IwbabRH3Tq10sDp5HNM3NY4lIYwtGYqomneb2o="
+    },
+    "https://git.sr.ht/~artemis/artenekoverlay": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://git.sr.ht/~artemis/artenekoverlay"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "21119326e14e69d5ef527f08a92ea93a73fb9900",
+      "url": null,
+      "hash": "sha256-kIhkFIUsdB2M48/i/cXc+mlUZJwT3pXQ4YDT+aTmBlI="
+    },
+    "https://git.sr.ht/~hutzdog/NUR": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://git.sr.ht/~hutzdog/NUR"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "93ba3ccc36d77760854eb12bbed6d86ae02555cf",
+      "url": null,
+      "hash": "sha256-xqmyJ623GmSH6fGRc7XYip/ysiZzFM0d5XBNejiZBsw="
+    },
+    "https://git.sr.ht/~jleightcap/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://git.sr.ht/~jleightcap/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "3863b6d09b7af3e7c27ba602ea8428fb9c0f0276",
+      "url": null,
+      "hash": "sha256-pRbf8rnbeYpjhuCdPRfXVw8F6eQ1j4A0coQ5trIbUDA="
+    },
+    "https://git.sr.ht/~misterio/nix-config": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://git.sr.ht/~misterio/nix-config"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "c1ee5c7310e3993b13522714d8c9cbc39d47d7eb",
+      "url": null,
+      "hash": "sha256-dgQc9EFHeHI4kK8oJ4JTXMVYgLXQOq9mcFJXaWZEzIE="
+    },
+    "https://git.sr.ht/~noneucat/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://git.sr.ht/~noneucat/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "3211ca63ce22fe86dd1462cc550fd6605614b246",
+      "url": null,
+      "hash": "sha256-oVJGvVDxOc+JzyKu+7L03E3oAjZlI2Aya7YNvBNfkvg="
+    },
+    "https://git.sr.ht/~priegger/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://git.sr.ht/~priegger/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "500a7658b1dd2d50f14db6d5afa06fac645b7035",
+      "url": null,
+      "hash": "sha256-rtJj+MsI6yDi5MZTsFK4JUQNy+5yU/QMVhVjRdyta6Q="
+    },
+    "https://git.uninsane.org/colin/nix-files": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://git.uninsane.org/colin/nix-files"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "a7b5c86f25fa067c7cb07ece189449999dfbf81c",
+      "url": null,
+      "hash": "sha256-PZNZia2IaHvfCxtJ7Ov4OZcWPoWY4f67w7AVNIPoYwE="
+    },
+    "https://github.com/06kellyjac/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/06kellyjac/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "d77c19ff6bbc3eb56d114caaff6a3c9ff0427b32",
+      "url": null,
+      "hash": "sha256-FdlhVrWt1oq56tQXHkhyaH9w1R4Cb+ZUviXXyb2qwLs="
+    },
+    "https://github.com/0x4A6F/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/0x4A6F/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "0514d23b1eff0ee3d66d42266b0ca8230dc82d9a",
+      "url": null,
+      "hash": "sha256-6KnUKsP8P8VJZSRg3OuvIG/fYWNWbNHsJCjf48r0Jkg="
+    },
+    "https://github.com/1235467/nurpkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/1235467/nurpkgs"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "415c2307c5611eb685b3bd439700da6d15c8bfc2",
+      "url": null,
+      "hash": "sha256-c7qE53qhEvasYOO7vL7cheDORqGsssZXPzQKmvEODn0="
+    },
+    "https://github.com/12Boti/nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/12Boti/nur"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "f078d9364b10ab64e68ded14da9dd65b353f9324",
+      "url": null,
+      "hash": "sha256-LgmutVR0syJS/bbzVeq8uZ9mnr1rN1ZkXImbL7vdysY="
+    },
+    "https://github.com/7mind/7mind-nix": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/7mind/7mind-nix"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "8eb424f13073650eb3d8431c18dda38edf0cb310",
+      "url": null,
+      "hash": "sha256-A7HvHVXQ2RlQxgM1EfrkY8PSmlofcUxcEX1Pu9v48Cg="
+    },
+    "https://github.com/9glenda/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/9glenda/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "ff955f2bd86c32434dfe855ec7f75cd33fdf348c",
+      "url": null,
+      "hash": "sha256-X5n+l8PpUQTzYrfmyDl4aCyI8/jmULI+GiojFTL5Vsk="
+    },
+    "https://github.com/Adamekka/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Adamekka/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "bd9425313b00627d1322fb12055c8dc485d18f7a",
+      "url": null,
+      "hash": "sha256-nMH1CVZ3k8iYqucNgYZ6nXaSm19f3QjU3qnugWofTOA="
+    },
+    "https://github.com/Aleksanaa/NUR-Aleksana": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Aleksanaa/NUR-Aleksana"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "bf6167576099ddd86ae0d3a372e6eda60009959b",
+      "url": null,
+      "hash": "sha256-svxhCgwyS7DuXu584evuGO3FuqEyqzeNzfEikZyrrOI="
+    },
+    "https://github.com/Artturin/artturin-nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Artturin/artturin-nur"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "c3daeeb704f4b366f8488c89d72f9733b133e341",
+      "url": null,
+      "hash": "sha256-mR0umxoCr1j2fevK7/EEUdAm9yx67VBJ4vlvn9+oO/c="
+    },
+    "https://github.com/AsterisMono/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/AsterisMono/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "150de46cf3161d1b40b30338e7c0a61e3724a30f",
+      "url": null,
+      "hash": "sha256-vKVYG7jMDpJTAwK+AkFIVVOr/jMKNxXg8hi7q5WCbOU="
+    },
+    "https://github.com/AtaraxiaSjel/nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/AtaraxiaSjel/nur"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "0281ee4c5528f7200ecd2ad58d90d724133739fb",
+      "url": null,
+      "hash": "sha256-mAxK0G/pqq4d8ADdGUpY9sBdrstzHjz/7MxQxnD2qH8="
+    },
+    "https://github.com/Bot-wxt1221/Bot-wxt1221-nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Bot-wxt1221/Bot-wxt1221-nur"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "7c688ef2174a27ad9b0df2d7bd96a41db204cf4b",
+      "url": null,
+      "hash": "sha256-3xuJJP++Wd6sPIpBklaLw6W8YCVX2d5sWifNBrgtKhk="
+    },
+    "https://github.com/CRTified/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/CRTified/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "8346841a2d80d108989abbd1adfb3d065a135da6",
+      "url": null,
+      "hash": "sha256-yxH9Lh7LodTb1t3chL/LIGzUD5nlLMKEOs/nSSJSQKo="
+    },
+    "https://github.com/ChrisOboe/nurrepo": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/ChrisOboe/nurrepo"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "bedbb3623d3da586432cd1cc394f468fbcab4cd0",
+      "url": null,
+      "hash": "sha256-N8pf7BGjXifGsS02tOrKIOMwLfX3mcOycPQ7ea2zHmU="
+    },
+    "https://github.com/CrazedProgrammer/nix": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/CrazedProgrammer/nix"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "b92589c2a6f7f7a50688c2d02194d85c10d3e273",
+      "url": null,
+      "hash": "sha256-+4s0qmSmi/Nnn5Ad8nhsj4MFG6UNX6IaSdcrU+xWD7Q="
+    },
+    "https://github.com/Cryolitia/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Cryolitia/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "b4c8fdfa6826ce59d8728ba2404e0fa911b33fec",
+      "url": null,
+      "hash": "sha256-+OEGGiowHh+c5zZ/+LH9cXB0pPtBXCYyDv/I7mSVd5o="
+    },
+    "https://github.com/CutestNekoAqua/nur-repo": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/CutestNekoAqua/nur-repo"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "6fe0c20509dfd3782a2200aa067ad207a82a4ebb",
+      "url": null,
+      "hash": "sha256-5eD/mJ9hHfCDZirGVawjo1InsTcQ7sQfS4o1HPGeF/A="
+    },
+    "https://github.com/Cvtx/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Cvtx/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "0073fc0458e924d82f888f38f4fc136f67ca8e85",
+      "url": null,
+      "hash": "sha256-jmntqVh4GM5XTdZZl2aJFgZrUemeLkPDSX/omRVNe8w="
+    },
+    "https://github.com/DCsunset/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/DCsunset/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "100938ad1d6842c51daaf27a935af3d69b6aec85",
+      "url": null,
+      "hash": "sha256-d0F89DHEXK1o3F+aagIUYSlW4zdCYcKLs4mwbyKUjPQ="
+    },
+    "https://github.com/DanNixon/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/DanNixon/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "f446ce3fe3aee4058fa54710726442a64636eb98",
+      "url": null,
+      "hash": "sha256-mwL18GTfMyqeOoamAfxasjobZgZs4L7ntogX67qeCTw="
+    },
+    "https://github.com/DeeUnderscore/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/DeeUnderscore/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "00df36ba121ab7465b438b49a3bb14a9d52534e3",
+      "url": null,
+      "hash": "sha256-AWTOFKuSPrA0ZoqeXrUduzoEIwJwupPiwPCtuyxy12g="
+    },
+    "https://github.com/Detegr/nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Detegr/nur"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "6b53a9f368fc94b0722e78c6b6921ed472f276a4",
+      "url": null,
+      "hash": "sha256-uzUvMwjmBQ746hDgyYV28C1w0NGycZFVDRyZZdNCCFk="
+    },
+    "https://github.com/Dev380/nur-repo": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Dev380/nur-repo"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "122de347780cbf3de521a3a90532c3c6dcc5a458",
+      "url": null,
+      "hash": "sha256-E+WJN0T+d5vVdhjG2H/SYlYdXrnzg00T03DoP9tchXc="
+    },
+    "https://github.com/DimitarNestorov/Nix-user-repository-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/DimitarNestorov/Nix-user-repository-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "469f2968bc635daa15a3581feefa84285245a230",
+      "url": null,
+      "hash": "sha256-6Vm3EWF6xOadMybh4Ih61CGP+58mDYBx7PnD/iIn0eM="
+    },
+    "https://github.com/EHfive/flakes": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/EHfive/flakes"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "9d11c8ae6eca5cc2e1af691efdd48bbc7b1f5f31",
+      "url": null,
+      "hash": "sha256-PUj5qAh8JFeINwf51UIOcltZ2um0q5Xl8lcJjGPfg9A="
+    },
+    "https://github.com/Educorreia932/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Educorreia932/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "e8fbd54f224085fba9e125bb346a71f63bc3cff1",
+      "url": null,
+      "hash": "sha256-JSND5xSUJVfrtG3t01oNXRb/O1/Y9N8mxUmfyxyV48c="
+    },
+    "https://github.com/Eggflaw/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Eggflaw/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "7fef75db3108e214872d43be577696c288ad1436",
+      "url": null,
+      "hash": "sha256-ndRn8wGiF5Ef6oDulsNY9K+Va9A+w+qlBV7hlmUxQI0="
+    },
+    "https://github.com/Emin017/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Emin017/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "9454417bf0b2f16c15f1ba1e7381e944110d78c2",
+      "url": null,
+      "hash": "sha256-2yF/Ysc1vXbsoKk8eduzOsiXCk6HtIFcUq8w71wqilA="
+    },
+    "https://github.com/Endle/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Endle/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "766d6c9be534e1c16b56badf89e022c26147aeb6",
+      "url": null,
+      "hash": "sha256-W/zPsCVAO0D/NAHpbJqD5vO82tN0BVFEZuPLXUrUh+o="
+    },
+    "https://github.com/Ex-32/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Ex-32/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "ff0b7ec561dacbb59c197a614c930f6a409c2fee",
+      "url": null,
+      "hash": "sha256-lYgKxwaDfG6HDEbV60VNLLnxjGa9ISxh9r53g9sopJg="
+    },
+    "https://github.com/FanBB2333/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/FanBB2333/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "30875479923385433632063e1e4b0b93f18273a4",
+      "url": null,
+      "hash": "sha256-Lcxm7h+JQzRZ3ZLef/R2Mg4bb+6Fqmoy+TVojzvVEGI="
+    },
+    "https://github.com/FedX-sudo/Nixpkgs_testing_NUR": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/FedX-sudo/Nixpkgs_testing_NUR"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "b1ee80ee8a790671f4b8fc1502cd52ca760cdf61",
+      "url": null,
+      "hash": "sha256-uAwehR4L6qsFVHiIbB4pASYXXGsC0oYxpy91l4n4Z7M="
+    },
+    "https://github.com/Fius/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Fius/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "4349033ec802dc845824d18f49fdf18bbcac7215",
+      "url": null,
+      "hash": "sha256-pSDFHxW6HDYdBADh75zls5srCgefe+6KdtR1D0ilHIE="
+    },
+    "https://github.com/FliegendeWurst/nur-packages/": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/FliegendeWurst/nur-packages/"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "4245098d90f8e3ce71c6c302a1a166ae548f7b54",
+      "url": null,
+      "hash": "sha256-7Zj1Yvjh9ZkTKUCl6ROCNjV66NhMGJA9t1r5adYCr/k="
+    },
+    "https://github.com/Freed-Wu/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Freed-Wu/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "05d7fd17f8afa7dce31ff5bd790298f555626d06",
+      "url": null,
+      "hash": "sha256-/SIXdtgm4YAxlq8+/LHxfvXFZyink7w/lun2BES/pU4="
+    },
+    "https://github.com/FriendsOfShopware/nur-packages/": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/FriendsOfShopware/nur-packages/"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "b38cff6421a2b3fa912ea789da398cba85f32ec7",
+      "url": null,
+      "hash": "sha256-98iAYQhy7eEESmkXpnKoch3qgRpCYb9ZFNh3ZNELY4w="
+    },
+    "https://github.com/GNUqb114514/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/GNUqb114514/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "61a9c169d61d4c730b1151eeb124d94fb17a480d",
+      "url": null,
+      "hash": "sha256-Kc+aYFn32zmPQMzMBC+xEI1HaO/hGRgZ5cBFoZVSiBk="
+    },
+    "https://github.com/Grafcube/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Grafcube/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "ca87cb15343430f0ee658ae00f151358d96b3ad3",
+      "url": null,
+      "hash": "sha256-Oej40uF5JwjiPTt5gjXBGwDU9gcUeZ6Oea4swdODV2I="
+    },
+    "https://github.com/Gricad/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Gricad/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "1605d8b20651a0a42152347e9e04096e567cd359",
+      "url": null,
+      "hash": "sha256-nJ+FKTCJz0FIWcE9S2covKGfj4SgZOjgfxcAGBZ8Kqs="
+    },
+    "https://github.com/Guanran928/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Guanran928/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "35779aaf1513b850eaee6947c525c4003d9e4e65",
+      "url": null,
+      "hash": "sha256-tpSZI3HIuXquSlMOlbgo2X8wl0uZlLQpImXBc+rb7J4="
+    },
+    "https://github.com/HumXC/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/HumXC/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "956785f6664aa0b8ff505ec63b05c2e010968d37",
+      "url": null,
+      "hash": "sha256-fkTjal4dcow7e60AWX3wsHOagKd0KIMhUzMUxQUFIJM="
+    },
+    "https://github.com/ImExtends/nur-packages-template": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/ImExtends/nur-packages-template"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "cb5dd151c29b15c0b462ba206198be17ced19f39",
+      "url": null,
+      "hash": "sha256-MQBkWDnqxdSh4fqBpcfJgI0YhRVUTmzlGrA+/WPOhEo="
+    },
+    "https://github.com/IvarWithoutBones/NUR": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/IvarWithoutBones/NUR"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "8e0efd92a5c251b8d3a474869ba86b349e71da27",
+      "url": null,
+      "hash": "sha256-dgBzcBQ+uaFpnmL5zzZ3qjFNHJBB/TDhThBHo2ka9Dk="
+    },
+    "https://github.com/Izorkin/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Izorkin/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "1dfca54e9df9f9fade039f3b356576711391126a",
+      "url": null,
+      "hash": "sha256-Sx+g3Lr6m7vSXf67RklzLo10b0sE3TvFX4nJirlQYYE="
+    },
+    "https://github.com/JPyke3/JPyke3-Nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/JPyke3/JPyke3-Nur"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "423291bfd38a35f24a4f8ac70a2b96da88f7f566",
+      "url": null,
+      "hash": "sha256-TUNos1isxetiGzsj+kQDZixmdJaYLf/Wy65/olIqzU4="
+    },
+    "https://github.com/Jake-Gillberg/nix-data": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Jake-Gillberg/nix-data"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "ffc99060e70d03c95b68b1e405db0d4d8af941e9",
+      "url": null,
+      "hash": "sha256-aIlOcm4O2FY6NQj0t4Wx1/Rt9vVqSwt+GgmpFSbSPHY="
+    },
+    "https://github.com/JaviMerino/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/JaviMerino/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "1d728ebc5cc487dc5db88bf4498404a315ef1257",
+      "url": null,
+      "hash": "sha256-LvnbRu6eaIHJlfEujOLFr/xIklUWBRtNRVqpIWqqpw0="
+    },
+    "https://github.com/JohnAZoidberg/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/JohnAZoidberg/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "6072b24e77fd188298c3eeff991cf0f53598d897",
+      "url": null,
+      "hash": "sha256-pMIuWGVANlHBIvujC3vSFdvhZbWYK1JFWR+vA9xzSXA="
+    },
+    "https://github.com/JonBoyleCoding/falconprogrammer-nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/JonBoyleCoding/falconprogrammer-nur"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "67ee19e6781b1c82999451a9bb9d3c51511c349b",
+      "url": null,
+      "hash": "sha256-2VFl9shrZ0g0GbruPVeUXjuIojWJcjEm6s67qmFAq18="
+    },
+    "https://github.com/JonathanHope/nur-armaria": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/JonathanHope/nur-armaria"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "ed55f1ec5ab7e8f1c7a7b39793fbec6f1b26f4f2",
+      "url": null,
+      "hash": "sha256-+6QQaQtEhM7SPffIzEJaAUyt7+rp5AKA5t0Sw+pQAkA="
+    },
+    "https://github.com/JuniorIsAJitterbug/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/JuniorIsAJitterbug/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "a6241e2d4ccd24a57706b6fd58b31332912ea9ee",
+      "url": null,
+      "hash": "sha256-YJWb2CvaRaAlXZtGYyBsbA8OTE4i1kaYOV2hZj4Mau0="
+    },
+    "https://github.com/KokaKiwi/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/KokaKiwi/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "420bc678b54a1411dc09ecfee476fa5d73bda309",
+      "url": null,
+      "hash": "sha256-OGOrwbXUhZpcyiyhwTFp2xCqL0IFihBwZtUv+pE7I1k="
+    },
+    "https://github.com/KongJian520/NUR": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/KongJian520/NUR"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "5fb7917bc12eb32a9fb33a61d726be4e09e2e716",
+      "url": null,
+      "hash": "sha256-0oKtmMX+4rlcPMjlGIxIKilVQesNDTnXOutOPRkYKSs="
+    },
+    "https://github.com/LuisChDev/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/LuisChDev/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "08e36a896c42c8e75e79a9013d3e8d50c171d617",
+      "url": null,
+      "hash": "sha256-K+Qq5wC/AN0h6mvFDuXYT1lCtz4hp/Uxg5fXdrTrA3Q="
+    },
+    "https://github.com/Lykos153/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Lykos153/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "3b930eadd9e999cb4a83ef69fd8178a571de11a1",
+      "url": null,
+      "hash": "sha256-5XNNIJ7A00MfTkgAYkOfCUbjWMcW0dEJ+BNHNoQ3HPQ="
+    },
+    "https://github.com/MH0386/nurpkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/MH0386/nurpkgs"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "32e1828cd9e03be2155058bc2c0077e1fc42b353",
+      "url": null,
+      "hash": "sha256-4E4EZlAGRMTBFpdD3f8c7C9eGwZcO10W4gS02yF4yR8="
+    },
+    "https://github.com/MartinLoeper/nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/MartinLoeper/nur"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "f5a6bd83ababb5a05d10b337c0849db71646f213",
+      "url": null,
+      "hash": "sha256-2FjaX9ylg47+jX5aeS5zTDWYgmu5eSPyD0w/VwecPLs="
+    },
+    "https://github.com/Mic92/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Mic92/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "d49cfe88cd433c6587ba958e3a8ebd5661020ad7",
+      "url": null,
+      "hash": "sha256-yxTBmmmCa1RABqnLbtrjuHEgmarBRfKiNZe8r4cpUVU="
+    },
+    "https://github.com/MikaelFangel/NUR": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/MikaelFangel/NUR"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "8a3e429306e094999eb861b93561ccb0c7ffe7fe",
+      "url": null,
+      "hash": "sha256-JQrNSW/iptOnRxkTGp1b8p2FIAeZoWAQp+gvFJKzTHc="
+    },
+    "https://github.com/Mikilio/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Mikilio/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "d8ccb1431dade8e106520581f7c4dff159778fb4",
+      "url": null,
+      "hash": "sha256-BXnIrVwkYpD3GzDrWZHPP3kaIRdShvDWRC90zCpkGjg="
+    },
+    "https://github.com/Moredread/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Moredread/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "1da0547cb52064863572839d808df297ad17e648",
+      "url": null,
+      "hash": "sha256-+um80dc9qVM5qjJdvrdOg9jMLl7CRDK1eXXXdBJejuQ="
+    },
+    "https://github.com/MtFBella109/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/MtFBella109/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "9a4b1b888493f538dfda9920ad50dbe64bb78af7",
+      "url": null,
+      "hash": "sha256-swDYDQ0yOimivgo+9m7kQBm+kR4fc7zesaWobZgzqRk="
+    },
+    "https://github.com/NNBnh/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/NNBnh/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "db7e5e403c9bddbc3e3f5aefb7f0de5a2da256d2",
+      "url": null,
+      "hash": "sha256-6GyLzq0+ARyuvaMJ/VnAixT8vUcenYeOVnGVLxa+X+E="
+    },
+    "https://github.com/Nelonn/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Nelonn/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "08d08da8eeb6a896e426b3b9d2780f4755bd1c2e",
+      "url": null,
+      "hash": "sha256-EBHGW+d+FukuLjZkJEl6z+MxmQTB6UWFakN9I36gB+A="
+    },
+    "https://github.com/Nick1296/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Nick1296/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "bdff314dbc435a2a99137c799f48a37fb1cf03d9",
+      "url": null,
+      "hash": "sha256-i0O5qBNKRVYo8exjug0v8UrV53kjZIrmSQDcDFXGYaw="
+    },
+    "https://github.com/Nishimara/nurpkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Nishimara/nurpkgs"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "e02bb50c97beb22425f920d3707d2518594bf291",
+      "url": null,
+      "hash": "sha256-oopGH7NZxlnoB1v+nGK1+R18+JSy5ClUjRNiBn7q3RM="
+    },
+    "https://github.com/NixOS/Nixpkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/NixOS/Nixpkgs"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "d49468adec5971545468a350e1e4fe4de5549f7c",
+      "url": null,
+      "hash": "sha256-JdnSL6QLRE8UVLej+a4lj3XOxU3FNVWKyTPC0dhmXhw="
+    },
+    "https://github.com/NoUseFreak/nix-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/NoUseFreak/nix-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "a7efa86b438a5b8824bcac7890bd641e99ff337f",
+      "url": null,
+      "hash": "sha256-/jSdqJINxdveybYby5rxikO4WqSrKDQRhJxg1Ya7OLU="
+    },
+    "https://github.com/NotBalds/nurpkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/NotBalds/nurpkgs"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "06c9db31b5ebd329466b1d3dc4fbaa5613d63414",
+      "url": null,
+      "hash": "sha256-hVEToJNUwmlLNd/2XB8SRLeT9IdFdn9FQOFgD3l9d6M="
+    },
+    "https://github.com/NotEvenANeko/nur-pkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/NotEvenANeko/nur-pkgs"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "3508b41d83ae4beb0b5ca71f59f500241c1591df",
+      "url": null,
+      "hash": "sha256-oG6EpCyzs6NuROTFVetpXrOAbRdrKgQLyQmPmOCzzvI="
+    },
+    "https://github.com/Pandapip1/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Pandapip1/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "061c4d4dc6fb8c45b064eb026c810ee07067ca41",
+      "url": null,
+      "hash": "sha256-DXz9FOyoWQayg3878mCmiqetPpSVom0UmPrRlqREEks="
+    },
+    "https://github.com/PascalThesing/NUR": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/PascalThesing/NUR"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "1b738a0b34859daa632446836bd5b455e240cd73",
+      "url": null,
+      "hash": "sha256-waGwQxydxkjT0/RqKcmhZNJBGwXY4C6PF0r7DqQOO7I="
+    },
+    "https://github.com/PhotonQuantum/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/PhotonQuantum/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "d3f95d94e8e80d11aab7f0eb1718664e535f0d8c",
+      "url": null,
+      "hash": "sha256-TgksKc6CB6chKApwsdYwZI8Y2HwmEwCUyz9AYoXYJWo="
+    },
+    "https://github.com/ProducerMatt/my-nur-pkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/ProducerMatt/my-nur-pkgs"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "42a1ef50755aadd950d06f81bf302c8a291dcc09",
+      "url": null,
+      "hash": "sha256-ELkRE8J/jpQ7zvYvcX2rKUYEbBCzdWsIMn72t+6GyLE="
+    },
+    "https://github.com/Propheci/NixUR": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Propheci/NixUR"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "21f1d8fcd6db9b6e71e32422f3977e8d29b21c02",
+      "url": null,
+      "hash": "sha256-MUUuTBpb/E0U8W1y57aItHuu8TR392gHwnbQpKVuLXI="
+    },
+    "https://github.com/Ptival/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Ptival/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "0190c53aa923aaeefb5473ab9fb59634250409ee",
+      "url": null,
+      "hash": "sha256-yv96Qnz9FiXJE1J7vf+QvYe9fBg6uLgmYNZ6cc0oLe0="
+    },
+    "https://github.com/Redrield/nurpkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Redrield/nurpkgs"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "cc72012a6e8bd87913d8fb4aff2afe0c463e4109",
+      "url": null,
+      "hash": "sha256-1umMemVAVVUXKs5xnLY+dj44Nl4AgcZfnsy8DuAjlLU="
+    },
+    "https://github.com/Rhys-T/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Rhys-T/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "5a63863b0dc1c01cc81455d0e87c438c569ac584",
+      "url": null,
+      "hash": "sha256-Zg6YYIval7PMnmh72RsPHWmLEJ8zQMXe0ymO1zs5Lbg="
+    },
+    "https://github.com/Ruixi-rebirth/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Ruixi-rebirth/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "f6747adb440310c0250952456ab4c026e8617bd0",
+      "url": null,
+      "hash": "sha256-zVxiY42G85T87OEKx+RuohLzGYGIZcRcAQr7GZsikxA="
+    },
+    "https://github.com/SCOTT-HAMILTON/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/SCOTT-HAMILTON/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "a9350d9a97211e4a478788fb3bb72c2799001e1f",
+      "url": null,
+      "hash": "sha256-Q0jfVsHCUX8uBLpKeest8JobV2Z1F876wZRNLxdX46g="
+    },
+    "https://github.com/SamLukeYes/nix-custom-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/SamLukeYes/nix-custom-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "a91653c297315981ac576791552cfea0e890177b",
+      "url": null,
+      "hash": "sha256-VvGuqyN9CGGqDoDijOTF9FjVEuK1xfDjJnSYLwJ9rFQ="
+    },
+    "https://github.com/Samuel-Martineau/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Samuel-Martineau/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "65a44edc27e56b02b19c5c2eac96dfaa5dfa6c20",
+      "url": null,
+      "hash": "sha256-6RsMv9RuGKzqoiVMHBo5CuM/1l14DZ5WKDOIXscwDgI="
+    },
+    "https://github.com/SeTSeR/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/SeTSeR/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "f194aac119e7484e0b362af018f3edb1d8c40bf0",
+      "url": null,
+      "hash": "sha256-IK9R5/I0FC4mQmnNJHqi9VtNn9omWADVv+VVsMoc/JU="
+    },
+    "https://github.com/SebRut/personal-nix-packages-repository": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/SebRut/personal-nix-packages-repository"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "a3ccd4a0f2801b23d3e237677ba355e171650c78",
+      "url": null,
+      "hash": "sha256-yRkMVSPu36+Cu+53hHTRrXbf1O4GAqHWm/Ovow/la+I="
+    },
+    "https://github.com/Shados/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Shados/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "31bd2525dca44439d08d4a8eebfda4e5ee627174",
+      "url": null,
+      "hash": "sha256-lKOkOv/vGnQyAMvamr4DeritNiiNK1pjiB6xtJTyDjw="
+    },
+    "https://github.com/ShadowRZ/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/ShadowRZ/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "51553b0fd5967a090b85023630fd291af0283286",
+      "url": null,
+      "hash": "sha256-Xz4JvNQkWXqAP8rQ4xX81+XSnsS17KOMKaMeAzFxzyI="
+    },
+    "https://github.com/Sittymin/NUR": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Sittymin/NUR"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "f03e79bcf80505ec91cd23409efe11ddbe6ebb4e",
+      "url": null,
+      "hash": "sha256-dvApQ4fqpSypDlYsJlQB4/+9vE5QD5kr1a1pcR8S+8Q="
+    },
+    "https://github.com/SkyLeite/nix-repository": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/SkyLeite/nix-repository"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "9aaf7d1f8115915ec113e0bda84b81792cd2319b",
+      "url": null,
+      "hash": "sha256-pwx67ibEeLVLkuroeW+OIW/MJ9EP2yMsgA39yF11di4="
+    },
+    "https://github.com/SomeoneSerge/pkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/SomeoneSerge/pkgs"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "6f6537e6e896c6092fcc2a5e92395d0f8bfab4e1",
+      "url": null,
+      "hash": "sha256-KzJBOaevheR9Jiu9gyGRjNrlG2gWYxl5x0UF6u5ZzvY="
+    },
+    "https://github.com/Stupremee/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Stupremee/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "8ea430cd798b8a39f9d5af2d68ee2f020ecd25d9",
+      "url": null,
+      "hash": "sha256-b86E446RRpiiWRtB5VUEjZyLVF6Ldv100sZAegGruLE="
+    },
+    "https://github.com/SuperKenVery/nix-user-packages/": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/SuperKenVery/nix-user-packages/"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "f456a24ec974530d468a2faadc3a2bdea4e124b9",
+      "url": null,
+      "hash": "sha256-cLAEi3ecSlHYQOU2c5+ZWCnoBbfZboPJJC700vgaZ/A="
+    },
+    "https://github.com/TahlonBrahic/fuyu-no-nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/TahlonBrahic/fuyu-no-nur"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "cc75ce42ac58b26192292ec5cd8d1e55435cd822",
+      "url": null,
+      "hash": "sha256-yFgdf0lpz57o15km7vWEQzIOOzN/fwLSlrCYuOJUR6A="
+    },
+    "https://github.com/Thaumy/nur-pkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Thaumy/nur-pkgs"
+      },
+      "branch": "stable",
+      "submodules": true,
+      "revision": "e2ba92218f78da02d0600cf1d1ba3ae115b2f42a",
+      "url": null,
+      "hash": "sha256-8imupeRfoEm9roBRXzLyk0gUqRC17lfmin3WF3/tgzk="
+    },
+    "https://github.com/TheColorman/nurpkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/TheColorman/nurpkgs"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "cee4aeb92721d40f24e75defde1594e07dac0146",
+      "url": null,
+      "hash": "sha256-2qrEGp2LfOEgr59/nLw4sLzre3Co//ncSlv6cutW3Eo="
+    },
+    "https://github.com/TonyWu20/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/TonyWu20/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "dfe6f9564a1bcc6204807a100a2b357b9514698a",
+      "url": null,
+      "hash": "sha256-DZLb6vMqrC/CQJdfmG7WTk+RV78vYwLCAcphemeoe3o="
+    },
+    "https://github.com/ToyVo/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/ToyVo/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "bde8a4648235ecbb6232896aa7943f1640e4e7ba",
+      "url": null,
+      "hash": "sha256-JBCSiUGB+06NVYF+XgHrohExoUyHpoMst4COr7byDsI="
+    },
+    "https://github.com/TwIStOy/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/TwIStOy/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "2c2b3fe313c1e6188d221ab6ec62f11f9470d72c",
+      "url": null,
+      "hash": "sha256-q3H79UrWUMz5oyh8Yvp0Ee/wdV9LoEKv/0cWijrF6Xo="
+    },
+    "https://github.com/VergeDX/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/VergeDX/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "fe115f055212325d5029beefcfad1deef171fa81",
+      "url": null,
+      "hash": "sha256-zsb3TwuMFnEqOhFnT38UA4TGfPFx72HD3Y5QzS00794="
+    },
+    "https://github.com/ViZiD/nur-vizqq": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/ViZiD/nur-vizqq"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "c8ade1d2da614172adb3bce5e3d8b5f430ca6742",
+      "url": null,
+      "hash": "sha256-4TBVbvwdmq8ou+9jyJn9Suk4uUV6qGERVaxbD4jLt7I="
+    },
+    "https://github.com/ViZiD/picokeys-nix": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/ViZiD/picokeys-nix"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "6c1e614f4474222f74cacf661c1e561e4187165d",
+      "url": null,
+      "hash": "sha256-i0bW3V1JFSYtTSgULl/XqvHlX9Y+PAaEZPpvPMs35vw="
+    },
+    "https://github.com/VojtechStep/vspkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/VojtechStep/vspkgs"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "aa9ace5174ee2c2c87ae5d1b56e35dcec2584bb5",
+      "url": null,
+      "hash": "sha256-pPeimcubaArU6R9j1N++qOAMlRHBf4q1HQ3KeDHIvzk="
+    },
+    "https://github.com/Weathercold/nixfiles": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Weathercold/nixfiles"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "9904b6e3c24849085adb26fa86398dc11dc2f370",
+      "url": null,
+      "hash": "sha256-ujYI+60j4Pdh2enx/S+WLdyXbgBLUWwk4XbA9nd6BjQ="
+    },
+    "https://github.com/WillPower3309/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/WillPower3309/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "982b85880a549eabc035bd08a9dd136ad0c86408",
+      "url": null,
+      "hash": "sha256-ePiMu2e9at09VxHYZ58mLbn42OOOTlRHQ1PPEGnWjqc="
+    },
+    "https://github.com/XYenon/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/XYenon/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "42cadc1d9e52f312903132b036975ae87c7e734c",
+      "url": null,
+      "hash": "sha256-p4KNtRLUtIOOtjS/xonKEJkyLFg3DSNZaK8uOJcbCy8="
+    },
+    "https://github.com/Xe/xepkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/Xe/xepkgs"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "5be834d0cfe1abedaaf9fd8ae20764649930df24",
+      "url": null,
+      "hash": "sha256-y4vEX/WXmKKcXxbVyrKijIQSf6ZQkppMHIonxYUVms0="
+    },
+    "https://github.com/YisuiDenghua/nur-apps": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/YisuiDenghua/nur-apps"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "7a852774dcebd3cf8329eaa107f1b9bd7b43e807",
+      "url": null,
+      "hash": "sha256-1ocKnG4+PDhj6jaN/T3RWwmuVs2PDipoD5w4UiSHU6w="
+    },
+    "https://github.com/ZerataX/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/ZerataX/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "4d4b8b34cbc18a9e29cd3b1516cc99472292a538",
+      "url": null,
+      "hash": "sha256-sb2DWFEEmzUNbe+h31zuBSaw5RRNuBEO/aHaD231zhk="
+    },
+    "https://github.com/aaqaishtyaq/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/aaqaishtyaq/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "75b45fa15d5d52d213e47a74f74dc676f199f5a2",
+      "url": null,
+      "hash": "sha256-hIvqwy9v1NMlQc7egB6/86iHvq0hjOhLF4aeR+VsWg8="
+    },
+    "https://github.com/adam-gaia/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/adam-gaia/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "c5fc1a64b5e90b58b1567d06fc55dd8c33efb591",
+      "url": null,
+      "hash": "sha256-MfHpb4w/Z6tbHR7NRG3sGtRcR+/e0fENMJ0/4YQt3zg="
+    },
+    "https://github.com/afreakk/mynixrepo": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/afreakk/mynixrepo"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "d65048dd51bd7ffdd4189266eabc62978a908795",
+      "url": null,
+      "hash": "sha256-45evdeCC5/3+MyykRKqK1Ztg9PYxmqyUZ7tFd4ldsCA="
+    },
+    "https://github.com/alarsyo/nixos-config": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/alarsyo/nixos-config"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "03346040e01c988ff03bf0c34519529051023a2c",
+      "url": null,
+      "hash": "sha256-9Zrk0/gcb/tV0UwPQXYKhif1yMAgtSsCuSgZKtfSoUQ="
+    },
+    "https://github.com/alexnortung/nur-alexnortung": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/alexnortung/nur-alexnortung"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "f361c8f039c6847ef9ac55e5e49eed42bd51028d",
+      "url": null,
+      "hash": "sha256-IkYKyG8lJNp6FZfeP18UBHZ+O2BqAEQFQEnTNZ2Biy0="
+    },
+    "https://github.com/ambroisie/nix-config": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/ambroisie/nix-config"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "e3ca18e3afc22ea02ecb034543bde6d5facfa1c2",
+      "url": null,
+      "hash": "sha256-8kU/Y17EdX3PReMfh/g5e2KDPZc/wbDK0ytq1ak7Vc4="
+    },
+    "https://github.com/amesgen/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/amesgen/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "eecb565e8b2b8e9f48abf7ccf49cc4e641521dec",
+      "url": null,
+      "hash": "sha256-ujn/ts7di+UUJHYsHExUE/nkC4pONsNWInUE06yj5hw="
+    },
+    "https://github.com/andreasrid/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/andreasrid/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "a8df0ac15ad309925af165883f2491e0e284c83f",
+      "url": null,
+      "hash": "sha256-3Y5xjK+93iLkSewIuCO34w8hoIN8x6On/+41sVYAOQ4="
+    },
+    "https://github.com/angr/nixpkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/angr/nixpkgs"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "1b761d6713d80ba98fb0617850deca474f2c6584",
+      "url": null,
+      "hash": "sha256-Z0Sug2Q+Py3p9fcSmql7w10Xt4IBJ5WNt9zaDoXqlgI="
+    },
+    "https://github.com/anntnzrb/nurpkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/anntnzrb/nurpkgs"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "1e784d5d783792f01aaec185ecf71734271c9aa5",
+      "url": null,
+      "hash": "sha256-64bWS7M9joHt0Gzrhg1+EmfII1RIbUWisNjqH7kSbic="
+    },
+    "https://github.com/anthonyroussel/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/anthonyroussel/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "1fcd6ec55b2fca8cd99a173cf95743a6086f18be",
+      "url": null,
+      "hash": "sha256-JgcOIUhZM3RhnX90rgjyeeubfiZTUrZpwwX5Wm1qDBc="
+    },
+    "https://github.com/arcnmx/nixexprs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/arcnmx/nixexprs"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "b8dc621ea27c622703fbe96fb79eb092450f32b2",
+      "url": null,
+      "hash": "sha256-qvpmVnA8wHlPrEdXIA1tyu6sJxgDMEOwPDG4IkX4sZ8="
+    },
+    "https://github.com/avrahambenaram/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/avrahambenaram/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "833a8bec12611ee244eb88a7843943b4be1eb526",
+      "url": null,
+      "hash": "sha256-036p5dP4w2A8nmsNUb3hQ62HSaZMe5Uy2WVBxbh9AZ0="
+    },
+    "https://github.com/aymanbagabas/nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/aymanbagabas/nur"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "e84aca1ddcb4f0bed744228e4db20d6c7bd896ef",
+      "url": null,
+      "hash": "sha256-101YeyGxrrT8EEB/qDBnOBAEqZ8yRZeAzCYX3gvpgEU="
+    },
+    "https://github.com/babariviere/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/babariviere/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "fc82804183e367605ab20c199fbf667d52534297",
+      "url": null,
+      "hash": "sha256-tRAPxsFD84ofwTm+shD/q0C3bWVTN3UHb3w61sETjmo="
+    },
+    "https://github.com/badele/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/badele/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "4a3ba8b9b42ff49e782c35ad5b005a7c540c48f4",
+      "url": null,
+      "hash": "sha256-1HFVHcfVgZtwHGS6OwWaqspEDcFiZefhV8PNFKjZ7JU="
+    },
+    "https://github.com/balsoft/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/balsoft/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "f39fb799c516cb986945e8a6f8b6cbf5b9d5af2e",
+      "url": null,
+      "hash": "sha256-OZtKYx8RrVtvwDVdDhHUe+ec2Gv4bLI8kkuYriFp/6M="
+    },
+    "https://github.com/bandithedoge/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/bandithedoge/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "471ecb5e1eb9959a20c30e383ea7386125ed8eae",
+      "url": null,
+      "hash": "sha256-DVx4rTlHIBDvAz0Hm07BWObYBWF2f/vJP9+u61czxl4="
+    },
+    "https://github.com/bb010g/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/bb010g/nur-packages"
+      },
+      "branch": "integration/stable",
+      "submodules": false,
+      "revision": "8e18c6a685cab9d37f0b09c41b386e184739af54",
+      "url": null,
+      "hash": "sha256-mWcYaUPPmKG0m/gvsvKtOts9PjilrkJt76jb7oYeXyw="
+    },
+    "https://github.com/bbjubjub2494/nur-expressions": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/bbjubjub2494/nur-expressions"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "2ad860ed6f3cbd03928aef7a060bf951857be86b",
+      "url": null,
+      "hash": "sha256-VeBUEMd3PwFzhqCZDoDFV80qA3axjv4Y5BJdnujsljE="
+    },
+    "https://github.com/bd-g/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/bd-g/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "f91c23ef2a8c001ca3839617d2b9bd676be4a503",
+      "url": null,
+      "hash": "sha256-DIlq1vj4Y/m9VQhQGML76IBDKGv7swg7AGPfxgoqnyc="
+    },
+    "https://github.com/behoof4mind/packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/behoof4mind/packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "332f5c4a12dfe68b225f64ac2d1d30f513b7114c",
+      "url": null,
+      "hash": "sha256-fNXelEu8xEmaEdCH/06j78K+lxNeRVR84594E7/e/hU="
+    },
+    "https://github.com/bendlas/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/bendlas/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "a6f55f4683ab1721a1600948dbbd873067a4cabf",
+      "url": null,
+      "hash": "sha256-duyGwXrGW7bCQDswQQUFMlI1KQdQKvjF9p1rvqaE77k="
+    },
+    "https://github.com/berbiche/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/berbiche/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "131bee026c049373ae7b9f78653e0ade609c239b",
+      "url": null,
+      "hash": "sha256-fxiKkH9ER6bcdby72IYpzNnpN8T2577tcoMXEXahPCE="
+    },
+    "https://github.com/berryp/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/berryp/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "f21438e65a9024b99e1efe92f142ed382fcd719c",
+      "url": null,
+      "hash": "sha256-g5exmBZfFg8LUHbE7a4F0yH8Ze7HPAS1BLPxPl6Q0UI="
+    },
+    "https://github.com/bhasherbel/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/bhasherbel/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "4cc492bb0457ea00d838b72d48cfdb3e4664f046",
+      "url": null,
+      "hash": "sha256-NCzPNQHc5JgRMgfKoJoY3Eyv9U1rHCzBf0Le4QaFFBg="
+    },
+    "https://github.com/bhipple/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/bhipple/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "f19e3ebb985a829f6de39b573a20054fe7f8bdc1",
+      "url": null,
+      "hash": "sha256-4B2IU0L5dXJtDCn1kpnbLHdaRMl5IZj+oU6wGyRSnFA="
+    },
+    "https://github.com/bignaux/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/bignaux/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "a2788d71c3b965419033b17a936503b21cbed4f3",
+      "url": null,
+      "hash": "sha256-tbi5EpS5ZC+apJiW7EbMFfSzSrCvSkkQj0uTE95EzlA="
+    },
+    "https://github.com/blakat360/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/blakat360/nur-packages"
+      },
+      "branch": "master",
+      "submodules": true,
+      "revision": "9458f4d1413b21c0604d8062b85ea56823b5dcc3",
+      "url": null,
+      "hash": "sha256-hqtfzQ8v63UZUICtoYX5qMATRdl3SqsmTDf3IUqRe8c="
+    },
+    "https://github.com/brpaz/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/brpaz/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "ae40374ddf63fe6131b8d56a993ba657e66c6ba1",
+      "url": null,
+      "hash": "sha256-wq4OPTw9/GPcQMKJ1YZvLKXeBRcZH1Uk1p1AkEzzXoM="
+    },
+    "https://github.com/c0deaddict/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/c0deaddict/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "780b63bd72c4b300e8d23d2284f03235e2d65029",
+      "url": null,
+      "hash": "sha256-Fr6tiSwtMwd6wcJwcrU50pR6cRsK7vJ5l7RA7OuW8Ew="
+    },
+    "https://github.com/c2vi/nixos": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/c2vi/nixos"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "ff78b4ecb349b8a4fc17a8f7673f426142fb996c",
+      "url": null,
+      "hash": "sha256-GMyEb4RBhulMJauUIcDENZ8ivOzRrrALg4is5U/b5nM="
+    },
+    "https://github.com/caarlos0/nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/caarlos0/nur"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "755e7fb9d27bee0c8260b316f9057b49c7959785",
+      "url": null,
+      "hash": "sha256-GePZUVwhrysTeFQbd5qBUpdeC9TM4s/4vQ59J42CUWs="
+    },
+    "https://github.com/charmbracelet/nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/charmbracelet/nur"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "7f2f0bd1968dbd513dde47d0fcf94c700cdab002",
+      "url": null,
+      "hash": "sha256-FQTMlAVkD8uEfY+Kc2uvz/zsECL6XzbTyDUDxmCeEEA="
+    },
+    "https://github.com/cherrypiejam/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/cherrypiejam/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "81742efc8375ffe23f854f0ec938f5bb736483fb",
+      "url": null,
+      "hash": "sha256-SfLMDb8+mv9eeXhESPITAsWzl3aTo4Q3ldijrUah0+4="
+    },
+    "https://github.com/chillcicada/nurpkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/chillcicada/nurpkgs"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "291acc272421f0b37cdb1682b93b2ed14765c6e0",
+      "url": null,
+      "hash": "sha256-l1qxI36oaSGTA7Qm5l12SZmbaxmASshYJbvtHgDpFcg="
+    },
+    "https://github.com/chisui/nur-pkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/chisui/nur-pkgs"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "eceb3539f793fa7aa304f8fd00add7b1a1affbf0",
+      "url": null,
+      "hash": "sha256-Mh5JhIArvJlwXhfWyNaH8VvtjB4xpFHDcHtXYDP2s8E="
+    },
+    "https://github.com/chordtoll/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/chordtoll/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "430eda893e685a6668de4422210e905f339d856c",
+      "url": null,
+      "hash": "sha256-jEb8Y/3nIdE8Ud+uqCRV+cb0JQ020Bb5ZlD/PiKAE2c="
+    },
+    "https://github.com/clefru/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/clefru/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "1ed38fd05957f47c7a8f3fc84fc378c33891d760",
+      "url": null,
+      "hash": "sha256-M8rhhJmMHZjbG3N7kWf5xN0ey/1AciTCm2ywVlFiHQw="
+    },
+    "https://github.com/codgician/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/codgician/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "578c80ec3289166ac24b08272552baf30b862b37",
+      "url": null,
+      "hash": "sha256-Caz5L1/FTtA/fAqHkI8ShMP2tHYUVOthyswmuEWjryE="
+    },
+    "https://github.com/congee/nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/congee/nur"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "040526d46e3d221309d74ce45a4a1431a8cf1ecf",
+      "url": null,
+      "hash": "sha256-ooXIsjvxoYQQ7r2SfQci3VRUmcEyvwCwihAUzOpG6HI="
+    },
+    "https://github.com/crazazy/nixos-config": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/crazazy/nixos-config"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "8acf63e4b3a1d440c57f4a3b32d19c0780c6cdfd",
+      "url": null,
+      "hash": "sha256-ZAVtRSeUP78mDHnuh9B79ZAHGv8v/E21/knpWex/PAM="
+    },
+    "https://github.com/cu1ch3n/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/cu1ch3n/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "fda40b232ae8c2e415c15d72b9ccca06252c9dc3",
+      "url": null,
+      "hash": "sha256-2jw+S8vP2ds8L4dC99Le1Qq4yz+5F3HDnP0yqYkSl4I="
+    },
+    "https://github.com/cwyc/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/cwyc/nur-packages"
+      },
+      "branch": "master",
+      "submodules": true,
+      "revision": "a944287d01d3a0b96312bcf0cf59a7adf52cf7ae",
+      "url": null,
+      "hash": "sha256-NH9B1DT5YlrzZQ9/0BCw9dGfqi3V7O+xhuwy8TCgshE="
+    },
+    "https://github.com/dagger/nix": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/dagger/nix"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "76507e2d0e6c302cfc652c7acd68c6c700f7125f",
+      "url": null,
+      "hash": "sha256-Gv7hgW37lyZd2XabuOYQEn8WT7TH9yTqK2+uaAudYyE="
+    },
+    "https://github.com/dan4ik605743/nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/dan4ik605743/nur"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "aac67954bbeacce64d84ddf800e05bcb467c11da",
+      "url": null,
+      "hash": "sha256-26KUhenStq5NwFriC7WlCvsQEIl6wz6pIdH/7ejMXjs="
+    },
+    "https://github.com/dani0854/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/dani0854/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "c2010ab3685a51e2ed62fbccb60e112ea4e57f0f",
+      "url": null,
+      "hash": "sha256-1/I+brqm80nEEaaGJ7Q8IpLmnhf10RVLAY84OmpqU0I="
+    },
+    "https://github.com/dawidsowa/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/dawidsowa/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "a4c42756dc246d26c06e0dcc2e6dbcf932ed55d8",
+      "url": null,
+      "hash": "sha256-I+cr70vqCEp/R9q7BL8uiLOHjTqx7oOprMIJKtJcU7Q="
+    },
+    "https://github.com/dduan/nix-swift-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/dduan/nix-swift-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "44a1dc3a5159e881da2d168bb2e4017f2eec99e1",
+      "url": null,
+      "hash": "sha256-IIzFPKfufIXy5M4V+/aOi7vZgeQueqT/4QLVRo9gnmI="
+    },
+    "https://github.com/definfo/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/definfo/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "024dd64267f67d0eff455e5afce36598777b6060",
+      "url": null,
+      "hash": "sha256-WxH+JZmC7rA0qZbmRozxLhJhdw+S4zl81PuPcgDdZsk="
+    },
+    "https://github.com/demivan/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/demivan/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "9f60b00f0092bed201e40da97853d85a7549ff34",
+      "url": null,
+      "hash": "sha256-WbOZJWvx2qClKyF0eEQRnlXoAU0MyBIU6ptiMQD0grM="
+    },
+    "https://github.com/demyanrogozhin/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/demyanrogozhin/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "a82fcf0ca5a425503e0ef530c83c53ee1af54dfa",
+      "url": null,
+      "hash": "sha256-MzlD4jrCQaVwxdkqAi9/VIkyPoNVhHBSbRad1hTYdPM="
+    },
+    "https://github.com/devins2518/nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/devins2518/nur"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "ee806f4ef56bfe662812a6a07ec65bc16a1e4343",
+      "url": null,
+      "hash": "sha256-E6ArUG7GLGT1Y1v3br8Uzk4ufShCUTmCc+nMLGAniA8="
+    },
+    "https://github.com/devmegablaster/nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/devmegablaster/nur"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "8886de64bdee3c5a5c023e64dbaffdc22ccdaf09",
+      "url": null,
+      "hash": "sha256-e7zqRJVKYO47uIhO41+uorpkOitueim+mB01vuUrxR8="
+    },
+    "https://github.com/dezgeg/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/dezgeg/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "2d1018064f60640b6dcc2201efcfc9d0a92a7889",
+      "url": null,
+      "hash": "sha256-/mu/s447GpffI0+1aJYv/MtFTG98e4ida1Sbwts3OHU="
+    },
+    "https://github.com/dguibert/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/dguibert/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "3c0e10bbab621ab3d1a8d69522d785150f7694a5",
+      "url": null,
+      "hash": "sha256-liPUNJo+E350qwS6jpwefndOrXKgBQnPce/0jiA8o0s="
+    },
+    "https://github.com/divanorama/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/divanorama/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "fa84dfcd2f76840409a4ac6f1854900afe862dec",
+      "url": null,
+      "hash": "sha256-mtspA3DTb6kbvEtApcyJbS4brk0Ng5bvpP2S/IxVhNc="
+    },
+    "https://github.com/dmayle/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/dmayle/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "84c23287f94e251a948be8866056e0370389054b",
+      "url": null,
+      "hash": "sha256-dJeMBPiplz+wmYx+FNWtNQFnY6eUPkQCXue4gPfYKiE="
+    },
+    "https://github.com/drewrisinger/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/drewrisinger/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "295ca29567e8e4fc2b4329d24bc1739d46fb7768",
+      "url": null,
+      "hash": "sha256-i0bF1vkeI/I5TAGYNMrPrE8n3SMVcY5JfUiAqqZ4oYo="
+    },
+    "https://github.com/drmikecrowe/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/drmikecrowe/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "9c28cb904891432013bdf3d32234b82c53f735f1",
+      "url": null,
+      "hash": "sha256-nj86rRYKLKv+s3yXFlLfvLBsEV49vCWgSBbzLhBg+bI="
+    },
+    "https://github.com/dschrempf/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/dschrempf/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "0361bf62c4ce817d80849751ef6d83707d84c02a",
+      "url": null,
+      "hash": "sha256-rw7PMDCM6JFdQ/COHLQLzMrRt9jwl1bQLVXrhp/UdPo="
+    },
+    "https://github.com/dtn7/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/dtn7/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "3a30ea1f1881cd6781f17523782eb64177a86341",
+      "url": null,
+      "hash": "sha256-B6rfuXXWseZkL6e8fDbU+nBupqAEnJ36qt6K3DX8fKU="
+    },
+    "https://github.com/dtzWill/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/dtzWill/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "dabf4820ee5b3203cf29e7d81c62b26a33a91692",
+      "url": null,
+      "hash": "sha256-cldAkd4eKuch6F+APtChQKzvdOH529xA3kWRRLjeRbs="
+    },
+    "https://github.com/dustinblackman/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/dustinblackman/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "55b771873f0f568f15e5ffa9eea8771fcf33b56e",
+      "url": null,
+      "hash": "sha256-0FbgZHSHA0rEWUwVbjsYxTdvFVpGeHZkG3A3EgRz9gw="
+    },
+    "https://github.com/duvetfall/mur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/duvetfall/mur"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "39e3eaf091b926c559f606d268b8fbdfe5931f33",
+      "url": null,
+      "hash": "sha256-u7SAIcfJCA5aI7+qpVKbMDCdiqJzXm9e3/VKDw4Kbi8="
+    },
+    "https://github.com/dywedir/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/dywedir/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "0ed84710caa8ea218d12a3a3c154733ec9c5d02f",
+      "url": null,
+      "hash": "sha256-ILSWMhm6aF5lTlk1sNtGv8QdDWpfjYvXuOWVs5G5aGY="
+    },
+    "https://github.com/emiller88/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/emiller88/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "0e0450a7b5e653ecb7bf72103e4374d1e91c6c17",
+      "url": null,
+      "hash": "sha256-GCqJmo/34w+PW67K0/vOcSqLzXaNDJFdb70RMhH9DCI="
+    },
+    "https://github.com/ethancedwards8/ethancedwards8-nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/ethancedwards8/ethancedwards8-nur"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "0263960bdfc98e590db580f5a25f80f20b95160d",
+      "url": null,
+      "hash": "sha256-yWfrEmPoDH5uc8KUv8tyEt2AkRfvaFJSPNjmdqwRJG4="
+    },
+    "https://github.com/etu/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/etu/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "98bdeb7389071d6f8ebfc22a55b6b27f32f2e0bc",
+      "url": null,
+      "hash": "sha256-xAgImXoItupzSYR9iqElpWTG6nYRSkZHq1Of9yCQFEU="
+    },
+    "https://github.com/fendse/nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/fendse/nur"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "84ec40bac8cbe14d173fb660763761b7329edb49",
+      "url": null,
+      "hash": "sha256-Jlxmjktfv+V5t1t9cjnQFkAfofSDKKv7d5gLfYWpSio="
+    },
+    "https://github.com/fgaz/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/fgaz/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "4d8f25814921b521817b7630fcaba267119045de",
+      "url": null,
+      "hash": "sha256-jcIKuFpwCDZAlbWl4YN5MhlXXg5TMDwMqbE3Gf5gvY8="
+    },
+    "https://github.com/fooker/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/fooker/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "dcd96344d43a837847b1c1920c6866e9c78d4a59",
+      "url": null,
+      "hash": "sha256-GMVZYXhhroIMulHEQ7tdnOAyK9bInFAgVDbI0ZyTQxg="
+    },
+    "https://github.com/foolnotion/nur-pkg": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/foolnotion/nur-pkg"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "cd14814f37832d8656a31ecf5c0c28b8f02b4b66",
+      "url": null,
+      "hash": "sha256-p+Oym1YRW4i7xcZSXE5FMiFAdMWLY0toQN6+F3SKFKg="
+    },
+    "https://github.com/foresense/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/foresense/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "ad1ae97d8799ba7084fa2eb5a3c059552e407dd8",
+      "url": null,
+      "hash": "sha256-HRPfIFoDrGKYORJCR90qKrJP77UkDIuVoFkma83owmQ="
+    },
+    "https://github.com/fortuneteller2k/nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/fortuneteller2k/nur"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "4cd0dcc8fa4fdacf026605b24927884173d13f67",
+      "url": null,
+      "hash": "sha256-rqsgSb/keD9Gej8mfA62AXtqwzT/LtIGPnJeaI5rL4I="
+    },
+    "https://github.com/francescocarzaniga/awl-fcarza": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/francescocarzaniga/awl-fcarza"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "7aa113aef4e3dcffdf51e4dbf5d678d27f286018",
+      "url": null,
+      "hash": "sha256-rG1HEKYev4oSQEgsLoAYGe03op5DsvHlc4LaoFgKgws="
+    },
+    "https://github.com/friedow/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/friedow/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "df1fa273724414f1d1c7beb6dce4dee946aa2a5d",
+      "url": null,
+      "hash": "sha256-UUlRd+iWdBFqnB8dFfNnUcWiKe26XWitDa6xvE5szE0="
+    },
+    "https://github.com/gabr1sr/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/gabr1sr/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "e66f66ae66c4e4b3d23fd099272308b200b52599",
+      "url": null,
+      "hash": "sha256-d55ZVNKx3/jNMp0UevCHD6z/ylwONO5c/u9Ps6oVKVE="
+    },
+    "https://github.com/gbytedev/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/gbytedev/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "e36a59c060c7c54466efce1f2bac9d53d3c60e16",
+      "url": null,
+      "hash": "sha256-JUqlDoaho/5UAdsY3fFDLHqfbX3iYM5GZzf3PxXJWZs="
+    },
+    "https://github.com/gepbird/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/gepbird/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "9a51f2d4f33a7acff2501d2a8948339c7fe62a66",
+      "url": null,
+      "hash": "sha256-KrkUKXV45pOQJwN/YCNlxRpFgWLJVALX/PIKow04dXU="
+    },
+    "https://github.com/ggemre/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/ggemre/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "53862d99f50324beb3d6cc360c770fd06a4532e3",
+      "url": null,
+      "hash": "sha256-SaULHaMLMDWa7dNBOd03cvKZav/Fok4+7S8zns7LWSY="
+    },
+    "https://github.com/gigamonster256/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/gigamonster256/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "08c57b37be61053656b0db193ee1fe92e65ddb03",
+      "url": null,
+      "hash": "sha256-f/TMIXH7nJgdLiblKKOQbD4iR3G3UEXkBoBtwj7s4aI="
+    },
+    "https://github.com/glostis/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/glostis/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "9fd92412ee8399d819cfb5ab1b330e68598a12aa",
+      "url": null,
+      "hash": "sha256-PhazfxHp5KbkpI8tKNy33pXmJCw08JjHQdgiQFDJyAo="
+    },
+    "https://github.com/goreleaser/nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/goreleaser/nur"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "e684958c26a5a164285af62a8773eea9e3080254",
+      "url": null,
+      "hash": "sha256-VmO8P2G77xO/DXoWMqN79/MoRYiUxG/8NSeguGa43Fw="
+    },
+    "https://github.com/graham33/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/graham33/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "acb8dbc97b684b0556815715249c66e4d38fe16b",
+      "url": null,
+      "hash": "sha256-EKh6NG6uuFoPD9BQdChIjkkY1/m3RgBKy1EsTmI6Kzs="
+    },
+    "https://github.com/guoard/nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/guoard/nur"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "197d7e2459cecb01398a8841cbb557134f1d272a",
+      "url": null,
+      "hash": "sha256-FPbQ0zC06UnCTdR5cjl2z3Wji/n0urdN6VESa7SuJXw="
+    },
+    "https://github.com/harukafractus/nix": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/harukafractus/nix"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "3c9e9b5134377b55316c535de07ad301a27a356c",
+      "url": null,
+      "hash": "sha256-b5Tm2Eec3x7STceEqvFTISNqwbeCEqXvwI5eiMx6sv8="
+    },
+    "https://github.com/heph2/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/heph2/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "539dd4cd4b933e62df9e015ba1b0527be8a76540",
+      "url": null,
+      "hash": "sha256-NEcrCH5RqtarIyE/Un+hERbbyMkKvwB38leZINw85SI="
+    },
+    "https://github.com/hhr2020/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/hhr2020/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "a336ed3187f5b3612149d678763361c609a41cb4",
+      "url": null,
+      "hash": "sha256-du+Txd/CwP/xlWU2ZPuZH7O/04y0NxZfTyrLUEqdVCU="
+    },
+    "https://github.com/htr/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/htr/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "49bb48aa7095b105483883c161eb19be3bc27ab8",
+      "url": null,
+      "hash": "sha256-IfBWaqK1pb5ufzHeZv3+XB71MlTWM0OFJ0inB2L23aQ="
+    },
+    "https://github.com/hujw77/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/hujw77/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "1c9f11c1e061974bf4c6ac7517a19419960e229d",
+      "url": null,
+      "hash": "sha256-prg3/LITqYYVJw2WEh+QKO9g1K4bICW1rLDoGG4i8dg="
+    },
+    "https://github.com/iagocq/nix": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/iagocq/nix"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "8a6ea267bec4244f2b266e218e2a24eae8ff2608",
+      "url": null,
+      "hash": "sha256-Fp8Eb5yyPJQszgmZxXwWRzIfWSCp5NOx/HCzzM+QzlQ="
+    },
+    "https://github.com/ianmurphy1/nurpkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/ianmurphy1/nurpkgs"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "eb0da05e347f0fcbae77c00983181bd5e7709a33",
+      "url": null,
+      "hash": "sha256-3wmKIQOA+mB2lUchjrRS6/+cNFX12x7tu7juCKPOsBw="
+    },
+    "https://github.com/ifd3f/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/ifd3f/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "f85c890a1ee41e3c5026477ef1e5fd867883d158",
+      "url": null,
+      "hash": "sha256-kZafCBspvRbpM1lajIiswIXNJOGQpAx6P1G+RqJKZus="
+    },
+    "https://github.com/ihaveamac/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/ihaveamac/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "45d7ea6d921b33c113960d57d9f42f384d723a1c",
+      "url": null,
+      "hash": "sha256-LIel51mOC0GotMPKWT0kTmvJlYj/coMFMSXngwrqbhQ="
+    },
+    "https://github.com/ihebchagra/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/ihebchagra/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "48e11e3bb7df3aa9a23b309b543a47cbb29ee40b",
+      "url": null,
+      "hash": "sha256-wrdcn69md/KWgRLEaWMy6lutXxq8ZiuG/DYQmtQboKM="
+    },
+    "https://github.com/ijohanne/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/ijohanne/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "a3d6c86051e574dd81bc13552ee5a22ba6a42467",
+      "url": null,
+      "hash": "sha256-mn0K1xuUYvFZdGB/zuO1MHcxx5D16Gu3stycsJSUC34="
+    },
+    "https://github.com/ilya-fedin/nur-repository": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/ilya-fedin/nur-repository"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "030b69398394ed6191273728c035a92e3561aad6",
+      "url": null,
+      "hash": "sha256-z2ea6QIyYidi1GMs0W8AFBnE8rKn8ZozxDFMtFvTTQ8="
+    },
+    "https://github.com/imincik/geonix": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/imincik/geonix"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "c77b259a7eaa7164741f768f9826a8d3e05574c0",
+      "url": null,
+      "hash": "sha256-qIEeN2aM62NzjCm62HrbnII9c6YRfFEswHID9yYtsNw="
+    },
+    "https://github.com/instantOS/nix": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/instantOS/nix"
+      },
+      "branch": "dev",
+      "submodules": false,
+      "revision": "73fbe4d2a75d857c8e58211da59bf23cbd267364",
+      "url": null,
+      "hash": "sha256-lSsrLz1/TfSP9RIC6tViHvpuQYYFBCMk29QV+PZExU8="
+    },
+    "https://github.com/ionutnechita/ionutnechita-nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/ionutnechita/ionutnechita-nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "f77ddd85668866608610f09b2e91676d811e791c",
+      "url": null,
+      "hash": "sha256-UhauOjslg9CdkrdkohHLfhoTuUIM224p+3ekUVfFIQo="
+    },
+    "https://github.com/iopq/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/iopq/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "ab1266662a3cb33e3cb52bd9ec74531626374e4b",
+      "url": null,
+      "hash": "sha256-xukYTVWJSwIBzqAQj0qC/aePx+JzNE3HfygKVlIfSzU="
+    },
+    "https://github.com/iuricarras/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/iuricarras/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "acfe22551fae3e7c87ace69ca8679e8983ba15a4",
+      "url": null,
+      "hash": "sha256-yCnFlbdSrXr3yGqkx3VPXkUY1ILA3mAAv+IiLQp266k="
+    },
+    "https://github.com/ixhbinphoenix/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/ixhbinphoenix/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "2d381ccd7f9ed6cac8ca2aeb410de0e1b090ef70",
+      "url": null,
+      "hash": "sha256-cX4ejzNkR8wy1LRslwnjqPVlnMPoKts2dPh++6LQHYQ="
+    },
+    "https://github.com/j4ger/nix-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/j4ger/nix-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "a1adb03d3dc1ebb6770dda1a2ec9311b900f7e2d",
+      "url": null,
+      "hash": "sha256-NGIvlO3oqKxdaW/tCMjjcBmBOPECco2MfBtoLRj8P7o="
+    },
+    "https://github.com/jakobrs/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/jakobrs/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "7bd8e62ecab7891f7b9c3aaa23aaefd884755ba0",
+      "url": null,
+      "hash": "sha256-kPI5UNURQgw+CvD/I+b6B44D/hSwZFosj+krMaL0DoU="
+    },
+    "https://github.com/jbarthelmes/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/jbarthelmes/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "64340769e8da95b4289916c9798c902f0256cac5",
+      "url": null,
+      "hash": "sha256-NqiRy2EsxcS8iqzJ0e4MjAO0ycAQq3/59W+JTL2AqPc="
+    },
+    "https://github.com/jcs090218/nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/jcs090218/nur"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "edfcd82af807f730a9329ebca6cfc9722b53920c",
+      "url": null,
+      "hash": "sha256-LDS38Z5mRAFEdXeEb12XqN5qqACavA8sasun+5Hx6Jc="
+    },
+    "https://github.com/jdev082/jdpkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/jdev082/jdpkgs"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "4705475e8c6818dc21ec0dde0e0b4524fbfbbff9",
+      "url": null,
+      "hash": "sha256-QxdlZ2+GHwDY+KKQ+X0/4YWxRgnLFnNVYdVOrIsbgGk="
+    },
+    "https://github.com/jechol/nix-beam": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/jechol/nix-beam"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "af6170db9d75949443d980d9da68bf0a7f13fe1e",
+      "url": null,
+      "hash": "sha256-mKjTJh7yqsvmI3ct69Zoq5Ajy4Qna5JQkKYVzYPKnXo="
+    },
+    "https://github.com/jeffguorg/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/jeffguorg/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "79d7203d3a28b611ba821e863bfb0b82fb00333a",
+      "url": null,
+      "hash": "sha256-8pMzaoOHAZi5dQPNqC5IW22IygZsNZPDnn0ShMM+2f4="
+    },
+    "https://github.com/jerrita/nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/jerrita/nur"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "27a64c1a812f449fc57444be31745383393f6e52",
+      "url": null,
+      "hash": "sha256-j1aWD7ycX5onvywSvr00mSR4kos9fQxjUaOBoxlbmiY="
+    },
+    "https://github.com/jjjollyjim/nur-repo": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/jjjollyjim/nur-repo"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "bd387bf78ceebfc0de6534135b07d689b59eabc0",
+      "url": null,
+      "hash": "sha256-phZhEuiqYLogXXcBjUwFSIpCgbTytUWutLPzKRk7m9g="
+    },
+    "https://github.com/jo1gi/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/jo1gi/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "9444fa3117965ffa32b92ec9e1c478bcff8bb245",
+      "url": null,
+      "hash": "sha256-nHisfxQSLRqJ7pQWUwjcdoDh1VwM8aRx3Aa5OhjHjbM="
+    },
+    "https://github.com/jorsn/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/jorsn/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "295b26bbd3b2c22b91511ed9d90ff428038795a1",
+      "url": null,
+      "hash": "sha256-TEBhbfbx3BQ1Pl7fgu6V/B8BHE0YUzbARLajpdVZpHE="
+    },
+    "https://github.com/josh/nurpkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/josh/nurpkgs"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "5850db084927682611eecd02ea55117f777292b8",
+      "url": null,
+      "hash": "sha256-BiqWTwEGn08kUMlg7kOrqpodU+AN0zvroZHTxNOtwxw="
+    },
+    "https://github.com/jpts/nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/jpts/nur"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "31356fa9f17c9a6f34e739d263ce7137b3790e5d",
+      "url": null,
+      "hash": "sha256-jPVRia7a6n74tIVs3vCzCNODtJZUh7wQIOwkes2DPGc="
+    },
+    "https://github.com/k0ral/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/k0ral/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "cf5accea1ff609c61d109321d2b93fea4d2d4ff0",
+      "url": null,
+      "hash": "sha256-0lnZNXBUxZiv5/TN1aNYMrWU+HvhfA7eRArSJdQ4KYY="
+    },
+    "https://github.com/k3a/nurpkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/k3a/nurpkgs"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "991c1e35b5271bc68b1e18cc286fa5221a99a2ce",
+      "url": null,
+      "hash": "sha256-ssjUFO6jZrrNjwl/UPBSVZEEzzR6SFAVzWWUAARFv8k="
+    },
+    "https://github.com/kakkun61/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/kakkun61/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "a4f85d7dd7f58f5a4c0b23c34f31c409b419664d",
+      "url": null,
+      "hash": "sha256-GQhv6rnPyi2Ne6RkznbK4gEwpVS4HA/sTC0+UhnM758="
+    },
+    "https://github.com/kalbasit/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/kalbasit/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "408eff4131d68b8ac3f7a09264047e68227fa24c",
+      "url": null,
+      "hash": "sha256-dEob6OYuCDF6t72lV9zmbB8s2bq3TyfqYJJDgBna8Nk="
+    },
+    "https://github.com/kf5grd/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/kf5grd/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "8cc980460b80380eed13e5bf5c9a0aa6c7311797",
+      "url": null,
+      "hash": "sha256-Be5K18Zz7Ph3h3QcZbyDYqMmU4TCkQl0BVg2NTVKc0M="
+    },
+    "https://github.com/kinzoku-dev/nur-kinzoku": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/kinzoku-dev/nur-kinzoku"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "28ab6b6087d2b36780a6a3352378421fe12355a6",
+      "url": null,
+      "hash": "sha256-bNqGahhWBHE0ZNxbBs2KrVdqwB2IIFI/EKuSfSqRKNI="
+    },
+    "https://github.com/kolloch/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/kolloch/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "606ac0cb71f21626c8ffd9f43a0b950d874696c5",
+      "url": null,
+      "hash": "sha256-fFsA7+P/XnNllTX1KYRkdc6iT7X+9mgfWC9boW7mPyI="
+    },
+    "https://github.com/kreisys/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/kreisys/nur-packages"
+      },
+      "branch": "master",
+      "submodules": true,
+      "revision": "5481e902798f3fcecc8b71f25707822feec8ce16",
+      "url": null,
+      "hash": "sha256-hU2ILdGorIsbPXYG72FOoDpAO/r7oc6phS07CXD9buE="
+    },
+    "https://github.com/kugland/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/kugland/nur-packages"
+      },
+      "branch": "master",
+      "submodules": true,
+      "revision": "1d538683ced03d57805ed118c4f560e49b46768a",
+      "url": null,
+      "hash": "sha256-GioH1hdvFTXFA6tsmgf85cC2nXFLI1yAlmYjHAXe/uM="
+    },
+    "https://github.com/lambdadog/nix-extra": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/lambdadog/nix-extra"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "222127489b9b2c89d68ca06e2f3c8f8bace0f65e",
+      "url": null,
+      "hash": "sha256-KpvAfO1rYIBk1ookUlnSFxxaf00wZ7NDLawTBWrUaR8="
+    },
+    "https://github.com/lcx12901/nur-nixpkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/lcx12901/nur-nixpkgs"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "5605c05a6b1a2e4871832e71fe78f7798f338d1d",
+      "url": null,
+      "hash": "sha256-I5//P5Zi8+bKlbVDYIxRKxZMx66PGOakxkB4+RotU80="
+    },
+    "https://github.com/lheckemann/nixwip": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/lheckemann/nixwip"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "a2a0916234568b3880b06bffc336a1ebc104d276",
+      "url": null,
+      "hash": "sha256-U3uUUsBIZHvXcY0qT4tYAdMCdHWylVGdDEIVnNVQfJg="
+    },
+    "https://github.com/linyinfeng/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/linyinfeng/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "8f4fe1c79ae50578d55d369b3a23c4c435ef6f62",
+      "url": null,
+      "hash": "sha256-HYJcXnWPIOc0fO73Nm11otjOZfDfdNwlh0Lb69BUhUU="
+    },
+    "https://github.com/liyangau/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/liyangau/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "26a460e0a6f8c9cdfa46d951842df9e8563c60be",
+      "url": null,
+      "hash": "sha256-AL3ZlB52NVJg3dj7r11ms94OxgBbNY5AhRJtKOzyuL0="
+    },
+    "https://github.com/lolbinarycat/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/lolbinarycat/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "c201b70252c0c872a3f751495641c837d07002e6",
+      "url": null,
+      "hash": "sha256-5kOWKAVMdgWWxLcFji2IW75O6OKva5wG9MpHzvvMtyE="
+    },
+    "https://github.com/lschuermann/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/lschuermann/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "8a5d489849bf8497ce3c96db29d0fc61455e9b88",
+      "url": null,
+      "hash": "sha256-Ct52tQjXS0QPkm3DqbQLnWOjLRo1pI4lvQYL0yD85s4="
+    },
+    "https://github.com/lucasew/nixcfg": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/lucasew/nixcfg"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "b98ac8a3fac9ad32f44d201d919d3108ed5a13d8",
+      "url": null,
+      "hash": "sha256-uY0i/lrJSuntwlsOXVLdfLezcTX4r8o2N+u+ihQxBYU="
+    },
+    "https://github.com/lunik1/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/lunik1/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "7a76d70fa059828e83f1acffbec7fe16b2b725a1",
+      "url": null,
+      "hash": "sha256-KV31cVCw1kOigcc2PQXocRHKrElA4gnCIEyiDvpL90E="
+    },
+    "https://github.com/m15a/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/m15a/nur-packages"
+      },
+      "branch": "main",
+      "submodules": true,
+      "revision": "7ee7f3169a757302a2948bc9420e150c12c96777",
+      "url": null,
+      "hash": "sha256-rJygP8ubroH73TmQgpkQWrk01hPCp6cPWuuYVjKuRZw="
+    },
+    "https://github.com/make-42/NUR": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/make-42/NUR"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "6e9f243e42b044338e9b952f8ff95d902d547862",
+      "url": null,
+      "hash": "sha256-+7dU+n8i5JhZ9Hnz9E+qUgrX+IGN0ofvNQGJZ2MdN28="
+    },
+    "https://github.com/makefu/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/makefu/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "272cf1ad3b3da0e30b5435f2425f39bed616b080",
+      "url": null,
+      "hash": "sha256-iL4qZp+ssGLwNiKdlkToMLd5fGGfwn5cl7TYuA1MfMA="
+    },
+    "https://github.com/markuskowa/NixOS-QChem": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/markuskowa/NixOS-QChem"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "83d79a5020705d38c04440c2dd3ab324c6b9be76",
+      "url": null,
+      "hash": "sha256-e2EBwsYIPfbA7MDPqIpalQHLwrjw7doFMr1zaffyUnc="
+    },
+    "https://github.com/marsupialgutz/nur-pkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/marsupialgutz/nur-pkgs"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "e45c3fc04279677f38afb5f5668e108ab1fa4d76",
+      "url": null,
+      "hash": "sha256-7KeWfl9wOe5581JDptYsghKdJkJqReZiS3Rc4eExwF8="
+    },
+    "https://github.com/marzipankaiser/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/marzipankaiser/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "2eeab71bd1bc66f9231a512bb1f529c1aedeab32",
+      "url": null,
+      "hash": "sha256-e0/oAapResAcnclCeI6UCfgF68gEr8ESfW61FJBkl9s="
+    },
+    "https://github.com/materusPL/Nixerus": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/materusPL/Nixerus"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "c381bde8eab3998246dd7c31eb0047526a319224",
+      "url": null,
+      "hash": "sha256-dyYxuBNdUOH5nvpbDAgwGJI4aN9CXv+m57VMuDYDGEg="
+    },
+    "https://github.com/matthewbauer/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/matthewbauer/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "21b678d31d567730921dd932fef6682694715b65",
+      "url": null,
+      "hash": "sha256-hE3Wdf0+p9iZymrdq/ITR1AyWKGHPHNqmXTe0XKgqkA="
+    },
+    "https://github.com/mbekkomo/nurpkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/mbekkomo/nurpkgs"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "fe810dd6579c8194ce31fb64f8e4e908d04d5518",
+      "url": null,
+      "hash": "sha256-21aeTReXC4xCr0r6hIk0FeLpGsE6aUPEbj+lULnDEK0="
+    },
+    "https://github.com/meain/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/meain/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "8ebcc3dbd5894d00d932b1fd9b459b4c15a20d72",
+      "url": null,
+      "hash": "sha256-/Q9Ga/bvF4C9JGV0ZTWJBeV0qnDG5jiIlWdio+6kqGI="
+    },
+    "https://github.com/mgord9518/nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/mgord9518/nur"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "77b094cae23c001b47272d9c08ada5ee486e0714",
+      "url": null,
+      "hash": "sha256-uKTSkE4HAFwf/JuUpJY64U60m2AOOO7bul6aua0xiok="
+    },
+    "https://github.com/mhuesch/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/mhuesch/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "83b0ba76173dcc88f2b4b617efeae1fba1b08994",
+      "url": null,
+      "hash": "sha256-FQPE6Q0GHQRn6h0oJX1kW5YCiJElCMdl4m1f4vyFb9I="
+    },
+    "https://github.com/mich-adams/nix-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/mich-adams/nix-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "bb8e01e84aa5f885b288938a2d8e2423870b8c2f",
+      "url": null,
+      "hash": "sha256-EdZphrXCC6hDxKnIo19j/9A+GwzTFi3Nm2+T5357kIU="
+    },
+    "https://github.com/michaelglass/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/michaelglass/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "c0abc18c6794a18c04999c0ac7a92db045f058bd",
+      "url": null,
+      "hash": "sha256-4BgEKYDVynopmqvsAkwTpieqJANamAj0NGNeHppTJoM="
+    },
+    "https://github.com/milahu/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/milahu/nur-packages"
+      },
+      "branch": "master",
+      "submodules": true,
+      "revision": "03b4b3a3223e45779524575c157246cc1451946f",
+      "url": null,
+      "hash": "sha256-dzgQyV2PPPk/Xn52zPGtsDCW/Eb9Z/XyfD6Z2MF6tLw="
+    },
+    "https://github.com/minegameYTB/nurpkgs-repo": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/minegameYTB/nurpkgs-repo"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "3a5b9abd9e09b3e0cc5da027dc4246f6625feba9",
+      "url": null,
+      "hash": "sha256-NQZSA0f11nChfTUvP1lg5InBxTMo8N7U1abOwRa2k0g="
+    },
+    "https://github.com/minion3665/nurpkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/minion3665/nurpkgs"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "ab2f419e72faa0a4e3d9a3af0f14bae615255eea",
+      "url": null,
+      "hash": "sha256-YiFct6GME6pZK9iVB3bZl7F0RTagrQIJj8wI1D6GiWU="
+    },
+    "https://github.com/mistzzt/program-synthesis-nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/mistzzt/program-synthesis-nur"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "5a89268d93eb4ebd4d954acbd679ad8c7e6c0cd5",
+      "url": null,
+      "hash": "sha256-YiYrIFX+zXLNTcpBuCpTVrZP1S160AaNIVvOyW0k4Qg="
+    },
+    "https://github.com/mmilata/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/mmilata/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "0265f31dfec8114dfd7aad64b19f7b66a68dfb73",
+      "url": null,
+      "hash": "sha256-BwVNZwNWXqWJc5XAV8eqILuak7bu6Do4wBeS8zvLWGk="
+    },
+    "https://github.com/moaxcp/nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/moaxcp/nur"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "a835678ecd9d3c6ddee47e84782affc4a52c3609",
+      "url": null,
+      "hash": "sha256-pXBzOmxTcvOCeGb7UJ+Syf+hHMYMivwz36HJ2H16js0="
+    },
+    "https://github.com/moosingin3space/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/moosingin3space/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "20a564911303581107235f768e79e82de43f1682",
+      "url": null,
+      "hash": "sha256-RzeMneezx/FMOm6cVoFv0xyGdaiRUdx1OiRMBsQo5f4="
+    },
+    "https://github.com/moraxyc/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/moraxyc/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "69071618cbf3563021849a6162576a864a7acffa",
+      "url": null,
+      "hash": "sha256-xkVaToGodr0k9OFW9/KKdv2xgnVDpxNks4CMKCMAfxI="
+    },
+    "https://github.com/moredhel/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/moredhel/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "0efec61d26ae2e84bf14fb4697e390cc971ca574",
+      "url": null,
+      "hash": "sha256-INPFZlW4kwk1hW+u5Q9dVnO7bvhK9esLX/Cin3bDM/E="
+    },
+    "https://github.com/mozilla/nixpkgs-mozilla": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/mozilla/nixpkgs-mozilla"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "e35b0e071cae97469d80222be988fdd972b22c3b",
+      "url": null,
+      "hash": "sha256-I7a6e3IYJAp9u3PwUSW1+oilO1tAfnbeN3/YJQ+ObCo="
+    },
+    "https://github.com/mpickering/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/mpickering/nur-packages"
+      },
+      "branch": "master",
+      "submodules": true,
+      "revision": "e14453d19ce02709513da067d4ebee6983f373b4",
+      "url": null,
+      "hash": "sha256-5dVMg52teNxVDPfdYVbVg7y4gF0JbTjEVcv7XtSqdzg="
+    },
+    "https://github.com/mrVanDalo/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/mrVanDalo/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "c7b6135617e50ab0bd9485fd46d7bb4245da41e9",
+      "url": null,
+      "hash": "sha256-+pKxUOLn6M1MvKccVzd7hatLbr05GABoAvAMjTyeHsU="
+    },
+    "https://github.com/mrcjkb/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/mrcjkb/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "ee55f1416d3cc0d2dae725ebcbdfe3ed80376c5d",
+      "url": null,
+      "hash": "sha256-AXnWuG40iCUVWsK0Xv/hFnsefbSTLy7cRav++rcr1G4="
+    },
+    "https://github.com/mrene/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/mrene/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "1eec91543281fd1e2c86c73c9aa185f333c1df42",
+      "url": null,
+      "hash": "sha256-+cpdN+c06Zwqhj54LydwohMhe+fPdixpDQbKtrq3f6A="
+    },
+    "https://github.com/mrtnvgr/nurpkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/mrtnvgr/nurpkgs"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "ee84fd8e01bc63c62ba5b6e6e122daf82e825e27",
+      "url": null,
+      "hash": "sha256-MLMT6AtvPbDKlJujZmStEbgqd63At6wmU5jAGksJp/8="
+    },
+    "https://github.com/mweinelt/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/mweinelt/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "ce964f21470ed455db9ce051d3e11838a292bbfc",
+      "url": null,
+      "hash": "sha256-BOKjD9DuSB5mRNG4JetI0yJCy9qPSS0qqbLtrjU96as="
+    },
+    "https://github.com/n1kolasM/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/n1kolasM/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "9e6c706e1e476f42aae9c8de0a676c3fca368a55",
+      "url": null,
+      "hash": "sha256-CKLSaCCYZORkB9LRyl0mUeZhh0fQ56pvQNobWK/0rr0="
+    },
+    "https://github.com/nagy/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/nagy/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "793a26694ad9e28d728666187312a1939a0d7edb",
+      "url": null,
+      "hash": "sha256-JXXbzLh4RYbI90yY9SvEMncip5v4x0uT7oXV5dF0VLQ="
+    },
+    "https://github.com/nasirhm/nasirhmpkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/nasirhm/nasirhmpkgs"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "92368d5911774f79c701e1a22eeb060a512473f5",
+      "url": null,
+      "hash": "sha256-n7SL2qMJsEfdQf90sc+FZBISTf16isWxoYNz3IUiMTY="
+    },
+    "https://github.com/natsukium/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/natsukium/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "e0b6afdc03f4a18dd98f3bd43dda5695c9601794",
+      "url": null,
+      "hash": "sha256-IolH0D2t8XLTEncVFQ4AA2vk+O4rq2bC1Yn6ognN0Jw="
+    },
+    "https://github.com/neXromancers/nixromancers": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/neXromancers/nixromancers"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "b8722c5dcd1ce3944cb9f6c55af7ac7f0c73707b",
+      "url": null,
+      "hash": "sha256-FKcmM+MzHLCds1xemY4aMZU2+8rpSbUGJDrG1k4RQj8="
+    },
+    "https://github.com/nerdypepper/npkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/nerdypepper/npkgs"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "846692540a379eb7849068d8fd3f550c8c7c045d",
+      "url": null,
+      "hash": "sha256-vkFYCMiBzjJOZIxHFVvkcVgSZB1TH6gubZk/eU3coH4="
+    },
+    "https://github.com/neumantm/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/neumantm/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "4dff6af4c1f99a5ad95d3cdee9a522e829289209",
+      "url": null,
+      "hash": "sha256-vv2UDnm7gQucF9GOqos6VCQjSqXTzXSGdG0rQTzsxUw="
+    },
+    "https://github.com/nginxinc/nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/nginxinc/nur"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "c661f1b4df13c3aeca3a51c802e09c64f774a8ca",
+      "url": null,
+      "hash": "sha256-xUbSzmYnlw3EMMpdMStzCPN+wWQPdJUN0kI9G1cXuWU="
+    },
+    "https://github.com/nikolaizombie1/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/nikolaizombie1/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "0a588a984eea4428f6240dd52115a70cd25c2965",
+      "url": null,
+      "hash": "sha256-AUZkMDqvX+qYkOV2zZv1umNwKu0WvyZnV0JMuutpk5o="
+    },
+    "https://github.com/nikp123/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/nikp123/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "2c613bd4d8638c03f5675940e255f51a8b798b70",
+      "url": null,
+      "hash": "sha256-0aCBvnYDRyc82PR0DPOlz/SrPIQE83jj3bJE4gJI1CY="
+    },
+    "https://github.com/nim65s/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/nim65s/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "bd5158e99c45236370c13c618794767454b6c9da",
+      "url": null,
+      "hash": "sha256-CrGgQe0rTUbdbEayuRECD7Q8SAHVXjsubYwHPy/isEE="
+    },
+    "https://github.com/nl-tch/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/nl-tch/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "9767b88837202b4b07f18767ed99d17e3a85dbf2",
+      "url": null,
+      "hash": "sha256-pihTP1V1QVSVQ/U8XV8rPX26oANtketQU5BJ7JPsIvo="
+    },
+    "https://github.com/novafacing/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/novafacing/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "70cc8d73136ca8cc72bfc921bb16a20080507ae5",
+      "url": null,
+      "hash": "sha256-NoPeM9c/xzC3cSvvv5ba6dLZPmt5XhhAkfue+WEginY="
+    },
+    "https://github.com/novel2430/MyNUR": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/novel2430/MyNUR"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "9462ebcd8fcc59b61bd94fe0ae4b7f2e57c26df1",
+      "url": null,
+      "hash": "sha256-4Ht764WdI8acxe5yTyHk4BeIrHSQrAHs+v20mCHyCiA="
+    },
+    "https://github.com/nprindle/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/nprindle/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "cc3d49bf460f11c487aa4cfca61aa5077e0ebd68",
+      "url": null,
+      "hash": "sha256-Nk51hpVfbeIJXbi8hCn0lFdQ5OSQW20OieZNg52L7eI="
+    },
+    "https://github.com/nuclear06/NUR": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/nuclear06/NUR"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "d40ee9a7d2416ee5dcf52ebd879d5476c802db95",
+      "url": null,
+      "hash": "sha256-xJOaHEEHt12QEczp4jaUB+y9H/o/kl03DW4TvBKhkwY="
+    },
+    "https://github.com/nukdokplex/nix-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/nukdokplex/nix-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "c49975fcff3ee91ccc4133519b78ae4293053b17",
+      "url": null,
+      "hash": "sha256-35HeUxaEoAHdiprOUABbwy/Lur2Fph0ZIkSwZRg5jWE="
+    },
+    "https://github.com/nykma/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/nykma/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "2535d668ba0e742009de1a96d04b7040a381762e",
+      "url": null,
+      "hash": "sha256-RERYvyukwaSS5ftIfCyelEymLmQtBZJd8NbeieHkTTw="
+    },
+    "https://github.com/oar-team/nur-kapack": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/oar-team/nur-kapack"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "396383bd4789c3dc75cd8562ffd49ff904de20e0",
+      "url": null,
+      "hash": "sha256-QyCKqzAyNYXGar8DoDi/Knil/ZbfB7oEJT6PsG+hbHg="
+    },
+    "https://github.com/ocfox/nur-pkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/ocfox/nur-pkgs"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "a094f509303d0f5f0d9a1a867435fae4c3cadf8f",
+      "url": null,
+      "hash": "sha256-26BzFgDxR0XVET/686VYNobmL40UWKkiRx7uE5HPQLU="
+    },
+    "https://github.com/oluceps/nixos-config": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/oluceps/nixos-config"
+      },
+      "branch": "trival",
+      "submodules": false,
+      "revision": "7d92a535e8e027e3f1a4afb9644f3cf03e00a95f",
+      "url": null,
+      "hash": "sha256-9oNdJaXXpR4Qyh3OqRsgeKttaRVvMsbxF71P4nxvFFI="
+    },
+    "https://github.com/ondt/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/ondt/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "53fc0e8fbc374eed1ac83960934729c22726d5aa",
+      "url": null,
+      "hash": "sha256-CmsO3i6yqPcWXXG4nTx9GVfbKIYR0/hFdZK1CYYP5tg="
+    },
+    "https://github.com/onemoresuza/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/onemoresuza/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "a5f4bbd8aaeba5627661d97502380943431efef3",
+      "url": null,
+      "hash": "sha256-IBvmVDfY9ITVwn5ACsiiOh48O4nkjOQRu4XXKcA2//A="
+    },
+    "https://github.com/ossareh/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/ossareh/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "07763f3e03f50100fdfb0eadf7fa101bbf731139",
+      "url": null,
+      "hash": "sha256-QK2u+H56B0IuGsA+Qg5XrN3eW/sv9HkSmEkh2rTWprA="
+    },
+    "https://github.com/otevrenamesta/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/otevrenamesta/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "67e3db0fea9fe3f54b65ec1ddac5b018f99662b2",
+      "url": null,
+      "hash": "sha256-aFg/zTxWYXgaFWWmBi3I2RRDnbJfjNN5EEQ7D6O3QTk="
+    },
+    "https://github.com/ouzu/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/ouzu/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "613fc72a385de48d4672461d29241e54ff80e41e",
+      "url": null,
+      "hash": "sha256-NdWHNbHJw9V2oIYtr0ho5YGbxgP8qP/yRy9OY6XZ/O0="
+    },
+    "https://github.com/p3psi-boo/p3psi-nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/p3psi-boo/p3psi-nur"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "619c9af3bd3e1b444d25ed14e84ccb03df6ad1c1",
+      "url": null,
+      "hash": "sha256-lwksnB48uo+gN3z+87y0qHVA3zSE75A5FBX8E+U/z6s="
+    },
+    "https://github.com/paladhammika/dur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/paladhammika/dur"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "25e604f3bcc9b30de56109818091ce4baf4b2957",
+      "url": null,
+      "hash": "sha256-s7Vn5u5TsUxI5ZOhAmFmXFxC1tVKF0qzReetsRn3b3c="
+    },
+    "https://github.com/pborzenkov/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/pborzenkov/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "9d0b4dfae1598436e261fe674a8e4a7ef04579ca",
+      "url": null,
+      "hash": "sha256-t3n5DjSO1FWiDvf88uDaOSgtD+jewji9EmgPUXCUlpY="
+    },
+    "https://github.com/peel/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/peel/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "edca34098808717772878ea0ba0e1bc6f0b736ed",
+      "url": null,
+      "hash": "sha256-ZsrPrn9J7CgVbUmSGsU0+l9jZVB78BfyjaOzsBUh8iA="
+    },
+    "https://github.com/phandox/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/phandox/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "6e25d3f291a72e72b2b6fc1aedeb05428bf06467",
+      "url": null,
+      "hash": "sha256-Gow/nuuwdI0nEG1Yl/Vrd67M2nThdBpKcBtyNSp9w+8="
+    },
+    "https://github.com/piegamesde/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/piegamesde/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "450f52069faa973af82220bc22ffd611455df2a4",
+      "url": null,
+      "hash": "sha256-ywphAwTKpKZUO8HlZtWyIQM0usYR91GuE5IMmmT01RM="
+    },
+    "https://github.com/piensa/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/piensa/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "1cd5f5928ed2a643e10d065adff0822371cbf4bc",
+      "url": null,
+      "hash": "sha256-b9unhOUUSvIDX63CjN2JN9wWPR3gO6HXFpXsOkKcPcs="
+    },
+    "https://github.com/pillowtrucker/tooo000oooot": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/pillowtrucker/tooo000oooot"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "9256cfa05731576a700b0dcb5d160eb74a4bfd55",
+      "url": null,
+      "hash": "sha256-NV6ENK8rmAN4JIGZub2ZFpsGa8I8MDWNb7e+oNRFpUA="
+    },
+    "https://github.com/plabadens/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/plabadens/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "2a6b1ae0a837a9ff5aa9891699546adcfb4c7080",
+      "url": null,
+      "hash": "sha256-rtRiPYkVU5w7BRw2+q1hJ5t3HxPuRrTY73of9kZwabI="
+    },
+    "https://github.com/pniedzwiedzinski/pnpkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/pniedzwiedzinski/pnpkgs"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "06b78a6d42bd0f2d0cc1adccbe7d0e40214e46d1",
+      "url": null,
+      "hash": "sha256-iKqxHod6IbIRYkdlMQNWnQAwZUK3UK8cmwtGch4TMeE="
+    },
+    "https://github.com/pokon548/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/pokon548/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "d5acde66b0f5e9a158dc2c0dab3345240792dd6b",
+      "url": null,
+      "hash": "sha256-lLG3O4FzN76Z0DwzzLzktIK2wZSz+kU5s6bphtW/B30="
+    },
+    "https://github.com/presto8/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/presto8/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "69bc0eedda1134fbde26fc323cdeb0db11405d6c",
+      "url": null,
+      "hash": "sha256-3sgzf7hI+0lkST6ihj+pdEQwBR/c8xpcCpo+N0b/my8="
+    },
+    "https://github.com/pschuprikov/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/pschuprikov/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "eb30265f021689f98257982b2d2335a95c9240eb",
+      "url": null,
+      "hash": "sha256-G/StI40OXWNAN8sj5NEp5vuE3DlbiTfNeTrU9EPb6Kc="
+    },
+    "https://github.com/psiquo/nur-derivations": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/psiquo/nur-derivations"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "ed0e4e4ebee0051a581c6bd7d0332b19d7ef274c",
+      "url": null,
+      "hash": "sha256-gzJTn7TlZxuK/7CC31Q7gzz47pT0wXuh9NYepVMaJy0="
+    },
+    "https://github.com/qenya/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/qenya/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "f52dcae4c2b4c03f6f5bf87872071cbfc66a0958",
+      "url": null,
+      "hash": "sha256-G5LqBU31mowryIYOX3IIAMKmggmUpO0U75BV2syOkRo="
+    },
+    "https://github.com/qwbarch/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/qwbarch/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "d25c6522d720e02be08fd358e7e493dbe0493096",
+      "url": null,
+      "hash": "sha256-Xx+Awy8OI6+wieNo9ZjResARc91qgaXASGEpHDTnU2o="
+    },
+    "https://github.com/raizyr/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/raizyr/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "f7c7f9ba5d1e64a53a1b75f133968ef143a86bca",
+      "url": null,
+      "hash": "sha256-xTS+MtahtOfSXRkw7a9MtTl3SomIXzY62leLdpkepFI="
+    },
+    "https://github.com/reDpz/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/reDpz/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "f92f24ed3de8341d4b5f7063b52743641b90d6c5",
+      "url": null,
+      "hash": "sha256-mZAehMd01qoERsxtkQH8ZpW36rQE3zy+h1Vq5a1jMfk="
+    },
+    "https://github.com/reedrw/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/reedrw/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "62ec6d600039ccc0b68df137321be1eeae92c5fa",
+      "url": null,
+      "hash": "sha256-TxHOIIg3KIsHCCscathQyOu8piXxjZd9915SZfw16pY="
+    },
+    "https://github.com/rencire/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/rencire/nur-packages"
+      },
+      "branch": "master",
+      "submodules": true,
+      "revision": "6e4feeb6e6419c7a350f93d7034c0107a3edcee6",
+      "url": null,
+      "hash": "sha256-wMIKZfrLL/z3wdstoguy/6VUUsWp/pokY0kG1V/EMU0="
+    },
+    "https://github.com/renesat/nur-renesat": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/renesat/nur-renesat"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "b76a05ce0fc7977ed4c614f2f25f4e9b3ae3bd16",
+      "url": null,
+      "hash": "sha256-j1sDfRkLg0oHvDWnfj4tntCHWLYoEiIRmxPNv0SmSio="
+    },
+    "https://github.com/rewardenv/nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/rewardenv/nur"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "30dccab58a88ebc3d3e65171dca36ac8ebb694c9",
+      "url": null,
+      "hash": "sha256-/La2gGrT5svbI4qX4bXHQrHziJgCy6BFZo3KpPQqHfk="
+    },
+    "https://github.com/robertodr/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/robertodr/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "42c30c742c16de61c7817c13fc7657951f57a8d4",
+      "url": null,
+      "hash": "sha256-cLolnrPro2kSaMG7y6/UfT/cLJ6prxcBOfjrPYBxD+s="
+    },
+    "https://github.com/robinovitch61/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/robinovitch61/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "9367cdb41a75e631c09032a4de1a15fb4be2af55",
+      "url": null,
+      "hash": "sha256-fhiZ95ev49lcG1OPDeIOyC3RPdZXwL9RCeysJrzVGl0="
+    },
+    "https://github.com/rse-ops/nix": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/rse-ops/nix"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "2b06173269eb3e67bbbc56188583f8858d57433c",
+      "url": null,
+      "hash": "sha256-y0Oy+f1k3PAyOZHZpC4W2vu9gqrziGNSXep2X55iR4M="
+    },
+    "https://github.com/running-grass/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/running-grass/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "7ee536d7593dd8cd518e78b78dd5eea97907c4dc",
+      "url": null,
+      "hash": "sha256-Tk2emQRfQ7ec5Lso85awPy6/M5LaSjjJpQmXDvMfPcA="
+    },
+    "https://github.com/ryan4yin/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/ryan4yin/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "357e602f757cf194a296e080ed25e0669133a3c2",
+      "url": null,
+      "hash": "sha256-pfwY5/wHXmYcYRTnajJcxSe8yhMwL6gi2iWsKdrKec4="
+    },
+    "https://github.com/sagikazarmark/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/sagikazarmark/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "97517474832d0541df6cd61aeabafb402b3e307e",
+      "url": null,
+      "hash": "sha256-E34HAnMZZyJmpIAY8CGY68Vo9WvXHT9LQGHk68r6cwg="
+    },
+    "https://github.com/schmittlauch/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/schmittlauch/nur-packages"
+      },
+      "branch": "mainline",
+      "submodules": false,
+      "revision": "6f4739cf5cc00030001ee3792b60f2003b12083d",
+      "url": null,
+      "hash": "sha256-CNAJn9s0Woy3JTi+iFEPwYjR2aIkMCqfMMRx976miZA="
+    },
+    "https://github.com/sehqlr/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/sehqlr/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "a907d055117cae96ebd5f626827803be52dfc272",
+      "url": null,
+      "hash": "sha256-CaWEhJzbiY19upbk75zuTSJH2m9IONbOKIIsC2O1Kds="
+    },
+    "https://github.com/sigprof/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/sigprof/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "c8f5d9e559b187c00035a68f6783b629975f106e",
+      "url": null,
+      "hash": "sha256-9uRBKTnnQuykOR54PVIsDbvBo/cNNtISOr9KJAvhJhw="
+    },
+    "https://github.com/sikmir/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/sikmir/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "634e39fe6600f9d1c9ad5bedc0607a5beacd005b",
+      "url": null,
+      "hash": "sha256-Hk9WDLTISawPh5Aa2ieEioSot9tFBw4Ll4gMO5l5IFk="
+    },
+    "https://github.com/sinofp/nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/sinofp/nur"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "f0146899dd98c5ddda5b535998339ea038837939",
+      "url": null,
+      "hash": "sha256-QJWXdNHbjmcKfdN8vgf+r8KhXFe0kr6EBvR00kM7R6A="
+    },
+    "https://github.com/skiletro/nur-repo": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/skiletro/nur-repo"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "1a5d6240ba99c12416cad4ef9efa0da54c2ac0b5",
+      "url": null,
+      "hash": "sha256-dYPvmT8gnCPgqTCQSnDh88wEn26c1mbV1Hnl8lgBb3w="
+    },
+    "https://github.com/slaier/nixos-config": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/slaier/nixos-config"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "da6bf1c280cd44075f7bcbd13ff0fd490808a525",
+      "url": null,
+      "hash": "sha256-S81NwxZgzdftZlvz7n0o2/yvkbfnFsKiatIncJEp+UY="
+    },
+    "https://github.com/smaret/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/smaret/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "4e6f719d1c2cff0cfdc03f125b9f518fd7204059",
+      "url": null,
+      "hash": "sha256-c+RH/on4+Uzf9kjI25gZPDrakV9lBx0F+SqRhFPE694="
+    },
+    "https://github.com/sn0wm1x/ur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/sn0wm1x/ur"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "c7bd34c2d79d8d385d56778cc532f9e2243b89cf",
+      "url": null,
+      "hash": "sha256-rQfQSNexcQQIgOoatAsLaNv1Vu2Fb3uDaX1wrZUx/go="
+    },
+    "https://github.com/sondr3/nix-expressions": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/sondr3/nix-expressions"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "af1c3aa32d95f54ae0e4052d1b2d46138c0ac0df",
+      "url": null,
+      "hash": "sha256-EVvcqUlCBg+Ox08XdVV8Rr7kjcEntr4ApGS9i8fyz/E="
+    },
+    "https://github.com/souxd/souxd-nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/souxd/souxd-nur"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "ae6a876526fa1737bfd88f927f122f507b85ae6b",
+      "url": null,
+      "hash": "sha256-uPr4aAWUgJGCqjpQB0WAun4noVcTzi34q8Puv+9zgNU="
+    },
+    "https://github.com/spitzeqc/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/spitzeqc/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "d841fe5c7f41b7ea39d12650c52a8aaf425e924f",
+      "url": null,
+      "hash": "sha256-fcY+2T2AcIo9Gq2Xda3suBheYcpdyS4z14ik5jsrFVo="
+    },
+    "https://github.com/splintah/nurpkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/splintah/nurpkgs"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "66d64acf2ff19633209c765b76884d9d61b2d33c",
+      "url": null,
+      "hash": "sha256-b0WBzqR56/NnUTGurzSBrrNkWGCDtf/hBua1oiDxwWA="
+    },
+    "https://github.com/stigtsp/nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/stigtsp/nur"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "89b0726d252e36cb5130d45a8312f6f96639bcc3",
+      "url": null,
+      "hash": "sha256-pm6iiQZQp1rkbdM70GHMObOy20iCHSMwtfF+52D2BPU="
+    },
+    "https://github.com/suhr/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/suhr/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "06541361bb602f4db90a2811b5074202764c3d60",
+      "url": null,
+      "hash": "sha256-5Zcq1WodN3Nn44Q2tNYABfhtc4PK9Ey4DrZxOR0YeX0="
+    },
+    "https://github.com/syberant/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/syberant/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "c0b1a823454b9858b890e7ab25301cbc4f447305",
+      "url": null,
+      "hash": "sha256-VdyJGvSmiNeMSG0JPYRIuPIdA2OuoxE2Zm+G0de3SVk="
+    },
+    "https://github.com/tarantoj/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/tarantoj/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "b411ff97440fb5c9c24abe581412750352316297",
+      "url": null,
+      "hash": "sha256-vX8fWAx/j6uE35RiU5Y2X8PhQJVgYthzp8IINEA/RJY="
+    },
+    "https://github.com/tehplague/NUR": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/tehplague/NUR"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "97f448fc6dc44a4c5fc9045f70cef342abd3e741",
+      "url": null,
+      "hash": "sha256-GLSaIcMed3+BUYz7Z69FV+fDSd6Rkvqv5qvLUQQ/r7M="
+    },
+    "https://github.com/tilpner/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/tilpner/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "efccb862d0a95908ea88b4ba2fe183fd6d55daae",
+      "url": null,
+      "hash": "sha256-LuX/UIslH8txyHxh/WvWmykZc6yRhidGZOWLSZBXkmI="
+    },
+    "https://github.com/timsueberkrueb/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/timsueberkrueb/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "fa6a343b2d6b0bc2e6779fb600b06ee6076d386a",
+      "url": null,
+      "hash": "sha256-iSTHYqfAR/JJjU2hABIzNmw7YWbn1rcud34bMupwxT8="
+    },
+    "https://github.com/tinybeachthor/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/tinybeachthor/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "970dc2037016d2640594ad8a85cdca9adf3ef6f0",
+      "url": null,
+      "hash": "sha256-58lUKS8SZdeU6GmFIDv6uMqi3nOAw2tJOWG3s+96kaI="
+    },
+    "https://github.com/tokudan/nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/tokudan/nur"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "6a6e1897ee5993edf631311f3ad301f98f3203ba",
+      "url": null,
+      "hash": "sha256-h79bcXBLcRaGYwXI1XLi5WnzcqAjiTCsEtcyqYBU63g="
+    },
+    "https://github.com/tomberek/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/tomberek/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "60a99b59d1a8cef6fde1fb635e502ea3a96b8aa7",
+      "url": null,
+      "hash": "sha256-jy2+RXEY7spR11ncEK2pBraM40a/vrqRHaajjTndvWM="
+    },
+    "https://github.com/tomodachi94/nur-ftbwiki": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/tomodachi94/nur-ftbwiki"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "8cc74e91cf9f4f100d4e5b45634bda4e72e6b37a",
+      "url": null,
+      "hash": "sha256-q18P+y2FFogWwc5VWb6ljJO+wnJA699ALZOiB4xdsvA="
+    },
+    "https://github.com/toonn/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/toonn/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "6fea2bfd638322777a2acf4d9ced8898de498cba",
+      "url": null,
+      "hash": "sha256-UYjFhXsi12WwKE98vww6HWd61lZK1KRTaxGhia8JhkE="
+    },
+    "https://github.com/tox-rs/nur-tox": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/tox-rs/nur-tox"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "4e7ae501331e081f1679e657bbe9d6067f179db5",
+      "url": null,
+      "hash": "sha256-YhkDCAbKQ+AYngEmF7g9fNA3BQ2BCaZVYoHQPAKw7KE="
+    },
+    "https://github.com/trevorriles/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/trevorriles/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "f45e5a2ab2f29c9b7e7eee6c62289db755545329",
+      "url": null,
+      "hash": "sha256-UIgr3Sdp5AEzb58LjSfW19rUNsMzL7U/NSeyYnsdZd8="
+    },
+    "https://github.com/tuckershea/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/tuckershea/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "b84a14a912fb97e66ba32660ae645f9747197bf7",
+      "url": null,
+      "hash": "sha256-fTjSgPKu3eL3jPskzzW8Zbdeo2j+iD6E0nkxAQEQjHI="
+    },
+    "https://github.com/uleenucks/nurpkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/uleenucks/nurpkgs"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "2e0c90538f4eb161fdab76d0d71301d1c7040833",
+      "url": null,
+      "hash": "sha256-dLIs0d0QXfonkOZZiP7zn3Ych1V6JqtNKv9yp0NBAwg="
+    },
+    "https://github.com/uniquepointer/nur-babies": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/uniquepointer/nur-babies"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "a7e51776a6a9da246fbb19a9f0a7beb87e6c5429",
+      "url": null,
+      "hash": "sha256-WYf04gjri4DgVpkD6UwcqKTjjlbVXU5OGf+Yg9Lv9JY="
+    },
+    "https://github.com/utybo/NUR": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/utybo/NUR"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "c9c42cef37babfaa1f367872949789e9b8be2a8b",
+      "url": null,
+      "hash": "sha256-ckvFCbpTQl1MeJtee964RSLxEWRVq5YoJ8jcfhw1jGg="
+    },
+    "https://github.com/vifino/nix-geht": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/vifino/nix-geht"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "c8e4b7d22810a77e3cd5c4f69b8b517fc66b47e8",
+      "url": null,
+      "hash": "sha256-nuXc+/k/JCdN3mQX/tgNheh/Y7FRKRh7/mMvEKj0D1E="
+    },
+    "https://github.com/vroad/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/vroad/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "069b8e15aad2424f528c8a5a205464bc302214ba",
+      "url": null,
+      "hash": "sha256-dGVNrO6Io61TgUnEtbZSr4tN0CYT3sB2mhjG12KKrk8="
+    },
+    "https://github.com/vsoch/nix": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/vsoch/nix"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "74f02d9d4e7ad855eff7c04af225ac966dc51c49",
+      "url": null,
+      "hash": "sha256-K1oSjA/yJ5u2mQGm2UY8pqN6SWnOGWXQaUn1l/Bw96Y="
+    },
+    "https://github.com/wamserma/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/wamserma/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "0647a5813222a9c0fc043ac38bdf4eb3870459e6",
+      "url": null,
+      "hash": "sha256-dXB1OGa8eAX6szInRW6soEc50XVvH2jvKsN/JXsSEAs="
+    },
+    "https://github.com/weirdrock/weirdpkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/weirdrock/weirdpkgs"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "fb9d8904f8b75d9c4c183002c8ccd578eb9e584e",
+      "url": null,
+      "hash": "sha256-LbQq40LGNF+7/+h2MUph2WuYfoeQPRfp+yUtT47WnR0="
+    },
+    "https://github.com/wenjinnn/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/wenjinnn/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "4d6c5a9181ae287871a952ddfec631523e66b595",
+      "url": null,
+      "hash": "sha256-yir5l/sItD9w5pmEcHvACbQfT5Ee0GMay6HOyX5TDgs="
+    },
+    "https://github.com/whs/nix": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/whs/nix"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "be8012be37e795e63a4428d2959f98eae59e3459",
+      "url": null,
+      "hash": "sha256-ldLXNuhnqdV3Xzac6IcxCkvU98ruGP3Dgtbyu/Dsvag="
+    },
+    "https://github.com/willbou1/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/willbou1/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "1ca30408d65b465db05e46fb51dcd1fa47001410",
+      "url": null,
+      "hash": "sha256-dDhH6m08Ty+OetD/OLlXsKGM5csIrY0c+4CgNinOEkc="
+    },
+    "https://github.com/wineee/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/wineee/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "a3b739166624f1ddcc6001e490acbd3133703b1b",
+      "url": null,
+      "hash": "sha256-P2z978DpjynOHyHW+kpLGkIYmE3W6FoSfCCX8bf9v3U="
+    },
+    "https://github.com/wingej0/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/wingej0/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "a2b5bfec714a9c4221bcc37fa360a62dd396ac8d",
+      "url": null,
+      "hash": "sha256-Qnb0N0EpSrr52Tl55/WpGnViaGJeBVTX3h0Rm4Tc7uo="
+    },
+    "https://github.com/wrvsrx/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/wrvsrx/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "cd1490a8c115a71f0af03faa1f4932ae9c4d24ce",
+      "url": null,
+      "hash": "sha256-jRbSgGKBa0vfUxxR8xMqx9y22jBjA6p0qo9Rtn6nUH0="
+    },
+    "https://github.com/wwmoraes/nurpkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/wwmoraes/nurpkgs"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "1c01816dc289b2ed500ba943ef277f553e8515a2",
+      "url": null,
+      "hash": "sha256-2TieqVztiY/pwdRf2zwJB8Xzj8+bzjLoxqSw4P/1QLQ="
+    },
+    "https://github.com/wyzdwdz/nur-pkgs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/wyzdwdz/nur-pkgs"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "377e76cb6aeb37fc7148939d55a6268fc14e7839",
+      "url": null,
+      "hash": "sha256-iIjrtPrcRIu06LM+OBaGFW/mBZlTW0ii8hYz2ixCGZw="
+    },
+    "https://github.com/xddxdd/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/xddxdd/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "493f15ccdca9bce25a4cfce270329748546bb977",
+      "url": null,
+      "hash": "sha256-HD1oB4h035jsJ6araMenvFWtgYmCi4EWWBli5LF05Bo="
+    },
+    "https://github.com/xeals/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/xeals/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "de4bb6a60e21cb572ba9e6f72e1ceeb4cf567864",
+      "url": null,
+      "hash": "sha256-MSk75wAl8rqPQufi7cPZkSGEQhMeCssi64pA4GJ6pS0="
+    },
+    "https://github.com/xfix/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/xfix/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "2ecb953b6434112bac5e3ecbdbc2388fd274dd7d",
+      "url": null,
+      "hash": "sha256-yufGp0N4AAGJl9eHA4dqQ7WPAV6mcG+xn7mJbAlrnZQ="
+    },
+    "https://github.com/yellowonion/nur-bcachefs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/yellowonion/nur-bcachefs"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "8463c32cc2cbc3b16a2dd9470529d01b959cb95d",
+      "url": null,
+      "hash": "sha256-wsh0lDjhFm4Bd2uDkjS1B7f9Nua/x1MwHlbBb2NTmSM="
+    },
+    "https://github.com/ymstnt/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/ymstnt/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "a4567ab59c8e14409c9c5c833275a49c44490e4f",
+      "url": null,
+      "hash": "sha256-EJ1vpXvZOae86UM9lcrb7+EYYXR9JF3211P/vToGf1A="
+    },
+    "https://github.com/ysndr/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/ysndr/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "2e1ad348d4b9d0b6fd6032ff16a0f9434cf980cf",
+      "url": null,
+      "hash": "sha256-ynfwwn0wCMDEsq4Rw575naoNBFe+8foAzngezJDU2bU="
+    },
+    "https://github.com/zachcoyle/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/zachcoyle/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "66ba6f17671597ca02f27c74ac274b9ac2c8d015",
+      "url": null,
+      "hash": "sha256-MumBIl5c17KKhoxaHaCE/C3zcg9L1sFG9jBa9Y8nbsQ="
+    },
+    "https://github.com/zimeg/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/zimeg/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "41e364abdfa395c5116bee9c238bba36ce0e43d8",
+      "url": null,
+      "hash": "sha256-KmnZgh3zBor8O3FQgBk6p1rVuKwZ5jQkLBQt8KkWRWg="
+    },
+    "https://github.com/zsien/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/zsien/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "6bf17b0f56cc5c198203b59ab886f11042296c68",
+      "url": null,
+      "hash": "sha256-h5LKnTGNd6wtiLEFkyFysh/WVCDPpfgcDGs1Ppm5oEk="
+    },
+    "https://github.com/zzzsyyy/flakes": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/zzzsyyy/flakes"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "2f90a74892cc8bbc04560c951c4e64ce52f659d0",
+      "url": null,
+      "hash": "sha256-fBN8R2OnqNxslyeBqCnex4ZWeElRJxvUMdpSJcEiD3w="
+    },
+    "https://gitlab.com/AlwinB/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://gitlab.com/AlwinB/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "c5a34056ce61e8a4c48f33812512712dff20ce4c",
+      "url": null,
+      "hash": "sha256-Y5AW3j2UxmXIMz0HENYwpP7/mxmMxPTwJ82TPYcOUBA="
+    },
+    "https://gitlab.com/jjhr/nur": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://gitlab.com/jjhr/nur"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "2d56fca7c3c64e8b82cca1b208fd9ed75bd1c0f1",
+      "url": null,
+      "hash": "sha256-jOnslkt/nMKsDD59+JdFX7Jhs4cVWTBjAYl987TgGMY="
+    },
+    "https://gitlab.com/jomik/nur-expressions": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://gitlab.com/jomik/nur-expressions"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "dd2803ccca8783fa0f8fd57480f647d7dc1bebbe",
+      "url": null,
+      "hash": "sha256-+CS3xgAwqpJl6v+RUp/uD8nLRBnALhvwk8vXRzRREPk="
+    },
+    "https://gitlab.com/kira-bruneau/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://gitlab.com/kira-bruneau/nur-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "4ae39ca5902152f5dc73a35de4193e1f875b2bb6",
+      "url": null,
+      "hash": "sha256-/6nQfpI3aaD+wwPZJIOyBlzuPZfLjtzYtZvSvcxwlGI="
+    },
+    "https://gitlab.com/rconan/nix-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://gitlab.com/rconan/nix-packages"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "5c760a4f0e3e6fce384327c9d3a3a21fd4c8768b",
+      "url": null,
+      "hash": "sha256-bhA2VsitzILlQa6iJ+iDHoE9aa3wSz5yZtHULO6QBXc="
+    },
+    "https://gitlab.com/repos-holder/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://gitlab.com/repos-holder/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "ebe338940e38a51d4bccc5674055acab3b7ca7ad",
+      "url": null,
+      "hash": "sha256-l8svWmPr0Hhc6TjoM+jLO/+Iz0qHnIWJeufSwA1NvNo="
+    },
+    "https://gitlab.com/rummik/nixos/nur-packages": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://gitlab.com/rummik/nixos/nur-packages"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "1959186c289a3b7a110e89dad51de768134f3246",
+      "url": null,
+      "hash": "sha256-QVTlC/s7QsUfntUjlJU3r/0XQ6iRwZMvec7cYEJbVUg="
+    },
+    "https://gitlab.com/rycee/nur-expressions": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://gitlab.com/rycee/nur-expressions"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "d74460da63a8c08a69a1f143b04f2ab1a6b2f5c2",
+      "url": null,
+      "hash": "sha256-dAhrL+gEjNN5U/Sosy7IrX0Y0qPA0U7Gp9TBhqEliNU="
+    },
+    "https://gitlab.com/vdemeester/home": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://gitlab.com/vdemeester/home"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "d65d01c56ba2efbbf4137e67684b6e8e5b651785",
+      "url": null,
+      "hash": "sha256-B7mtiayfy9gVIFBHlxPb7jY6ZuUAvJeYXd+NEhmzdVY="
+    },
+    "https://gricad-gitlab.univ-grenoble-alpes.fr/Projets-INFO4/18-19/19/code": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://gricad-gitlab.univ-grenoble-alpes.fr/Projets-INFO4/18-19/19/code"
+      },
+      "branch": "master",
+      "submodules": false,
+      "revision": "8e7468efbb7fc13e0c4ccf7e2fd64f5106012301",
+      "url": null,
+      "hash": "sha256-4THOyJLRgDecvMNGE805G9rKE2ySr+rQ3Yf+gYYcUyA="
+    },
+    "https://tildegit.org/petrichor/nixexprs": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://tildegit.org/petrichor/nixexprs"
+      },
+      "branch": "main",
+      "submodules": false,
+      "revision": "2cd70bfaad955253db9acc4efaaaa0cbdcd12b99",
+      "url": null,
+      "hash": "sha256-cedmBetOah1mHr+EtSjP299VIfTyASAfxOOoqN9/YVk="
+    }
+  },
+  "version": 6
+}

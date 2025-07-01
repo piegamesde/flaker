@@ -6,33 +6,17 @@ let
   nixA = null;
   nixB = null;
 in
+assert nixA != null;
+assert nixB != null;
 rec {
   flaker = pkgs.callPackage ./flaker.nix { };
 
-  sources = builtins.scopedImport {
-    builtins = builtins // {
-      fromJSON = _: builtins.fromJSON (builtins.readFile ./test.json);
-      fetchTarball = { url, sha256 }: pkgs.fetchzip { inherit url sha256; };
-      fetchurl = { url, sha256 }: pkgs.fetchurl { inherit url sha256; };
-      fetchGit =
-        {
-          url,
-          submodules,
-          rev,
-          name,
-          narHash,
-        }:
-        pkgs.fetchgit {
-          inherit url rev name;
-          fetchSubmodules = submodules;
-          hash = narHash;
-        };
-    };
-  } ./npins/default.nix;
+  # Call all pins with a Nixpkgs to make them proper derivations
+  sources = lib.mapAttrs (_: pin: pin { inherit pkgs; }) (import ./npins { input = ./test.json; });
 
   reports = lib.mapAttrs (
     name: pin:
-    pkgs.stdenv.mkDerivation {
+    pkgs.stdenvNoCC.mkDerivation {
       inherit name;
       src = pin.outPath;
       buildInputs = [
@@ -47,14 +31,8 @@ rec {
     }
   ) sources;
 
-  reports-combined = pkgs.stdenv.mkDerivation {
+  reports-combined = pkgs.linkFarm "report-combined" {
     # ./pin1, ./pin2, ...
-    srcs = builtins.attrValues reports;
-    sourceRoot = ".";
-
-    buildPhase = ''
-      jq "[.]" * -o report-combined.json
-    '';
-    installPhase = "cp report-combined.json $out";
+    paths = reports;
   };
 }

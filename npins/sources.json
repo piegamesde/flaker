@@ -10,14 +10,14 @@
       "type": "Git",
       "repository": {
         "type": "GitHub",
-        "owner": "andir",
+        "owner": "piegamesde",
         "repo": "npins"
       },
-      "branch": "master",
+      "branch": "dev",
       "submodules": false,
-      "revision": "233a758651aa6f7027cdbcf98b92677c8ae0a901",
-      "url": "https://github.com/andir/npins/archive/233a758651aa6f7027cdbcf98b92677c8ae0a901.tar.gz",
-      "hash": "sha256-FcNAb8w9jK4e1kkDrlnjqyMxAVaxc1jOs7lxdf3hfzM="
+      "revision": "bf531fdb0360e49c62be47dc345079db2e98fa3e",
+      "url": "https://github.com/piegamesde/npins/archive/bf531fdb0360e49c62be47dc345079db2e98fa3e.tar.gz",
+      "hash": "sha256-+0g84WQBx0O7/vnPX6/VHzaJsoas5O4kmU+V9l8rv+Q="
     },
     "pre-commit-hooks.nix": {
       "type": "Git",
