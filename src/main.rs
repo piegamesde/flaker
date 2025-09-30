@@ -1,17 +1,29 @@
 mod diffing;
+mod errors;
 mod indexing;
 mod reporting;
 
+use crate::indexing::SourceSet;
 use crate::reporting::{report, ReportVerbosity};
-use clap::{Parser, Subcommand};
-use color_eyre::eyre::{eyre, Context, Result};
-use enumset::EnumSetType;
-use futures::Stream;
+use anyhow::Result;
+use clap::{Args, Parser};
+use enumset::EnumSet;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::PathBuf;
-use std::str::FromStr;
-use tracing::Instrument;
+
+#[derive(Args, Debug, Clone)]
+pub struct GithubOptions {
+    /// Authentification Token used to search github
+    #[arg(long)]
+    auth_token: Option<String>,
+    /// On which page to start the search
+    #[arg(long, default_value_t = 1)]
+    start_page: usize,
+    /// On which page to end early
+    #[arg(long)]
+    end_page: Option<usize>,
+}
 
 #[derive(Parser, Debug)]
 #[command(
@@ -27,9 +39,11 @@ enum Command {
     /// Build an index of repositories based on source sets
     BuildIndex {
         /// Which source sets to include.
-        /// Comma separated list. Available source sets: `nixpkgs`, `nur`, `github`
-        #[arg(long, default_value = "*")]
-        sources: String,
+        #[arg(long, value_enum)]
+        sources: Vec<SourceSet>,
+        #[command(flatten)]
+        github_options: GithubOptions,
+        /// Where to write the npins lock file
         #[arg()]
         out: PathBuf,
     },
@@ -52,8 +66,8 @@ enum Command {
     /// Default: auto (detailed with single file, summary for multiple
     Report {
         /// In which level of detail to print
-        #[arg(long, short, default_value = "")]
-        verbosity: String,
+        #[arg(long, short, value_enum, default_value = "auto")]
+        verbosity: ReportVerbosity,
         /// Path to the report file
         #[arg(num_args = 1..)]
         report_paths: Vec<PathBuf>,
@@ -65,7 +79,7 @@ async fn main() -> Result<()> {
     use tracing_subscriber::prelude::*;
     tracing_subscriber::registry()
         .with(tracing_subscriber::filter::LevelFilter::from_level(
-            tracing::Level::DEBUG,
+            tracing::Level::INFO,
         ))
         .with(
             tracing_subscriber::fmt::layer()
@@ -75,21 +89,18 @@ async fn main() -> Result<()> {
         .with(tracing_error::ErrorLayer::default())
         .init();
 
-    color_eyre::install()?;
-
     match Command::parse() {
-        Command::BuildIndex { sources, out } => {
-            use crate::indexing;
-            let sources = if sources.contains('*') {
-                enumset::EnumSet::all()
+        Command::BuildIndex {
+            sources,
+            github_options,
+            out,
+        } => {
+            let sources = if sources.len() == 0 {
+                EnumSet::all()
             } else {
-                sources
-                    .split(',')
-                    .map(indexing::SourceSet::from_str)
-                    .collect::<std::result::Result<_, ()>>()
-                    .map_err(move |()| eyre!("Invalid source set '{}'", sources))?
+                EnumSet::from_iter(sources)
             };
-            indexing::build_index(sources, out).await?;
+            indexing::build_index(sources, github_options, out).await?;
         }
         Command::NixParse {
             folder,
@@ -98,7 +109,7 @@ async fn main() -> Result<()> {
             output_file,
         } => {
             let result = diffing::diff_parsers(folder, nix_a, nix_b).await?;
-            let mut out_file_attempt = File::create(output_file);
+            let out_file_attempt = File::create(output_file);
             let mut out_file = out_file_attempt.unwrap_or_else(|e| {
                 tracing::error!("Error creating file; writing to ./report.json; {}", e);
                 File::create("./report.json").unwrap()
@@ -113,8 +124,6 @@ async fn main() -> Result<()> {
             verbosity,
             report_paths,
         } => {
-            let verbosity = ReportVerbosity::from_str(verbosity.as_str())
-                .map_err(move |()| eyre!("Invalid verbosity '{}'", verbosity))?;
             report(report_paths, verbosity)?;
         }
     }

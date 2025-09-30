@@ -1,7 +1,6 @@
 use crate::diffing::{Diff, DiffResult, Message, MessageOccurrences, Position};
-use crate::indexing::SourceSet;
-use crate::reporting::ReportVerbosity::{Auto, Detailed, Summary};
-use color_eyre::eyre::{eyre, Context, Result};
+use anyhow::Result;
+use clap::ValueEnum;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 use std::fs::File;
@@ -9,16 +8,17 @@ use std::io::Read;
 use std::path::PathBuf;
 use std::str::FromStr;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Default, ValueEnum)]
 pub enum ReportVerbosity {
     Summary,
     Detailed,
+    #[default]
     Auto,
 }
 
 impl FromStr for ReportVerbosity {
     type Err = ();
-    fn from_str(s: &str) -> std::result::Result<Self, ()> {
+    fn from_str(s: &str) -> Result<Self, ()> {
         match s {
             "summary" => Ok(ReportVerbosity::Summary),
             "detailed" => Ok(ReportVerbosity::Detailed),
@@ -58,7 +58,7 @@ impl Report {
     fn add(&mut self, diff_result: DiffResult, name: String) {
         let propagate_msg = |log: &mut MessageAnalysis, occ: MessageOccurrences| {
             for (msg, d) in occ {
-                let mut di = log
+                let di = log
                     .entry(msg.clone())
                     .or_insert(Default::default())
                     .entry(name.clone())
@@ -84,8 +84,8 @@ fn print_report(report: Report, verbosity: ReportVerbosity) {
             continue;
         }
         let content = match verbosity {
-            Summary => format!("{}", out_diffs.len()),
-            Detailed => format!("{:#?}", out_diffs),
+            ReportVerbosity::Summary => format!("{}", out_diffs.len()),
+            ReportVerbosity::Detailed => format!("{:#?}", out_diffs),
             _ => unreachable!(),
         };
         tracing::info!("\t|- \"{}\": {}", repo, content);
@@ -99,8 +99,10 @@ fn print_report(report: Report, verbosity: ReportVerbosity) {
             tracing::info!("\t|- `{}`:", msg);
             for (repo, diffs) in repo_info {
                 let content = match verbosity {
-                    Summary => format!("a: {} b: {}", diffs.result_a.len(), diffs.result_b.len()),
-                    Detailed => format!("{:#?}", diffs),
+                    ReportVerbosity::Summary => {
+                        format!("a: {} b: {}", diffs.result_a.len(), diffs.result_b.len())
+                    }
+                    ReportVerbosity::Detailed => format!("{:#?}", diffs),
                     _ => unreachable!(),
                 };
                 tracing::info!("\t|\t|- {}: {}", repo, content);
@@ -115,11 +117,11 @@ fn print_report(report: Report, verbosity: ReportVerbosity) {
 
 pub fn report(reports: Vec<PathBuf>, verbosity: ReportVerbosity) -> Result<()> {
     let verbosity = match verbosity {
-        Auto => {
+        ReportVerbosity::Auto => {
             if reports.len() == 1 {
-                Detailed
+                ReportVerbosity::Detailed
             } else {
-                Summary
+                ReportVerbosity::Summary
             }
         }
         v => v,
