@@ -1,10 +1,13 @@
 use anyhow::Result;
 use futures::StreamExt;
+use indicatif::ProgressStyle;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
 use std::process::Stdio;
 use tracing::Instrument;
+use tracing_indicatif::span_ext::IndicatifSpanExt;
+use walkdir::DirEntry;
 
 mod parsing {
     use crate::diffing::{CompLog, ErrLog, Finds, Message, TraceLog, WarnLog};
@@ -242,7 +245,7 @@ async fn diff_file(file: &Path, nix_a: &Path, nix_b: &Path) -> Result<Option<Par
             // Cancellation safety
             .kill_on_drop(true)
             .output()
-            .instrument(tracing::info_span!("Executing `nix-instantiate --parse`", runner, file = %file.display()))
+            .instrument(tracing::debug_span!("Executing `nix-instantiate --parse`", runner, file = %file.display()))
     };
     let result_a = run(nix_a, "nix_a");
     let result_b = run(nix_b, "nix_b");
@@ -342,6 +345,12 @@ impl DiffResult {
 }
 
 pub async fn diff_parsers(folder: PathBuf, nix_a: PathBuf, nix_b: PathBuf) -> Result<DiffResult> {
+    let collect_bar = tracing::info_span!("collect_bar");
+    collect_bar.pb_set_style(&ProgressStyle::with_template("{spinner} {msg} {pos}/?")?);
+    collect_bar.pb_set_message("Collecting files");
+    collect_bar.pb_set_finish_message("Collected files:");
+    let collect = collect_bar.enter();
+
     let files = walkdir::WalkDir::new(folder)
         .follow_links(false)
         .follow_root_links(true)
@@ -359,10 +368,35 @@ pub async fn diff_parsers(folder: PathBuf, nix_a: PathBuf, nix_b: PathBuf) -> Re
                     .to_str()
                     .expect("UTF-8 file paths only please")
                     .ends_with(".nix")
-        });
+        })
+        .map(|e| {
+            collect_bar.pb_inc(1);
+            e
+        })
+        .collect::<Vec<DirEntry>>();
+    let items = files.len() as u64;
+
+    collect_bar.pb_set_length(items);
+    collect_bar.pb_set_style(&ProgressStyle::with_template(
+        "{spinner} {msg} {pos}/{len}",
+    )?);
+    collect_bar.pb_tick();
+    // Tell the span/bar that it's finished
+    drop(collect);
+    drop(collect_bar);
+
+    let diff_bar = tracing::info_span!("diffing_bar");
+    diff_bar.pb_set_style(&ProgressStyle::with_template(
+        "{prefix:.bold.dim} {msg}: {wide_bar} [{pos:>7}/{len:7}]",
+    )?);
+    diff_bar.pb_set_length(items);
+    diff_bar.pb_set_message("Parsing files");
+    diff_bar.pb_set_finish_message("Finished parsing files");
+    diff_bar.pb_start();
 
     let diffs = futures::stream::iter(files)
         .map(|file| {
+            diff_bar.pb_inc(1);
             let nix_a = &nix_a;
             let nix_b = &nix_b;
             async move { diff_file(file.path(), nix_a, nix_b).await }
@@ -371,6 +405,7 @@ pub async fn diff_parsers(folder: PathBuf, nix_a: PathBuf, nix_b: PathBuf) -> Re
         .filter_map(|res| async move { res.unwrap_or_else(|_| None) })
         .collect::<Vec<ParserDiff>>()
         .await;
+
     let result = DiffResult::from(diffs);
     tracing::info!(?result);
     Ok(result)

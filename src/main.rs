@@ -8,9 +8,12 @@ use crate::reporting::{report, ReportVerbosity};
 use anyhow::Result;
 use clap::{Args, Parser};
 use enumset::EnumSet;
+use indicatif::ProgressStyle;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::PathBuf;
+use tracing_indicatif::span_ext::IndicatifSpanExt;
+use tracing_indicatif::IndicatifLayer;
 
 #[derive(Args, Debug, Clone)]
 pub struct GithubOptions {
@@ -44,7 +47,7 @@ enum Command {
         #[command(flatten)]
         github_options: GithubOptions,
         /// Where to write the npins lock file
-        #[arg()]
+        #[arg(long, short, default_value = "sources.json")]
         out: PathBuf,
     },
     /// Run two Nix versions on all sources and diff the results
@@ -77,6 +80,8 @@ enum Command {
 #[tokio::main]
 async fn main() -> Result<()> {
     use tracing_subscriber::prelude::*;
+
+    let indicatif_layer = IndicatifLayer::new();
     tracing_subscriber::registry()
         .with(tracing_subscriber::filter::LevelFilter::from_level(
             tracing::Level::INFO,
@@ -84,10 +89,20 @@ async fn main() -> Result<()> {
         .with(
             tracing_subscriber::fmt::layer()
                 .with_target(true)
-                .with_span_events(tracing_subscriber::fmt::format::FmtSpan::NEW),
+                .with_span_events(tracing_subscriber::fmt::format::FmtSpan::NEW)
+                .with_writer(indicatif_layer.get_stderr_writer()),
         )
         .with(tracing_error::ErrorLayer::default())
+        .with(indicatif_layer)
         .init();
+
+    let separator = tracing::info_span!("separator");
+    separator.pb_set_style(&ProgressStyle::with_template("{wide_bar}")?.progress_chars("---"));
+    separator.pb_start();
+
+    // Bit of a hack to show a full "-----" line underneath the header.
+    separator.pb_set_length(1);
+    separator.pb_set_position(1);
 
     match Command::parse() {
         Command::BuildIndex {
