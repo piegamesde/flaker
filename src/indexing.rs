@@ -1,6 +1,4 @@
-use crate::errors::{AddErrorResult, ErrorGroup};
 use crate::GithubOptions;
-use anyhow::{anyhow, Context, Error, Result};
 use clap::ValueEnum;
 use enumset::EnumSetType;
 use futures::{StreamExt, TryStreamExt};
@@ -9,8 +7,10 @@ use octorust::auth::Credentials;
 use octorust::types::{Order, SearchCodeSort};
 use octorust::{Client, ClientError};
 use reqwest::IntoUrl;
+use rootcause::prelude::ResultExt;
+use rootcause::report_collection::ReportCollection;
+use rootcause::{bail, report, Report};
 use serde::Deserialize;
-use std::borrow::BorrowMut;
 use std::collections::HashMap;
 use std::path::PathBuf;
 use std::time::Duration;
@@ -18,7 +18,7 @@ use tokio::spawn;
 use tokio::sync::mpsc::{unbounded_channel, UnboundedSender};
 use tokio::time::sleep;
 use tokio_stream::wrappers::UnboundedReceiverStream;
-use tracing::{debug, error, info, warn, Instrument};
+use tracing::{debug, info, warn, Instrument};
 use url::Url;
 
 /// Helper method to build you a client.
@@ -35,7 +35,7 @@ pub fn build_client() -> Result<reqwest::Client, reqwest::Error> {
 
 /// Helper method for doing various API calls
 #[tracing::instrument]
-async fn get_and_deserialize<T, U>(url: U) -> Result<T>
+async fn get_and_deserialize<T, U>(url: U) -> Result<T, Report>
 where
     T: for<'a> Deserialize<'a> + 'static,
     U: IntoUrl + std::fmt::Debug,
@@ -51,17 +51,23 @@ where
 }
 
 #[tracing::instrument(fields(url = %url), skip_all)]
-async fn fetch_pin(url: &Url, branch: Option<String>, submodules: bool) -> Result<npins::Pin> {
+async fn fetch_pin(
+    url: &Url,
+    branch: Option<String>,
+    submodules: bool,
+) -> Result<npins::Pin, Report> {
     // Always fetch default branch as a small first sanity check for the repo
-    let default_branch = npins::git::fetch_default_branch(url).await?;
+    let default_branch = npins::git::fetch_default_branch(url)
+        .await
+        .map_err(|e| report!(e))?;
     let mut pin: npins::Pin = npins::git::GitPin::new(
         npins::git::Repository::git(url.clone()),
         branch.clone().unwrap_or(default_branch),
         submodules,
     )
     .into();
-    pin.update().await?;
-    pin.fetch().await?;
+    pin.update().await.map_err(|e| report!(e))?;
+    pin.fetch().await.map_err(|e| report!(e))?;
     Ok(pin)
 }
 
@@ -102,41 +108,41 @@ pub async fn build_index(
     sources: enumset::EnumSet<SourceSet>,
     options: GithubOptions,
     out: PathBuf,
-) -> Result<()> {
+) -> Result<(), Report> {
     let mut pins = NixPins::default();
-    let mut global_errors: ErrorGroup = "Building Index failed with errors: ".into();
+    let mut global_errors = ReportCollection::new();
 
-    info!(sources = ?sources, "Scraping sources");
     for source in sources {
-        let mut sourceset_errors: ErrorGroup = format!(
-            "Indexing SourceSet {} failed with errors: ",
-            source.as_str()
-        )
-        .into();
         let _ = index_source_set(options.clone(), &mut pins, source)
+            .instrument(tracing::info_span!("Indexing", source = source.as_str()))
             .await
-            .add_error_to(sourceset_errors.borrow_mut());
-        sourceset_errors.add_error_to(global_errors.borrow_mut());
+            .context("Failed to index SourceSet")
+            .attach(format!("SourceSet: {source:?}"))
+            .map_err(|e| global_errors.push(e.into_cloneable()));
     }
 
     let _ = write_file(&out, &mut pins)
         .instrument(tracing::info_span!("Writing pins", out_path = ?out.display()))
         .await
-        .add_error_to(&mut global_errors);
+        .context("failed to write pins")
+        .attach(format!("Outfile: {out:?}"))
+        .map_err(|e| global_errors.push(e.into_cloneable()));
 
-    if global_errors.has_content() {
-        Err(global_errors)?
+    if !global_errors.is_empty() {
+        Err(global_errors
+            .context("Building Index failed with errors: ")
+            .into_dyn_any())
     } else {
         Ok(())
     }
 }
 
-async fn write_file(out: &PathBuf, pins: &mut NixPins) -> Result<()> {
+async fn write_file(out: &PathBuf, pins: &mut NixPins) -> Result<(), Report> {
     let out = out;
-    let parent = out.parent().ok_or(anyhow!("cant go higher than root"))?;
+    let parent = out.parent().ok_or(report!("cant go higher than root"))?;
     std::fs::create_dir_all(parent)?;
     let mut fh = std::fs::File::create(out)
-        .with_context(|| format!("Failed to open {} for writing.", out.display()))
+        .context_with(|| format!("Failed to open {} for writing.", out.display()))
         .or(std::fs::File::create("./index.json"))?;
     serde_json::to_writer_pretty(&mut fh, &pins.to_value_versioned())?;
     use std::io::Write;
@@ -148,7 +154,7 @@ async fn index_source_set(
     options: GithubOptions,
     pins: &mut NixPins,
     source: SourceSet,
-) -> Result<()> {
+) -> Result<(), Report> {
     match source {
         SourceSet::Nixpkgs => {
             let nixpkgs_url = Url::parse("https://github.com/NixOS/Nixpkgs").unwrap();
@@ -160,48 +166,47 @@ async fn index_source_set(
             );
         }
         SourceSet::Nur => {
-            index_nur(pins)
-                .instrument(tracing::info_span!("Scraping NUR"))
-                .await?;
+            index_nur(pins).await?;
         }
         SourceSet::Github => {
-            info!("Fetching Github repos...");
-            let errors: ErrorGroup = "Scraping Github failed with Errors: ".into();
             let (sender, receiver) = unbounded_channel();
             let fetcher = spawn(search_github(options, sender));
-            let (ps, error_group) = UnboundedReceiverStream::new(receiver)
-                .and_then(|url_string| async move {
-                    let url = Url::parse(url_string.as_str())?;
-                    let pin = fetch_pin(&url, None, false).await?;
-                    Ok((url, pin))
+            let (ps, err) = UnboundedReceiverStream::new(receiver)
+                .map(|res| async move {
+                    match res {
+                        Ok(url_string) => {
+                            let url = Url::parse(url_string.as_str())?;
+                            let pin = fetch_pin(&url, None, false).await?;
+                            Ok((format!("gh-{url}").replace("/", "-"), pin))
+                        }
+                        Err(e) => Err(e),
+                    }
                 })
+                .buffer_unordered(10)
                 .fold(
-                    (Vec::new(), errors),
-                    |(mut ps, mut eg): (Vec<(String, npins::Pin)>, ErrorGroup),
-                     itm: Result<(Url, npins::Pin), Error>| async move {
-                        match itm {
-                            Ok((url, pin)) => {
-                                ps.push((format!("gh-{}", url), pin));
-                            }
-                            Err(e) => {
-                                eg.add(e);
-                            }
-                        };
-                        (ps, eg)
+                    (vec![], ReportCollection::new()),
+                    |(mut ok, mut err), res| async {
+                        match res {
+                            Ok(v) => ok.push(v),
+                            Err(e) => err.push(e.into_cloneable()),
+                        }
+                        (ok, err)
                     },
                 )
                 .await;
             fetcher.await??;
-            for (name, pin) in ps {
-                pins.pins.insert(name.replace("/", "-"), pin);
+            if !err.is_empty() {
+                warn!("Errors while fetching gh pins: {err}")
             }
-            error_group.to_result()?;
+            for (name, pin) in ps {
+                pins.pins.insert(name, pin);
+            }
         }
     };
     Ok(())
 }
 
-async fn index_nur(pins: &mut NixPins) -> Result<()> {
+async fn index_nur(pins: &mut NixPins) -> Result<(), Report> {
     // <https://github.com/nix-community/NUR/blob/main/repos.json>
     let NurRepos { repos } = get_and_deserialize(
         "https://raw.githubusercontent.com/nix-community/NUR/refs/heads/main/repos.json",
@@ -217,28 +222,23 @@ async fn index_nur(pins: &mut NixPins) -> Result<()> {
                     submodules,
                 },
             )| async move {
-                match tokio::time::timeout(
-                    Duration::from_secs(30),
-                    fetch_pin(&url, branch, submodules),
-                )
-                .await
-                {
-                    Ok(r) => match r {
-                        Ok(pin) => Some((url.to_string().replace("/", "-"), pin)),
-                        Err(err) => {
-                            warn!(err = ?err, %url, "Failed to fetch pin, ignoring");
-                            None
-                        }
-                    },
-                    Err(err) => {
-                        warn!(err = ?err, %url , "Fetch timed out");
-                        None
-                    }
-                }
+                fetch_pin(&url, branch, submodules)
+                    .await
+                    .map(|pin| (url.to_string().replace("/", "-"), pin))
+                    .context("fetch_pin failed")
+                    .attach_with(|| url)
             },
         )
+        .map(|f| async {
+            tokio::time::timeout(Duration::from_secs(30), f)
+                .await
+                .context("Fetch timed out")
+                .unwrap_or_else(|e| Err(e))
+        })
         .buffer_unordered(20)
-        .filter_map(|val| async { val });
+        .map_err(|e| e.context("Failed to fetch pin, ignoring"))
+        .map_err(|e| warn!("Fetching of some pins failed: {e}"))
+        .filter_map(|val| async { val.ok() });
     futures::pin_mut!(stream);
     while let Some((k, v)) = stream.next().await {
         pins.pins.insert(k, v);
@@ -248,11 +248,11 @@ async fn index_nur(pins: &mut NixPins) -> Result<()> {
 
 async fn search_github(
     options: GithubOptions,
-    sender: UnboundedSender<Result<String>>,
-) -> Result<()> {
+    sender: UnboundedSender<Result<String, Report>>,
+) -> Result<(), Report> {
     let token = match options.auth_token {
         Some(t) => Ok(t),
-        None => Err(anyhow!("Authentification token required to search Github")),
+        None => Err(report!("Authentification token required to search Github")),
     }?;
     let gh_client = Client::new(String::from("flaker-indexer"), Credentials::Token(token))?;
     let s = octorust::search::Search { client: gh_client };
@@ -276,10 +276,9 @@ async fn search_github(
             Err(e) => match &e {
                 ClientError::RateLimited { ref duration } => {
                     if page == start_page && *duration == 60 {
-                        error!("Possibly invalid token provided!");
-                        Err(anyhow!("Possibly invalid Token!"))?;
+                        bail!("Possibly invalid Token!");
                     }
-                    info!("Got rate limited, waiting for {} seconds...", duration);
+                    info!("Got rate limited, waiting for {duration} seconds...");
                     sleep(Duration::from_secs(*duration + 2)).await;
                 }
                 ClientError::HttpError {
@@ -293,10 +292,18 @@ async fn search_github(
                         collected_what_github_calls_all = true;
                         continue;
                     }
-                    sender.send(Err(Error::new(e).context("Unexpected HTTP Error")))?;
+                    sender.send(
+                        Err(e)
+                            .context("Unexpected HTTP Error")
+                            .map_err(|e| e.into_dyn_any()),
+                    )?;
                 }
                 _ => {
-                    sender.send(Err(Error::new(e).context("unknown error type")))?;
+                    sender.send(
+                        Err(e)
+                            .context("unknown error type")
+                            .map_err(|e| e.into_dyn_any()),
+                    )?;
                     // Kill because we don't know if it is sensible to continue...
                     collected_what_github_calls_all = true;
                 }

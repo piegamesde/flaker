@@ -1,6 +1,6 @@
 use crate::diffing::{Diff, DiffResult, Message, MessageOccurrences, Position};
-use anyhow::Result;
 use clap::ValueEnum;
+use rootcause::{bail, Report};
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 use std::fs::File;
@@ -32,7 +32,7 @@ impl FromStr for ReportVerbosity {
 }
 
 impl DiffResult {
-    fn from_path(path: &PathBuf) -> Result<DiffResult> {
+    fn from_path(path: &PathBuf) -> Result<DiffResult, Report> {
         let mut report_file = File::open(path)?;
         let mut content = String::new();
         report_file.read_to_string(&mut content)?;
@@ -47,14 +47,14 @@ type OutAnalysis = HashMap<String, HashSet<Diff<Message>>>;
 type MessageAnalysis = HashMap<Message, HashMap<String, Diff<HashSet<Position>>>>;
 
 #[derive(Default, Debug, Serialize, Deserialize)]
-struct Report {
+struct DiffReport {
     stdout: OutAnalysis,
     err_log: MessageAnalysis,
     wrn_log: MessageAnalysis,
     trc_log: MessageAnalysis,
 }
 
-impl Report {
+impl DiffReport {
     fn add(&mut self, diff_result: DiffResult, name: String) {
         let propagate_msg = |log: &mut MessageAnalysis, occ: MessageOccurrences| {
             for (msg, d) in occ {
@@ -81,7 +81,7 @@ impl Report {
     }
 }
 
-fn print_report(report: Report, verbosity: ReportVerbosity) {
+fn print_report(report: DiffReport, verbosity: ReportVerbosity) {
     if report.is_empty() {
         tracing::info!("No diff found!");
         return;
@@ -128,7 +128,7 @@ fn print_report(report: Report, verbosity: ReportVerbosity) {
     print_log_report("Trace Messages", report.trc_log);
 }
 
-pub fn report(reports: Vec<PathBuf>, verbosity: ReportVerbosity) -> Result<()> {
+pub fn report(reports: Vec<PathBuf>, verbosity: ReportVerbosity) -> Result<(), Report> {
     let verbosity = match verbosity {
         ReportVerbosity::Auto => {
             if reports.len() == 1 {
@@ -160,7 +160,7 @@ pub fn report(reports: Vec<PathBuf>, verbosity: ReportVerbosity) -> Result<()> {
             .collect()
     }
 
-    let diffs: HashMap<String, Result<DiffResult>> = reports
+    let diffs: HashMap<String, Result<DiffResult, Report>> = reports
         .into_iter()
         .flat_map(|path| recurse(path))
         .map(|path| {
@@ -176,10 +176,10 @@ pub fn report(reports: Vec<PathBuf>, verbosity: ReportVerbosity) -> Result<()> {
         .collect();
 
     if diffs.is_empty() {
-        return Err(anyhow::anyhow!("No report files found"));
+        bail!("No report files found");
     }
 
-    let mut report = Report::default();
+    let mut report = DiffReport::default();
 
     for (repo_name, diff_result) in diffs {
         report.add(diff_result?, repo_name);

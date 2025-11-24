@@ -1,6 +1,7 @@
-use anyhow::Result;
-use futures::{StreamExt, TryStreamExt};
+use futures::StreamExt;
 use indicatif::ProgressStyle;
+use rootcause::report_collection::ReportCollection;
+use rootcause::Report;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
@@ -232,7 +233,7 @@ fn diff_stderr(
 }
 
 #[tracing::instrument(skip(nix_a, nix_b))]
-async fn diff_file(file: &Path, nix_a: &Path, nix_b: &Path) -> Result<Option<ParserDiff>> {
+async fn diff_file(file: &Path, nix_a: &Path, nix_b: &Path) -> Result<Option<ParserDiff>, Report> {
     /* Execute the parsers */
     let run = |nix: &Path, runner: &str| {
         tokio::process::Command::new(nix)
@@ -344,7 +345,11 @@ impl DiffResult {
     }
 }
 
-pub async fn diff_parsers(folder: PathBuf, nix_a: PathBuf, nix_b: PathBuf) -> Result<DiffResult> {
+pub async fn diff_parsers(
+    folder: PathBuf,
+    nix_a: PathBuf,
+    nix_b: PathBuf,
+) -> Result<DiffResult, Report> {
     let collect_bar = tracing::info_span!("collect_bar");
     collect_bar.pb_set_style(&ProgressStyle::with_template("{spinner} {msg} {pos}/?")?);
     collect_bar.pb_set_message("Collecting files");
@@ -394,7 +399,7 @@ pub async fn diff_parsers(folder: PathBuf, nix_a: PathBuf, nix_b: PathBuf) -> Re
     diff_bar.pb_set_finish_message("Finished parsing files");
     diff_bar.pb_start();
 
-    let diffs = futures::stream::iter(files)
+    let (diffs, err) = futures::stream::iter(files)
         .map(|file| {
             diff_bar.pb_inc(1);
             let nix_a = &nix_a;
@@ -402,10 +407,22 @@ pub async fn diff_parsers(folder: PathBuf, nix_a: PathBuf, nix_b: PathBuf) -> Re
             async move { diff_file(file.path(), nix_a, nix_b).await }
         })
         .buffer_unordered(10)
-        .map_err(|e| tracing::warn!("{e:#?}"))
-        .filter_map(|res| async move { res.unwrap_or_else(|_| None) })
-        .collect::<Vec<ParserDiff>>()
+        .fold(
+            (vec![], ReportCollection::new()),
+            |(mut ok, mut err), res| async {
+                match res {
+                    Ok(Some(diff)) => ok.push(diff),
+                    Err(e) => err.push(e.into_cloneable()),
+                    _ => {}
+                }
+                (ok, err)
+            },
+        )
         .await;
+
+    if !err.is_empty() {
+        tracing::warn!("Errors occurred while diffing files: {err}");
+    }
 
     let result = DiffResult::from(diffs);
     tracing::info!(?result);

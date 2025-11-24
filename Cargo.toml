@@ -21,6 +21,6 @@ regex = "1.11.1"
 octorust = "0.10.0"
 tokio-stream = "0.1.17"
 thiserror = "2.0.12"
-anyhow = "1.0.97"
 indicatif = {version = "0.18.2", features = ["rayon"]}
 tracing-indicatif = {version = "0.3.13"}
+rootcause = "0.10.0"

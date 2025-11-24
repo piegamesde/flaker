@@ -1,14 +1,13 @@
 mod diffing;
-mod errors;
 mod indexing;
 mod reporting;
 
 use crate::indexing::SourceSet;
 use crate::reporting::{report, ReportVerbosity};
-use anyhow::Result;
 use clap::{Args, Parser};
 use enumset::EnumSet;
 use indicatif::ProgressStyle;
+use rootcause::prelude::*;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::PathBuf;
@@ -80,7 +79,7 @@ enum Command {
 }
 
 #[tokio::main]
-async fn main() -> Result<()> {
+async fn main() -> Result<(), Report> {
     use tracing_subscriber::prelude::*;
 
     let indicatif_layer = IndicatifLayer::new();
