@@ -2,6 +2,7 @@ use crate::GithubOptions;
 use clap::ValueEnum;
 use enumset::EnumSetType;
 use futures::{StreamExt, TryStreamExt};
+use indicatif::ProgressStyle;
 use npins::NixPins;
 use octorust::auth::Credentials;
 use octorust::types::{Order, SearchCodeSort};
@@ -18,7 +19,8 @@ use tokio::spawn;
 use tokio::sync::mpsc::{unbounded_channel, UnboundedSender};
 use tokio::time::sleep;
 use tokio_stream::wrappers::UnboundedReceiverStream;
-use tracing::{debug, info, Instrument};
+use tracing::{debug, info, info_span, Instrument, Span};
+use tracing_indicatif::span_ext::IndicatifSpanExt;
 use url::Url;
 
 /// Helper method to build you a client.
@@ -66,8 +68,12 @@ async fn fetch_pin(
         submodules,
     )
     .into();
-    pin.update().await.map_err(|e| report!(e))?;
-    pin.fetch().await.map_err(|e| report!(e))?;
+    pin.update()
+        .await
+        .map_err(|e| report!(e).attach(url.clone()))?;
+    pin.fetch()
+        .await
+        .map_err(|e| report!(e).attach(url.clone()))?;
     Ok(pin)
 }
 
@@ -238,6 +244,16 @@ async fn index_nur() -> (Vec<(String, npins::Pin)>, ReportCollection) {
         Err(_) => return (vec![], err),
     };
 
+    let fetch_bar = Span::current();
+    fetch_bar.pb_set_style(
+        &ProgressStyle::with_template("{prefix:.bold.dim} {msg}: {wide_bar} [{pos:>7}/{len:7}]")
+            .unwrap(),
+    );
+    fetch_bar.pb_set_length(repos.len() as u64);
+    fetch_bar.pb_set_message("Indexing NUR pins");
+    fetch_bar.pb_set_finish_message("Finished indexing NUR");
+    fetch_bar.pb_start();
+
     let stream = futures::stream::iter(repos)
         .map(
             |(
@@ -247,18 +263,22 @@ async fn index_nur() -> (Vec<(String, npins::Pin)>, ReportCollection) {
                     branch,
                     submodules,
                 },
-            )| async move {
-                fetch_pin(&url, branch, submodules)
-                    .await
-                    .map(|pin| (url.to_string().replace("/", "-"), pin))
-                    .context("fetch_pin failed")
-                    .attach_with(|| url)
+            )| {
+                (url.as_str().to_string(), async move {
+                    fetch_pin(&url, branch, submodules)
+                        .await
+                        .map(|pin| (url.to_string().replace("/", "-"), pin))
+                        .context("fetch_pin failed")
+                        .attach_with(|| url)
+                })
             },
         )
-        .map(|f| async {
+        .map(|(url, f)| async {
+            fetch_bar.pb_inc(1);
             tokio::time::timeout(Duration::from_secs(30), f)
                 .await
                 .context("Fetch timed out")
+                .attach_with(|| url)
                 .unwrap_or_else(|e| Err(e))
         })
         .buffer_unordered(20)
@@ -283,9 +303,9 @@ async fn search_github(
     let start_page = options.start_page;
     let mut page = start_page;
     let mut collected_what_github_calls_all = false;
-
+    info_span!("Fetching repositories");
     while !collected_what_github_calls_all && options.end_page.map(|mp| page < mp).unwrap_or(true) {
-        info!("Fetching page {} of {}...", page, expected_total_pages);
+        info!("Fetching page {page} of {expected_total_pages}...");
         let search_result = s
             .code(
                 "filename:flake.nix path:/",
@@ -301,7 +321,7 @@ async fn search_github(
                     if page == start_page && *duration == 60 {
                         bail!("Possibly invalid Token!");
                     }
-                    info!("Got rate limited, waiting for {duration} seconds...");
+                    info_span!("Got rate limited, waiting...", seconds=%duration);
                     sleep(Duration::from_secs(*duration + 2)).await;
                 }
                 ClientError::HttpError {
