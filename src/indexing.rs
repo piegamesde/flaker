@@ -13,7 +13,6 @@ use serde::Deserialize;
 use std::borrow::BorrowMut;
 use std::collections::HashMap;
 use std::path::PathBuf;
-use std::str::FromStr;
 use std::time::Duration;
 use tokio::spawn;
 use tokio::sync::mpsc::{unbounded_channel, UnboundedSender};
@@ -87,18 +86,6 @@ impl SourceSet {
     }
 }
 
-impl FromStr for SourceSet {
-    type Err = ();
-    fn from_str(s: &str) -> std::result::Result<Self, ()> {
-        match s {
-            "nixpkgs" => Ok(SourceSet::Nixpkgs),
-            "nur" => Ok(SourceSet::Nur),
-            "github" => Ok(SourceSet::Github),
-            _ => Err(()),
-        }
-    }
-}
-
 #[derive(Debug, Deserialize)]
 struct NurRepo {
     url: Url,
@@ -166,7 +153,7 @@ async fn index_source_set(
         SourceSet::Nixpkgs => {
             let nixpkgs_url = Url::parse("https://github.com/NixOS/Nixpkgs").unwrap();
             pins.pins.insert(
-                nixpkgs_url.to_string(),
+                nixpkgs_url.to_string().replace("/", "-"),
                 fetch_pin(&nixpkgs_url, Some("master".into()), false)
                     .await
                     .map_err(|err| err)?,
@@ -206,7 +193,7 @@ async fn index_source_set(
                 .await;
             fetcher.await??;
             for (name, pin) in ps {
-                pins.pins.insert(name, pin);
+                pins.pins.insert(name.replace("/", "-"), pin);
             }
             error_group.to_result()?;
         }
@@ -230,10 +217,21 @@ async fn index_nur(pins: &mut NixPins) -> Result<()> {
                     submodules,
                 },
             )| async move {
-                match fetch_pin(&url, branch, submodules).await {
-                    Ok(pin) => Some((url.to_string(), pin)),
+                match tokio::time::timeout(
+                    Duration::from_secs(30),
+                    fetch_pin(&url, branch, submodules),
+                )
+                .await
+                {
+                    Ok(r) => match r {
+                        Ok(pin) => Some((url.to_string().replace("/", "-"), pin)),
+                        Err(err) => {
+                            warn!(err = ?err, %url, "Failed to fetch pin, ignoring");
+                            None
+                        }
+                    },
                     Err(err) => {
-                        warn!(err = ?err, %url, "Failed to fetch pin, ignoring");
+                        warn!(err = ?err, %url , "Fetch timed out");
                         None
                     }
                 }

@@ -72,9 +72,22 @@ impl Report {
         propagate_msg(&mut self.trc_log, diff_result.trc_diff);
         self.stdout.insert(name.clone(), diff_result.stdout_diff);
     }
+
+    fn is_empty(&self) -> bool {
+        self.stdout.iter().all(|(_name, diff)| diff.is_empty())
+            && self.err_log.is_empty()
+            && self.wrn_log.is_empty()
+            && self.trc_log.is_empty()
+    }
 }
 
 fn print_report(report: Report, verbosity: ReportVerbosity) {
+    if report.is_empty() {
+        tracing::info!("No diff found!");
+        return;
+    } else {
+        tracing::warn!("Output differs!");
+    }
     if report.stdout.iter().any(|(_, d)| !d.is_empty()) {
         tracing::warn!("Actual passing output differed between parsers!");
         tracing::info!("Stdout diffs:");
@@ -127,8 +140,29 @@ pub fn report(reports: Vec<PathBuf>, verbosity: ReportVerbosity) -> Result<()> {
         v => v,
     };
 
+    fn recurse(path: PathBuf) -> Vec<PathBuf> {
+        let Ok(entries) = std::fs::read_dir(path.clone()) else {
+            return vec![path];
+        };
+        entries
+            .flatten()
+            .flat_map(|entry| {
+                let p = entry.path();
+                if p.is_dir() {
+                    return recurse(p);
+                }
+                if p.is_file() {
+                    return vec![p];
+                }
+                tracing::error!("neither file nor dir");
+                vec![]
+            })
+            .collect()
+    }
+
     let diffs: HashMap<String, Result<DiffResult>> = reports
-        .iter()
+        .into_iter()
+        .flat_map(|path| recurse(path))
         .map(|path| {
             (
                 path.file_stem()
@@ -136,10 +170,14 @@ pub fn report(reports: Vec<PathBuf>, verbosity: ReportVerbosity) -> Result<()> {
                     .to_os_string()
                     .into_string()
                     .unwrap(),
-                DiffResult::from_path(path),
+                DiffResult::from_path(&path),
             )
         })
         .collect();
+
+    if diffs.is_empty() {
+        return Err(anyhow::anyhow!("No report files found"));
+    }
 
     let mut report = Report::default();
 

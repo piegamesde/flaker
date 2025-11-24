@@ -1,5 +1,5 @@
 use anyhow::Result;
-use futures::StreamExt;
+use futures::{StreamExt, TryStreamExt};
 use indicatif::ProgressStyle;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
@@ -402,6 +402,7 @@ pub async fn diff_parsers(folder: PathBuf, nix_a: PathBuf, nix_b: PathBuf) -> Re
             async move { diff_file(file.path(), nix_a, nix_b).await }
         })
         .buffer_unordered(10)
+        .map_err(|e| tracing::warn!("{e:#?}"))
         .filter_map(|res| async move { res.unwrap_or_else(|_| None) })
         .collect::<Vec<ParserDiff>>()
         .await;

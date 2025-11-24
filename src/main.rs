@@ -40,6 +40,7 @@ pub struct GithubOptions {
 )]
 enum Command {
     /// Build an index of repositories based on source sets
+    #[clap(visible_alias("index"), alias("scrape"))]
     BuildIndex {
         /// Which source sets to include.
         #[arg(long, value_enum)]
@@ -51,6 +52,7 @@ enum Command {
         out: PathBuf,
     },
     /// Run two Nix versions on all sources and diff the results
+    #[clap(visible_alias("diff"), alias("parse"))]
     NixParse {
         /// Path to the output file, will be overridden if present
         #[arg(long, short, default_value = "report.json")]
