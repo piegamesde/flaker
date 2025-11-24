@@ -18,7 +18,7 @@ use tokio::spawn;
 use tokio::sync::mpsc::{unbounded_channel, UnboundedSender};
 use tokio::time::sleep;
 use tokio_stream::wrappers::UnboundedReceiverStream;
-use tracing::{debug, info, warn, Instrument};
+use tracing::{debug, info, Instrument};
 use url::Url;
 
 /// Helper method to build you a client.
@@ -112,14 +112,36 @@ pub async fn build_index(
     let mut pins = NixPins::default();
     let mut global_errors = ReportCollection::new();
 
-    for source in sources {
-        let _ = index_source_set(options.clone(), &mut pins, source)
-            .instrument(tracing::info_span!("Indexing", source = source.as_str()))
-            .await
-            .context("Failed to index SourceSet")
-            .attach(format!("SourceSet: {source:?}"))
-            .map_err(|e| global_errors.push(e.into_cloneable()));
-    }
+    let _ = futures::stream::iter(sources)
+        .map(|source| {
+            let opt = options.clone();
+            async move {
+                let source_str = source.as_str();
+                let (p, err) = index_source_set(opt, source)
+                    .instrument(tracing::info_span!("Indexing", source = source_str))
+                    .await;
+                let err = err
+                    .context("Error while indexing SourceSet")
+                    .attach(source_str);
+                (p, err)
+            }
+        })
+        .buffer_unordered(3)
+        .collect::<Vec<_>>()
+        .await
+        .into_iter()
+        .fold(
+            vec![],
+            |mut ps: Vec<(String, npins::Pin)>, (mut new_pins, err)| {
+                global_errors.push(err.into_cloneable());
+                ps.append(&mut new_pins);
+                ps
+            },
+        )
+        .into_iter()
+        .for_each(|(name, pin)| {
+            pins.pins.insert(name, pin);
+        });
 
     let _ = write_file(&out, &mut pins)
         .instrument(tracing::info_span!("Writing pins", out_path = ?out.display()))
@@ -152,26 +174,26 @@ async fn write_file(out: &PathBuf, pins: &mut NixPins) -> Result<(), Report> {
 
 async fn index_source_set(
     options: GithubOptions,
-    pins: &mut NixPins,
     source: SourceSet,
-) -> Result<(), Report> {
+) -> (Vec<(String, npins::Pin)>, ReportCollection) {
+    let mut errs = ReportCollection::new();
     match source {
         SourceSet::Nixpkgs => {
             let nixpkgs_url = Url::parse("https://github.com/NixOS/Nixpkgs").unwrap();
-            pins.pins.insert(
-                nixpkgs_url.to_string().replace("/", "-"),
-                fetch_pin(&nixpkgs_url, Some("master".into()), false)
-                    .await
-                    .map_err(|err| err)?,
-            );
+            let res = fetch_pin(&nixpkgs_url, Some("master".into()), false)
+                .await
+                .map_err(|err| errs.push(err.into_cloneable()));
+            let v = match res {
+                Ok(pin) => vec![(nixpkgs_url.to_string().replace("/", "-"), pin)],
+                Err(_) => vec![],
+            };
+            (v, errs)
         }
-        SourceSet::Nur => {
-            index_nur(pins).await?;
-        }
+        SourceSet::Nur => index_nur().await,
         SourceSet::Github => {
             let (sender, receiver) = unbounded_channel();
             let fetcher = spawn(search_github(options, sender));
-            let (ps, err) = UnboundedReceiverStream::new(receiver)
+            let (ps, mut err) = UnboundedReceiverStream::new(receiver)
                 .map(|res| async move {
                     match res {
                         Ok(url_string) => {
@@ -194,24 +216,28 @@ async fn index_source_set(
                     },
                 )
                 .await;
-            fetcher.await??;
-            if !err.is_empty() {
-                warn!("Errors while fetching gh pins: {err}")
-            }
-            for (name, pin) in ps {
-                pins.pins.insert(name, pin);
-            }
+            let _ = fetcher
+                .await
+                .map_err(|e| err.push(report!(e).into_cloneable().into()))
+                .map(|o| o.map_err(|e| err.push(e.into_cloneable())));
+            (ps, err)
         }
-    };
-    Ok(())
+    }
 }
 
-async fn index_nur(pins: &mut NixPins) -> Result<(), Report> {
+async fn index_nur() -> (Vec<(String, npins::Pin)>, ReportCollection) {
+    let mut err = ReportCollection::new();
     // <https://github.com/nix-community/NUR/blob/main/repos.json>
-    let NurRepos { repos } = get_and_deserialize(
+    let NurRepos { repos } = match get_and_deserialize(
         "https://raw.githubusercontent.com/nix-community/NUR/refs/heads/main/repos.json",
     )
-    .await?;
+    .await
+    .map_err(|e| err.push(e.into_cloneable()))
+    {
+        Ok(r) => r,
+        Err(_) => return (vec![], err),
+    };
+
     let stream = futures::stream::iter(repos)
         .map(
             |(
@@ -237,13 +263,10 @@ async fn index_nur(pins: &mut NixPins) -> Result<(), Report> {
         })
         .buffer_unordered(20)
         .map_err(|e| e.context("Failed to fetch pin, ignoring"))
-        .map_err(|e| warn!("Fetching of some pins failed: {e}"))
-        .filter_map(|val| async { val.ok() });
+        .map_err(|e| err.push(e.into_cloneable().into()))
+        .filter_map(|x| async { x.ok() });
     futures::pin_mut!(stream);
-    while let Some((k, v)) = stream.next().await {
-        pins.pins.insert(k, v);
-    }
-    Ok(())
+    (stream.collect::<Vec<(String, npins::Pin)>>().await, err)
 }
 
 async fn search_github(
