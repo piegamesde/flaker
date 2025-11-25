@@ -1,6 +1,6 @@
-use futures::StreamExt;
+use futures::{StreamExt, TryStreamExt};
 use indicatif::ProgressStyle;
-use rootcause::report_collection::ReportCollection;
+use rootcause::prelude::ResultExt;
 use rootcause::Report;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
@@ -251,7 +251,14 @@ async fn diff_file(file: &Path, nix_a: &Path, nix_b: &Path) -> Result<Option<Par
     let result_a = run(nix_a, "nix_a");
     let result_b = run(nix_b, "nix_b");
     let (result_a, result_b) = futures::join!(result_a, result_b);
-    let (result_a, result_b) = (result_a?, result_b?);
+    let (result_a, result_b) = (
+        result_a
+            .context("while executing `nix-instantiate --parse` on nixA")
+            .attach_with(|| nix_a.display().to_string())?,
+        result_b
+            .context("while executing `nix-instantiate --parse` on nixA")
+            .attach_with(|| nix_b.display().to_string())?,
+    );
 
     /* compare Results */
     //dbg!(&result_a, &result_b);
@@ -399,7 +406,7 @@ pub async fn diff_parsers(
     diff_bar.pb_set_finish_message("Finished parsing files");
     diff_bar.pb_start();
 
-    let (diffs, err) = futures::stream::iter(files)
+    let diffs = futures::stream::iter(files)
         .map(|file| {
             diff_bar.pb_inc(1);
             let nix_a = &nix_a;
@@ -407,22 +414,9 @@ pub async fn diff_parsers(
             async move { diff_file(file.path(), nix_a, nix_b).await }
         })
         .buffer_unordered(10)
-        .fold(
-            (vec![], ReportCollection::new()),
-            |(mut ok, mut err), res| async {
-                match res {
-                    Ok(Some(diff)) => ok.push(diff),
-                    Err(e) => err.push(e.into_cloneable()),
-                    _ => {}
-                }
-                (ok, err)
-            },
-        )
-        .await;
-
-    if !err.is_empty() {
-        tracing::warn!("Errors occurred while diffing files: {err}");
-    }
+        .try_filter_map(|res| async { Ok(res) })
+        .try_collect::<Vec<_>>()
+        .await?;
 
     let result = DiffResult::from(diffs);
     tracing::info!(?result);
