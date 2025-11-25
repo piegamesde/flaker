@@ -171,7 +171,7 @@ async fn write_file(out: &PathBuf, pins: &mut NixPins) -> Result<(), Report> {
     std::fs::create_dir_all(parent)?;
     let mut fh = std::fs::File::create(out)
         .context_with(|| format!("Failed to open {} for writing.", out.display()))
-        .or(std::fs::File::create("./index.json"))?;
+        .or_else(|_| std::fs::File::create("./index.json"))?;
     serde_json::to_writer_pretty(&mut fh, &pins.to_value_versioned())?;
     use std::io::Write;
     fh.write_all(b"\n")?;
@@ -185,12 +185,12 @@ async fn index_source_set(
     let mut errs = ReportCollection::new();
     match source {
         SourceSet::Nixpkgs => {
-            let nixpkgs_url = Url::parse("https://github.com/NixOS/Nixpkgs").unwrap();
+            let nixpkgs_url = Url::parse("https://github.com/NixOS/nixpkgs").unwrap();
             let res = fetch_pin(&nixpkgs_url, Some("master".into()), false)
                 .await
                 .map_err(|err| errs.push(err.into_cloneable()));
             let v = match res {
-                Ok(pin) => vec![(nixpkgs_url.to_string().replace("/", "-"), pin)],
+                Ok(pin) => vec![(nixpkgs_url.to_string(), pin)],
                 Err(_) => vec![],
             };
             (v, errs)
@@ -205,7 +205,7 @@ async fn index_source_set(
                         Ok(url_string) => {
                             let url = Url::parse(url_string.as_str())?;
                             let pin = fetch_pin(&url, None, false).await?;
-                            Ok((format!("gh-{url}").replace("/", "-"), pin))
+                            Ok((url.to_string(), pin))
                         }
                         Err(e) => Err(e),
                     }
@@ -267,7 +267,7 @@ async fn index_nur() -> (Vec<(String, npins::Pin)>, ReportCollection) {
                 (url.as_str().to_string(), async move {
                     fetch_pin(&url, branch, submodules)
                         .await
-                        .map(|pin| (url.to_string().replace("/", "-"), pin))
+                        .map(|pin| (url.to_string(), pin))
                         .context("fetch_pin failed")
                         .attach_with(|| url)
                 })
