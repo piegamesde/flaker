@@ -182,16 +182,17 @@ async fn index_source_set(
     options: GithubOptions,
     source: SourceSet,
 ) -> (Vec<(String, npins::Pin)>, ReportCollection) {
-    let mut errs = ReportCollection::new();
     match source {
         SourceSet::Nixpkgs => {
+            let mut errs = ReportCollection::new();
             let nixpkgs_url = Url::parse("https://github.com/NixOS/nixpkgs").unwrap();
-            let res = fetch_pin(&nixpkgs_url, Some("master".into()), false)
-                .await
-                .map_err(|err| errs.push(err.into_cloneable()));
+            let res = fetch_pin(&nixpkgs_url, Some("master".into()), false).await;
             let v = match res {
                 Ok(pin) => vec![(nixpkgs_url.to_string(), pin)],
-                Err(_) => vec![],
+                Err(err) => {
+                    errs.push(err.into_cloneable());
+                    vec![]
+                }
             };
             (v, errs)
         }
@@ -233,15 +234,14 @@ async fn index_source_set(
 
 async fn index_nur() -> (Vec<(String, npins::Pin)>, ReportCollection) {
     let mut err = ReportCollection::new();
+
     // <https://github.com/nix-community/NUR/blob/main/repos.json>
-    let NurRepos { repos } = match get_and_deserialize(
+    let Ok(NurRepos { repos }) = get_and_deserialize(
         "https://raw.githubusercontent.com/nix-community/NUR/refs/heads/main/repos.json",
     )
     .await
-    .map_err(|e| err.push(e.into_cloneable()))
-    {
-        Ok(r) => r,
-        Err(_) => return (vec![], err),
+    .map_err(|e| err.push(e.into_cloneable())) else {
+        return (vec![], err);
     };
 
     let fetch_bar = Span::current();
@@ -285,7 +285,6 @@ async fn index_nur() -> (Vec<(String, npins::Pin)>, ReportCollection) {
         .map_err(|e| e.context("Failed to fetch pin, ignoring"))
         .map_err(|e| err.push(e.into_cloneable().into()))
         .filter_map(|x| async { x.ok() });
-    futures::pin_mut!(stream);
     (stream.collect::<Vec<(String, npins::Pin)>>().await, err)
 }
 
