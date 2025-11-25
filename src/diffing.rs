@@ -124,6 +124,7 @@ struct ParserDiff {
     pass_eq: Option<Diff<bool>>,
     // exit code difference
     exit_eq: Option<Diff<Option<i32>>>,
+    both_exit_nonzero: bool,
     stdout_eq: Option<Diff<Message>>,
     err_eq: Option<Diff<ErrLog>>,
     warn_eq: Option<Diff<WarnLog>>,
@@ -164,50 +165,6 @@ impl Diff<CompLog> {
             result_b: in_b_but_not_in_a,
         }
     }
-
-    pub fn merge(&mut self, b: Diff<CompLog>) {
-        self.result_a.extend(b.result_a);
-        self.result_b.extend(b.result_b);
-    }
-}
-macro_rules! merge_complog {
-    ($a: expr, $b: expr) => {
-        match ($a.as_mut(), $b) {
-            (Some(a), Some(b)) => a.merge(b),
-            (None, b) => $a = b,
-            _ => (),
-        }
-    };
-}
-
-impl ParserDiff {
-    fn merge(&mut self, other: ParserDiff) {
-        match (self.pass_eq.is_none(), other.pass_eq) {
-            (true, Some(s)) => {
-                self.pass_eq.replace(s);
-            }
-            _ => (),
-        };
-        match (self.exit_eq.is_none(), other.exit_eq) {
-            (true, Some(s)) => {
-                self.exit_eq.replace(s);
-            }
-            _ => (),
-        }
-
-        self.stdout_eq = match (self.stdout_eq.take(), other.stdout_eq) {
-            (Some(_), Some(_)) => Some(Diff {
-                result_a: "Multiple given".to_string(),
-                result_b: "Multiple given".to_string(),
-            }),
-            (None, b) => b,
-            (a, None) => a,
-        };
-
-        merge_complog!(self.err_eq, other.err_eq);
-        merge_complog!(self.warn_eq, other.warn_eq);
-        merge_complog!(self.trace_eq, other.trace_eq);
-    }
 }
 
 fn diff_stderr(
@@ -241,6 +198,8 @@ async fn diff_file(file: &Path, nix_a: &Path, nix_b: &Path) -> Result<Option<Par
             .arg("--parse")
             .arg("--log-format")
             .arg("internal-json")
+            .arg("--store")
+            .arg("dummy://")
             .arg(file)
             .stdin(Stdio::null())
             // Cancellation safety
@@ -261,7 +220,7 @@ async fn diff_file(file: &Path, nix_a: &Path, nix_b: &Path) -> Result<Option<Par
     );
 
     /* compare Results */
-    //dbg!(&result_a, &result_b);
+    // dbg!(&result_a, &result_b);
     let res = if result_a != result_b {
         let pass = result_a.status.success() && result_b.status.success();
         let exit = result_a.status == result_b.status;
@@ -281,6 +240,7 @@ async fn diff_file(file: &Path, nix_a: &Path, nix_b: &Path) -> Result<Option<Par
                 result_a: result_a.status.code(),
                 result_b: result_b.status.code(),
             }),
+            both_exit_nonzero: !result_a.status.success() && !result_b.status.success(),
             stdout_eq: (!stdout).then_some(Diff {
                 result_a: String::from_utf8(result_a.stdout)?,
                 result_b: String::from_utf8(result_b.stdout)?,
@@ -288,6 +248,17 @@ async fn diff_file(file: &Path, nix_a: &Path, nix_b: &Path) -> Result<Option<Par
             err_eq: err,
             warn_eq: warn,
             trace_eq: trace,
+        })
+    } else if !result_a.status.success() && !result_b.status.success() {
+        /* When both processes exit nonzero in an identical way, we ignore but keep track of the overall count */
+        Some(ParserDiff {
+            pass_eq: None,
+            exit_eq: None,
+            both_exit_nonzero: true,
+            stdout_eq: None,
+            err_eq: None,
+            warn_eq: None,
+            trace_eq: None,
         })
     } else {
         None
@@ -303,52 +274,56 @@ pub struct DiffResult {
     pub err_diff: MessageOccurrences,
     pub wrn_diff: MessageOccurrences,
     pub trc_diff: MessageOccurrences,
+    pub fail_cnt: u64,
+}
+
+trait AddLog {
+    fn add_log(&mut self, log: Option<Diff<CompLog>>);
+}
+
+impl AddLog for HashMap<Message, Diff<HashSet<Position>>> {
+    fn add_log(&mut self, log: Option<Diff<CompLog>>) {
+        if log.is_none() {
+            return;
+        }
+        let log = log.unwrap();
+        for (msg, poss) in log.result_a {
+            self.entry(msg)
+                .or_insert(Default::default())
+                .result_a
+                .extend(poss.positions);
+        }
+        for (msg, poss) in log.result_b {
+            self.entry(msg)
+                .or_insert(Default::default())
+                .result_b
+                .extend(poss.positions);
+        }
+    }
 }
 
 impl DiffResult {
+    fn add(&mut self, diff: ParserDiff) {
+        self.fail_cnt += diff.both_exit_nonzero as u64;
+
+        if let (Some(diff_eq), true) = (diff.stdout_eq, diff.pass_eq.is_none()) {
+            self.stdout_diff.insert(diff_eq.clone());
+        }
+
+        self.err_diff.add_log(diff.err_eq);
+        self.wrn_diff.add_log(diff.warn_eq);
+        self.trc_diff.add_log(diff.trace_eq);
+    }
+
     fn from(diffs: Vec<ParserDiff>) -> DiffResult {
+        let mut res = Default::default();
         if diffs.len() == 0 {
-            return Default::default();
+            return res;
         }
 
-        let mut out_diffs = HashSet::new();
+        diffs.into_iter().for_each(|d| res.add(d));
 
-        for diff in &diffs {
-            if diff.pass_eq.is_none() && diff.stdout_eq.is_some() {
-                out_diffs.insert(diff.stdout_eq.clone().unwrap());
-            }
-        }
-
-        let rep = diffs
-            .into_iter()
-            .reduce(|mut acc, diff| {
-                acc.merge(diff);
-                acc
-            })
-            .unwrap();
-
-        fn propagate_msg(log: Option<Diff<CompLog>>) -> HashMap<Message, Diff<HashSet<Position>>> {
-            let mut hm: HashMap<Message, Diff<HashSet<Position>>> = HashMap::default();
-            if log.is_none() {
-                return hm;
-            }
-            let log = log.unwrap();
-            for (msg, poss) in log.result_a {
-                hm.entry(msg).or_insert(Default::default()).result_a = poss.positions;
-            }
-            for (msg, poss) in log.result_b {
-                hm.entry(msg).or_insert(Default::default()).result_b = poss.positions;
-            }
-
-            hm
-        }
-
-        DiffResult {
-            stdout_diff: out_diffs,
-            err_diff: propagate_msg(rep.err_eq),
-            wrn_diff: propagate_msg(rep.warn_eq),
-            trc_diff: propagate_msg(rep.trace_eq),
-        }
+        res
     }
 }
 

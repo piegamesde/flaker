@@ -52,6 +52,8 @@ struct DiffReport {
     err_log: MessageAnalysis,
     wrn_log: MessageAnalysis,
     trc_log: MessageAnalysis,
+    fail_cnt: HashMap<String, u64>,
+    total_failures: u64,
 }
 
 impl DiffReport {
@@ -71,6 +73,9 @@ impl DiffReport {
         propagate_msg(&mut self.wrn_log, diff_result.wrn_diff);
         propagate_msg(&mut self.trc_log, diff_result.trc_diff);
         self.stdout.insert(name.clone(), diff_result.stdout_diff);
+        let fails = diff_result.fail_cnt;
+        self.fail_cnt.insert(name.clone(), fails);
+        self.total_failures += fails;
     }
 
     fn is_empty(&self) -> bool {
@@ -78,6 +83,7 @@ impl DiffReport {
             && self.err_log.is_empty()
             && self.wrn_log.is_empty()
             && self.trc_log.is_empty()
+            && self.total_failures == 0
     }
 }
 
@@ -125,7 +131,20 @@ fn print_report(report: DiffReport, verbosity: ReportVerbosity) {
 
     print_log_report("Error Messages:", report.err_log);
     print_log_report("Warn Messages:", report.wrn_log);
-    print_log_report("Trace Messages", report.trc_log);
+    print_log_report("Trace Messages:", report.trc_log);
+
+    match verbosity {
+        ReportVerbosity::Summary => {
+            tracing::info!("\t|- Total both failures: {}", report.total_failures);
+        }
+        ReportVerbosity::Detailed => {
+            tracing::info!("\t|- Both failure counts:");
+            for (repo, cnt) in report.fail_cnt {
+                tracing::info!("\t|\t|- {repo}: {cnt}");
+            }
+        }
+        _ => unreachable!(),
+    }
 }
 
 pub fn report(reports: Vec<PathBuf>, verbosity: ReportVerbosity) -> Result<(), Report> {
