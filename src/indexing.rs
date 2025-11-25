@@ -3,7 +3,7 @@ use clap::ValueEnum;
 use enumset::EnumSetType;
 use futures::{StreamExt, TryStreamExt};
 use indicatif::ProgressStyle;
-use npins::NixPins;
+use npins::{NixPins, Pin};
 use octorust::auth::Credentials;
 use octorust::types::{Order, SearchCodeSort};
 use octorust::{Client, ClientError};
@@ -123,9 +123,13 @@ pub async fn build_index(
             let opt = options.clone();
             async move {
                 let source_str = source.as_str();
-                let (p, err) = index_source_set(opt, source)
-                    .instrument(tracing::info_span!("Indexing", source = source_str))
-                    .await;
+                let (p, err) = (match source {
+                    SourceSet::Nixpkgs => index_nixpkgs().await,
+                    SourceSet::Nur => index_nur().await,
+                    SourceSet::Github => index_github(opt).await,
+                })
+                .instrument(tracing::info_span!("Indexing", source = source_str))
+                .await;
                 let err = err
                     .context("Error while indexing SourceSet")
                     .attach(source_str);
@@ -178,58 +182,51 @@ async fn write_file(out: &PathBuf, pins: &mut NixPins) -> Result<(), Report> {
     Ok(())
 }
 
-async fn index_source_set(
-    options: GithubOptions,
-    source: SourceSet,
-) -> (Vec<(String, npins::Pin)>, ReportCollection) {
-    match source {
-        SourceSet::Nixpkgs => {
-            let mut errs = ReportCollection::new();
-            let nixpkgs_url = Url::parse("https://github.com/NixOS/nixpkgs").unwrap();
-            let res = fetch_pin(&nixpkgs_url, Some("master".into()), false).await;
-            let v = match res {
-                Ok(pin) => vec![(nixpkgs_url.to_string(), pin)],
-                Err(err) => {
-                    errs.push(err.into_cloneable());
-                    vec![]
+async fn index_github(options: GithubOptions) -> (Vec<(String, Pin)>, ReportCollection) {
+    let (sender, receiver) = unbounded_channel();
+    let fetcher = spawn(search_github(options, sender));
+    let (ps, mut err) = UnboundedReceiverStream::new(receiver)
+        .map(|res| async move {
+            match res {
+                Ok(url_string) => {
+                    let url = Url::parse(url_string.as_str())?;
+                    let pin = fetch_pin(&url, None, false).await?;
+                    Ok((url.to_string(), pin))
                 }
-            };
-            (v, errs)
+                Err(e) => Err(e),
+            }
+        })
+        .buffer_unordered(10)
+        .fold(
+            (vec![], ReportCollection::new()),
+            |(mut ok, mut err), res| async {
+                match res {
+                    Ok(v) => ok.push(v),
+                    Err(e) => err.push(e.into_cloneable()),
+                }
+                (ok, err)
+            },
+        )
+        .await;
+    let _ = fetcher
+        .await
+        .map_err(|e| err.push(report!(e).into_cloneable().into()))
+        .map(|o| o.map_err(|e| err.push(e.into_cloneable())));
+    (ps, err)
+}
+
+async fn index_nixpkgs() -> (Vec<(String, Pin)>, ReportCollection) {
+    let mut errs = ReportCollection::new();
+    let nixpkgs_url = Url::parse("https://github.com/NixOS/nixpkgs").unwrap();
+    let res = fetch_pin(&nixpkgs_url, Some("master".into()), false).await;
+    let v = match res {
+        Ok(pin) => vec![(nixpkgs_url.to_string(), pin)],
+        Err(err) => {
+            errs.push(err.into_cloneable());
+            vec![]
         }
-        SourceSet::Nur => index_nur().await,
-        SourceSet::Github => {
-            let (sender, receiver) = unbounded_channel();
-            let fetcher = spawn(search_github(options, sender));
-            let (ps, mut err) = UnboundedReceiverStream::new(receiver)
-                .map(|res| async move {
-                    match res {
-                        Ok(url_string) => {
-                            let url = Url::parse(url_string.as_str())?;
-                            let pin = fetch_pin(&url, None, false).await?;
-                            Ok((url.to_string(), pin))
-                        }
-                        Err(e) => Err(e),
-                    }
-                })
-                .buffer_unordered(10)
-                .fold(
-                    (vec![], ReportCollection::new()),
-                    |(mut ok, mut err), res| async {
-                        match res {
-                            Ok(v) => ok.push(v),
-                            Err(e) => err.push(e.into_cloneable()),
-                        }
-                        (ok, err)
-                    },
-                )
-                .await;
-            let _ = fetcher
-                .await
-                .map_err(|e| err.push(report!(e).into_cloneable().into()))
-                .map(|o| o.map_err(|e| err.push(e.into_cloneable())));
-            (ps, err)
-        }
-    }
+    };
+    (v, errs)
 }
 
 async fn index_nur() -> (Vec<(String, npins::Pin)>, ReportCollection) {
