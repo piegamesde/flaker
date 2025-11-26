@@ -1,3 +1,4 @@
+mod bistate_result;
 mod diffing;
 mod indexing;
 mod reporting;

@@ -1,7 +1,10 @@
+use crate::bistate_result::BistateResult;
 use crate::GithubOptions;
 use clap::ValueEnum;
 use enumset::EnumSetType;
-use futures::{StreamExt, TryStreamExt};
+use futures::future::BoxFuture;
+use futures::stream::BoxStream;
+use futures::{future, FutureExt, StreamExt, TryFutureExt};
 use indicatif::ProgressStyle;
 use npins::{NixPins, Pin};
 use octorust::auth::Credentials;
@@ -10,18 +13,21 @@ use octorust::{Client, ClientError};
 use reqwest::IntoUrl;
 use rootcause::prelude::ResultExt;
 use rootcause::report_collection::ReportCollection;
-use rootcause::{bail, report, Report};
+use rootcause::{report, Report};
 use serde::Deserialize;
 use std::collections::HashMap;
 use std::path::PathBuf;
+use std::sync::Arc;
 use std::time::Duration;
 use tokio::spawn;
 use tokio::sync::mpsc::{unbounded_channel, UnboundedSender};
-use tokio::time::sleep;
+use tokio::time::{sleep, timeout};
 use tokio_stream::wrappers::UnboundedReceiverStream;
-use tracing::{debug, info, info_span, Instrument, Span};
+use tracing::{debug, info, info_span, Instrument};
 use tracing_indicatif::span_ext::IndicatifSpanExt;
 use url::Url;
+
+type FetcherStream = BoxStream<'static, BoxFuture<'static, Result<(String, Pin), Report>>>;
 
 /// Helper method to build you a client.
 // TODO make injectable via a configuration mechanism
@@ -53,16 +59,13 @@ where
 }
 
 #[tracing::instrument(fields(url = %url), skip_all)]
-async fn fetch_pin(
-    url: &Url,
-    branch: Option<String>,
-    submodules: bool,
-) -> Result<npins::Pin, Report> {
+async fn fetch_pin(url: Url, branch: Option<String>, submodules: bool) -> Result<Pin, Report> {
+    tracing::Span::current().pb_set_message(format!("Fetching {url}").as_str());
     // Always fetch default branch as a small first sanity check for the repo
-    let default_branch = npins::git::fetch_default_branch(url)
+    let default_branch = npins::git::fetch_default_branch(&url)
         .await
         .map_err(|e| report!(e))?;
-    let mut pin: npins::Pin = npins::git::GitPin::new(
+    let mut pin: Pin = npins::git::GitPin::new(
         npins::git::Repository::git(url.clone()),
         branch.clone().unwrap_or(default_branch),
         submodules,
@@ -115,53 +118,55 @@ pub async fn build_index(
     options: GithubOptions,
     out: PathBuf,
 ) -> Result<(), Report> {
-    let mut pins = NixPins::default();
-    let mut global_errors = ReportCollection::new();
+    let progress = Arc::new(tracing::info_span!("Building index"));
+    progress.pb_set_style(&ProgressStyle::with_template(
+        "{prefix:.bold.dim} {msg}: {wide_bar} [{pos:>7}/{len:7}]",
+    )?);
+    progress.pb_set_message("Building index");
+    progress.pb_set_length(0);
+    progress.pb_start();
 
-    let _ = futures::stream::iter(sources)
-        .map(|source| {
-            let opt = options.clone();
-            async move {
-                let source_str = source.as_str();
-                let (p, err) = (match source {
-                    SourceSet::Nixpkgs => index_nixpkgs().await,
-                    SourceSet::Nur => index_nur().await,
-                    SourceSet::Github => index_github(opt).await,
-                })
-                .instrument(tracing::info_span!("Indexing", source = source_str))
-                .await;
-                let err = err
+    let BistateResult(pins, mut err): BistateResult<_, ReportCollection> =
+        futures::stream::iter(sources)
+            .then(|source| {
+                let opt = options.clone();
+                let progress = progress.clone();
+                async move {
+                    let source_str = source.as_str();
+                    (match source {
+                        SourceSet::Nixpkgs => index_nixpkgs(progress).await,
+                        SourceSet::Nur => index_nur(progress).await,
+                        SourceSet::Github => index_github(opt, progress).await,
+                    })
                     .context("Error while indexing SourceSet")
-                    .attach(source_str);
-                (p, err)
-            }
-        })
-        .buffer_unordered(3)
-        .collect::<Vec<_>>()
-        .await
-        .into_iter()
-        .fold(
-            vec![],
-            |mut ps: Vec<(String, npins::Pin)>, (mut new_pins, err)| {
-                global_errors.push(err.into_cloneable());
-                ps.append(&mut new_pins);
-                ps
-            },
-        )
-        .into_iter()
-        .for_each(|(name, pin)| {
-            pins.pins.insert(name, pin);
-        });
+                    .attach(source_str)
+                }
+            })
+            .flat_map_unordered(None, |res| match res {
+                Ok(stream) => stream.boxed(),
+                Err(e) => {
+                    futures::stream::once(async { async { Err(e.into_dyn_any()) }.boxed() }).boxed()
+                }
+            })
+            .map(|f| {
+                timeout(Duration::from_secs(90), f).map(|r| {
+                    r.map_err(|e| report!(e).context("Fetch timed out").into_dyn_any())
+                        .flatten()
+                })
+            })
+            .buffer_unordered(10)
+            .collect()
+            .await;
 
-    let _ = write_file(&out, &mut pins)
+    let _ = write_file(&out, &NixPins { pins })
         .instrument(tracing::info_span!("Writing pins", out_path = ?out.display()))
         .await
         .context("failed to write pins")
         .attach(format!("Outfile: {out:?}"))
-        .map_err(|e| global_errors.push(e.into_cloneable()));
+        .map_err(|e| err.push(e.into_dyn_any().into_cloneable()));
 
-    if !global_errors.is_empty() {
-        Err(global_errors
+    if !err.is_empty() {
+        Err(err
             .context("Building Index failed with errors: ")
             .into_dyn_any())
     } else {
@@ -169,7 +174,7 @@ pub async fn build_index(
     }
 }
 
-async fn write_file(out: &PathBuf, pins: &mut NixPins) -> Result<(), Report> {
+async fn write_file(out: &PathBuf, pins: &NixPins) -> Result<(), Report> {
     let out = out;
     let parent = out.parent().ok_or(report!("cant go higher than root"))?;
     std::fs::create_dir_all(parent)?;
@@ -182,78 +187,35 @@ async fn write_file(out: &PathBuf, pins: &mut NixPins) -> Result<(), Report> {
     Ok(())
 }
 
-async fn index_github(options: GithubOptions) -> (Vec<(String, Pin)>, ReportCollection) {
-    let (sender, receiver) = unbounded_channel();
-    let fetcher = spawn(search_github(options, sender));
-    let (ps, mut err) = UnboundedReceiverStream::new(receiver)
-        .map(|res| async move {
-            match res {
-                Ok(url_string) => {
-                    let url = Url::parse(url_string.as_str())?;
-                    let pin = fetch_pin(&url, None, false).await?;
-                    Ok((url.to_string(), pin))
-                }
-                Err(e) => Err(e),
-            }
-        })
-        .buffer_unordered(10)
-        .fold(
-            (vec![], ReportCollection::new()),
-            |(mut ok, mut err), res| async {
-                match res {
-                    Ok(v) => ok.push(v),
-                    Err(e) => err.push(e.into_cloneable()),
-                }
-                (ok, err)
-            },
-        )
-        .await;
-    let _ = fetcher
-        .await
-        .map_err(|e| err.push(report!(e).into_cloneable().into()))
-        .map(|o| o.map_err(|e| err.push(e.into_cloneable())));
-    (ps, err)
+async fn index_nixpkgs(span: Arc<tracing::Span>) -> Result<FetcherStream, Report> {
+    let nixpkgs_string = "https://github.com/NixOS/nixpkgs";
+    let nixpkgs_url = Url::parse(nixpkgs_string).unwrap();
+    span.pb_inc_length(1);
+    Ok(futures::stream::once(future::ready({
+        span.pb_inc(1);
+        fetch_pin(nixpkgs_url, Some("master".into()), false)
+            .map_ok(|pin| (nixpkgs_string.to_string(), pin))
+            .map_err(|err| {
+                err.context("While indexing Nixpkgs")
+                    .attach(nixpkgs_string.to_string())
+                    .into_dyn_any()
+            })
+            .boxed()
+    }))
+    .boxed())
 }
 
-async fn index_nixpkgs() -> (Vec<(String, Pin)>, ReportCollection) {
-    let mut errs = ReportCollection::new();
-    let nixpkgs_url = Url::parse("https://github.com/NixOS/nixpkgs").unwrap();
-    let res = fetch_pin(&nixpkgs_url, Some("master".into()), false).await;
-    let v = match res {
-        Ok(pin) => vec![(nixpkgs_url.to_string(), pin)],
-        Err(err) => {
-            errs.push(err.into_cloneable());
-            vec![]
-        }
-    };
-    (v, errs)
-}
-
-async fn index_nur() -> (Vec<(String, npins::Pin)>, ReportCollection) {
-    let mut err = ReportCollection::new();
-
+async fn index_nur(span: Arc<tracing::Span>) -> Result<FetcherStream, Report> {
     // <https://github.com/nix-community/NUR/blob/main/repos.json>
-    let Ok(NurRepos { repos }) = get_and_deserialize(
+    let NurRepos { repos } = get_and_deserialize(
         "https://raw.githubusercontent.com/nix-community/NUR/refs/heads/main/repos.json",
     )
-    .await
-    .map_err(|e| err.push(e.into_cloneable())) else {
-        return (vec![], err);
-    };
+    .await?;
+    span.pb_inc_length(repos.len() as u64);
 
-    let fetch_bar = Span::current();
-    fetch_bar.pb_set_style(
-        &ProgressStyle::with_template("{prefix:.bold.dim} {msg}: {wide_bar} [{pos:>7}/{len:7}]")
-            .unwrap(),
-    );
-    fetch_bar.pb_set_length(repos.len() as u64);
-    fetch_bar.pb_set_message("Indexing NUR pins");
-    fetch_bar.pb_set_finish_message("Finished indexing NUR");
-    fetch_bar.pb_start();
-
-    let stream = futures::stream::iter(repos)
+    Ok(futures::stream::iter(repos)
         .map(
-            |(
+            move |(
                 _,
                 NurRepo {
                     url,
@@ -261,33 +223,53 @@ async fn index_nur() -> (Vec<(String, npins::Pin)>, ReportCollection) {
                     submodules,
                 },
             )| {
-                (url.as_str().to_string(), async move {
-                    fetch_pin(&url, branch, submodules)
-                        .await
-                        .map(|pin| (url.to_string(), pin))
-                        .context("fetch_pin failed")
-                        .attach_with(|| url)
-                })
+                span.pb_inc(1);
+                fetch_pin(url.clone(), branch, submodules)
+                    .map(move |r| match r {
+                        Ok(pin) => Ok((url.to_string(), pin)),
+                        Err(e) => Err(e
+                            .attach(url.to_string())
+                            .context("While indexing NUR")
+                            .into_dyn_any()),
+                    })
+                    .boxed()
             },
         )
-        .map(|(url, f)| async {
-            fetch_bar.pb_inc(1);
-            tokio::time::timeout(Duration::from_secs(30), f)
-                .await
-                .context("Fetch timed out")
-                .attach_with(|| url)
-                .unwrap_or_else(|e| Err(e))
-        })
-        .buffer_unordered(20)
-        .map_err(|e| e.context("Failed to fetch pin, ignoring"))
-        .map_err(|e| err.push(e.into_cloneable().into()))
-        .filter_map(|x| async { x.ok() });
-    (stream.collect::<Vec<(String, npins::Pin)>>().await, err)
+        .boxed())
 }
 
-async fn search_github(
+async fn index_github(
     options: GithubOptions,
-    sender: UnboundedSender<Result<String, Report>>,
+    span: Arc<tracing::Span>,
+) -> Result<FetcherStream, Report> {
+    let (sender, receiver) = unbounded_channel();
+    search_github(options, sender, span.clone())?;
+    Ok(UnboundedReceiverStream::new(receiver)
+        .map(move |res| match res {
+            Ok(url) => {
+                span.pb_inc(1);
+                fetch_pin(url.clone(), None, false)
+                    .map(move |r| match r {
+                        Ok(pin) => Ok((url.to_string(), pin)),
+                        Err(e) => Err(e
+                            .attach(url.to_string())
+                            .context("While indexing Github")
+                            .into_dyn_any()),
+                    })
+                    .boxed()
+            }
+            Err(e) => future::ready(Err(e
+                .context("While running the Github scraper".to_string())
+                .into_dyn_any()))
+            .boxed(),
+        })
+        .boxed())
+}
+
+fn search_github(
+    options: GithubOptions,
+    sender: UnboundedSender<Result<Url, Report>>,
+    span: Arc<tracing::Span>,
 ) -> Result<(), Report> {
     let token = match options.auth_token {
         Some(t) => Ok(t),
@@ -298,77 +280,91 @@ async fn search_github(
     let mut expected_total_pages = "?".to_string();
     let start_page = options.start_page;
     let mut page = start_page;
-    let mut collected_what_github_calls_all = false;
-    info_span!("Fetching repositories");
-    while !collected_what_github_calls_all && options.end_page.map(|mp| page < mp).unwrap_or(true) {
-        info!("Fetching page {page} of {expected_total_pages}...");
-        let search_result = s
-            .code(
-                "filename:flake.nix path:/",
-                SearchCodeSort::Noop,
-                Order::Noop,
-                100,
-                page as i64,
-            )
-            .await;
-        match search_result {
-            Err(e) => match &e {
-                ClientError::RateLimited { ref duration } => {
-                    if page == start_page && *duration == 60 {
-                        bail!("Possibly invalid Token!");
-                    }
-                    info_span!("Got rate limited, waiting...", seconds=%duration);
-                    sleep(Duration::from_secs(*duration + 2)).await;
-                }
-                ClientError::HttpError {
-                    status,
-                    headers: _,
-                    error,
-                } => {
-                    if *status == 422
-                        && error.contains("Cannot access beyond the first 1000 results")
-                    {
-                        collected_what_github_calls_all = true;
-                        continue;
-                    }
-                    sender.send(
-                        Err(e)
-                            .context("Unexpected HTTP Error")
-                            .map_err(|e| e.into_dyn_any()),
-                    )?;
-                }
-                _ => {
-                    sender.send(
-                        Err(e)
-                            .context("unknown error type")
-                            .map_err(|e| e.into_dyn_any()),
-                    )?;
-                    // Kill because we don't know if it is sensible to continue...
-                    collected_what_github_calls_all = true;
-                }
-            },
-            Ok(response) => {
-                if expected_total_pages == "?" {
-                    expected_total_pages = format!("{}", response.body.total_count / 100);
-                }
 
-                if response.body.items.len() == 0 {
-                    collected_what_github_calls_all = true;
-                    continue;
-                }
+    spawn(async move {
+        while options.end_page.map(|mp| page < mp).unwrap_or(true) {
+            info_span!(
+                "Fetching Github page",
+                "{}",
+                format!("{page} of {expected_total_pages}...")
+            );
+            let search_result = s
+                .code(
+                    "filename:flake.nix path:/",
+                    SearchCodeSort::Noop,
+                    Order::Noop,
+                    100,
+                    page as i64,
+                )
+                .await;
+            match search_result {
+                Err(e) => match &e {
+                    ClientError::RateLimited { ref duration } => {
+                        if page == start_page && *duration == 60 {
+                            if let Err(_) = sender.send(Err(report!("Possibly invalid token!"))) {
+                                break;
+                            }
+                        }
+                        info_span!("Got rate limited, waiting...", seconds=%duration);
+                        sleep(Duration::from_secs(*duration + 2)).await;
+                    }
+                    ClientError::HttpError {
+                        status,
+                        headers: _,
+                        error,
+                    } => {
+                        if *status == 422
+                            && error.contains("Cannot access beyond the first 1000 results")
+                        {
+                            break;
+                        }
+                        if let Err(_) = sender.send(
+                            Err(e)
+                                .context("Unexpected HTTP Error")
+                                .map_err(|e| e.into_dyn_any()),
+                        ) {
+                            break;
+                        }
+                    }
+                    _ => {
+                        let _ = sender.send(
+                            Err(e)
+                                .context("unknown error type")
+                                .map_err(|e| e.into_dyn_any()),
+                        );
+                        // Kill because we don't know if it is sensible to continue...
+                        break;
+                    }
+                },
+                Ok(response) => {
+                    if expected_total_pages == "?" {
+                        expected_total_pages = format!("{}", response.body.total_count / 100);
+                    }
 
-                for code_result in response.body.items {
-                    let repo_url_string = code_result
-                        .repository
-                        .url
-                        .replace("https://api.github.com/repos/", "https://github.com/");
-                    debug!("new repo: {}", repo_url_string);
-                    sender.send(Ok(repo_url_string))?;
+                    let items = response.body.items;
+
+                    if items.len() == 0 {
+                        break;
+                    }
+                    span.pb_inc_length(items.len() as u64);
+                    for code_result in items {
+                        let repo_url_string = code_result
+                            .repository
+                            .url
+                            .replace("https://api.github.com/repos/", "https://github.com/");
+                        debug!("new repo: {}", repo_url_string);
+                        if let Err(_) = sender.send(
+                            Url::parse(repo_url_string.as_str())
+                                .map_err(|e| report!(e).into_dyn_any()),
+                        ) {
+                            break;
+                        }
+                    }
+                    page += 1;
                 }
-                page += 1;
             }
         }
-    }
-    info!("Finished gathering Repos");
+        info!("Finished gathering Repos");
+    });
     Ok(())
 }
