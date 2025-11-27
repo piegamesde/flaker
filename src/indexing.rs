@@ -188,21 +188,32 @@ async fn write_file(out: &PathBuf, pins: &NixPins) -> Result<(), Report> {
 }
 
 async fn index_nixpkgs(span: Arc<tracing::Span>) -> Result<FetcherStream, Report> {
-    let nixpkgs_string = "https://github.com/NixOS/nixpkgs";
-    let nixpkgs_url = Url::parse(nixpkgs_string).unwrap();
-    span.pb_inc_length(1);
-    Ok(futures::stream::once(future::ready({
-        span.pb_inc(1);
-        fetch_pin(nixpkgs_url, Some("master".into()), false)
-            .map_ok(|pin| (nixpkgs_string.to_string(), pin))
-            .map_err(|err| {
-                err.context("While indexing Nixpkgs")
-                    .attach(nixpkgs_string.to_string())
-                    .into_dyn_any()
-            })
-            .boxed()
-    }))
-    .boxed())
+    const NIXPKGS_STRING: &'static str = "https://github.com/NixOS/nixpkgs";
+    let nixpkgs_url = Url::parse(NIXPKGS_STRING).unwrap();
+
+    /* The current master branch and all releases since 2021 (arbitrarily picked) */
+    let branches = std::iter::once("master".to_string())
+        .chain(
+            (21..=25)
+                .into_iter()
+                .flat_map(|year| [format!("nixos-{year}.05"), format!("nixos-{year}.11")]),
+        )
+        .collect::<Vec<_>>();
+    span.pb_inc_length(branches.len() as u64);
+    Ok(futures::stream::iter(branches)
+        .map(move |branch| {
+            span.pb_inc(1);
+            fetch_pin(nixpkgs_url.clone(), Some(branch.clone()), false)
+                .map_ok(|pin| (NIXPKGS_STRING.to_string(), pin))
+                .map_err(|err| {
+                    err.context("While indexing Nixpkgs")
+                        .attach(NIXPKGS_STRING.to_string())
+                        .attach(branch)
+                        .into_dyn_any()
+                })
+                .boxed()
+        })
+        .boxed())
 }
 
 async fn index_nur(span: Arc<tracing::Span>) -> Result<FetcherStream, Report> {
