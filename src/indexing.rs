@@ -4,7 +4,7 @@ use clap::ValueEnum;
 use enumset::EnumSetType;
 use futures::future::BoxFuture;
 use futures::stream::BoxStream;
-use futures::{future, FutureExt, StreamExt, TryFutureExt};
+use futures::{future, FutureExt, StreamExt};
 use indicatif::ProgressStyle;
 use npins::{NixPins, Pin};
 use octorust::auth::Credentials;
@@ -58,26 +58,47 @@ where
     Ok(serde_json::from_str(&response)?)
 }
 
+async fn fetch_pin_timeout(
+    url: Url,
+    branch: Option<String>,
+    submodules: bool,
+) -> Result<Pin, Report> {
+    timeout(
+        Duration::from_secs(120),
+        fetch_pin(url.clone(), branch, submodules),
+    )
+    .await
+    .map_err(|_| {
+        report!("Fetch timed out")
+            .attach(url.to_string())
+            .into_dyn_any()
+    })
+    .flatten()
+}
+
 #[tracing::instrument(fields(url = %url), skip_all)]
 async fn fetch_pin(url: Url, branch: Option<String>, submodules: bool) -> Result<Pin, Report> {
-    tracing::Span::current().pb_set_message(format!("Fetching {url}").as_str());
-    // Always fetch default branch as a small first sanity check for the repo
-    let default_branch = npins::git::fetch_default_branch(&url)
-        .await
-        .map_err(|e| report!(e))?;
-    let mut pin: Pin = npins::git::GitPin::new(
-        npins::git::Repository::git(url.clone()),
-        branch.clone().unwrap_or(default_branch),
-        submodules,
-    )
-    .into();
-    pin.update()
-        .await
-        .map_err(|e| report!(e).attach(url.clone()))?;
-    pin.fetch()
-        .await
-        .map_err(|e| report!(e).attach(url.clone()))?;
-    Ok(pin)
+    let result = async {
+        tracing::Span::current().pb_set_message(format!("Fetching {url}").as_str());
+        // Always fetch default branch as a small first sanity check for the repo
+        let default_branch = npins::git::fetch_default_branch(&url)
+            .await
+            .map_err(|e| report!(e))?;
+        let mut pin: Pin = npins::git::GitPin::new(
+            npins::git::Repository::git(url.clone()),
+            branch.clone().unwrap_or(default_branch),
+            submodules,
+        )
+        .into();
+        pin.update()
+            .await
+            .map_err(|e| report!(e).attach(url.clone()))?;
+        pin.fetch()
+            .await
+            .map_err(|e| report!(e).attach(url.clone()))?;
+        Ok::<npins::Pin, Report>(pin)
+    };
+    result.await.attach(url.to_string())
 }
 
 #[derive(EnumSetType, Debug, ValueEnum)]
@@ -148,13 +169,7 @@ pub async fn build_index(
                     futures::stream::once(async { async { Err(e.into_dyn_any()) }.boxed() }).boxed()
                 }
             })
-            .map(|f| {
-                timeout(Duration::from_secs(90), f).map(|r| {
-                    r.map_err(|e| report!(e).context("Fetch timed out").into_dyn_any())
-                        .flatten()
-                })
-            })
-            .buffer_unordered(10)
+            .buffer_unordered(5)
             .collect()
             .await;
 
@@ -203,13 +218,20 @@ async fn index_nixpkgs(span: Arc<tracing::Span>) -> Result<FetcherStream, Report
     Ok(futures::stream::iter(branches)
         .map(move |branch| {
             span.pb_inc(1);
-            fetch_pin(nixpkgs_url.clone(), Some(branch.clone()), false)
-                .map_ok(|pin| (NIXPKGS_STRING.to_string(), pin))
-                .map_err(|err| {
-                    err.context("While indexing Nixpkgs")
-                        .attach(NIXPKGS_STRING.to_string())
-                        .attach(branch)
-                        .into_dyn_any()
+            fetch_pin_timeout(nixpkgs_url.clone(), Some(branch.clone()), false)
+                .map(move |result| match result {
+                    Ok(pin) => Ok((
+                        if branch == "master" {
+                            NIXPKGS_STRING.to_string()
+                        } else {
+                            format!("{NIXPKGS_STRING}/tree/{branch}")
+                        },
+                        pin,
+                    )),
+                    Err(err) => Err(err
+                        .context("While indexing Nixpkgs")
+                        .attach(branch.clone())
+                        .into_dyn_any()),
                 })
                 .boxed()
         })
@@ -235,13 +257,10 @@ async fn index_nur(span: Arc<tracing::Span>) -> Result<FetcherStream, Report> {
                 },
             )| {
                 span.pb_inc(1);
-                fetch_pin(url.clone(), branch, submodules)
+                fetch_pin_timeout(url.clone(), branch, submodules)
                     .map(move |r| match r {
                         Ok(pin) => Ok((url.to_string(), pin)),
-                        Err(e) => Err(e
-                            .attach(url.to_string())
-                            .context("While indexing NUR")
-                            .into_dyn_any()),
+                        Err(e) => Err(e.context("While indexing NUR").into_dyn_any()),
                     })
                     .boxed()
             },
@@ -259,13 +278,10 @@ async fn index_github(
         .map(move |res| match res {
             Ok(url) => {
                 span.pb_inc(1);
-                fetch_pin(url.clone(), None, false)
+                fetch_pin_timeout(url.clone(), None, false)
                     .map(move |r| match r {
                         Ok(pin) => Ok((url.to_string(), pin)),
-                        Err(e) => Err(e
-                            .attach(url.to_string())
-                            .context("While indexing Github")
-                            .into_dyn_any()),
+                        Err(e) => Err(e.context("While indexing Github").into_dyn_any()),
                     })
                     .boxed()
             }
