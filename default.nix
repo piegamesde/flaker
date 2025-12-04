@@ -1,9 +1,9 @@
 # Usage:
-# nix-build -A reports-combined \
+# nix-build -A reports-combined --keep-going \
 #     --arg nixA '{ url = "file://path/to/lix"; rev = "0000000000000000000000000000000000000000";}' \
 #     --arg nixB '{ url = "file://path/to/lix"; ref = "2.94.0";}'
 # or
-# nix-build -A reports.\"https://github.com/nixos/nixpkgs\" \
+# nix-build -A reports.\"https://github.com/nixos/nixpkgs\" --keep-going \
 #     --arg nixA /path/to/lix/repo \
 #     --arg nixB '{ url = "file://path/to/lix"; ref = "2.94.0";}'
 let

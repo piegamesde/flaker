@@ -2,9 +2,9 @@ use crate::diffing::{Diff, DiffResult, Message, MessageOccurrences, Position};
 use clap::ValueEnum;
 use rootcause::{bail, Report};
 use serde::{Deserialize, Serialize};
-use std::collections::{HashMap, HashSet};
+use std::collections::{BTreeSet, HashMap};
 use std::fs::File;
-use std::io::Read;
+use std::io::{Read, Write};
 use std::path::PathBuf;
 use std::str::FromStr;
 
@@ -42,11 +42,11 @@ impl DiffResult {
 }
 
 /// repo -> stdout_diffs
-type OutAnalysis = HashMap<String, HashSet<Diff<Message>>>;
+type OutAnalysis = HashMap<String, BTreeSet<Diff<Message>>>;
 /// Message -> (repo -> positions)
-type MessageAnalysis = HashMap<Message, HashMap<String, Diff<HashSet<Position>>>>;
+type MessageAnalysis = HashMap<Message, HashMap<String, Diff<BTreeSet<Position>>>>;
 
-#[derive(Default, Debug, Serialize, Deserialize)]
+#[derive(Default, Debug, Serialize, Deserialize, Clone)]
 struct DiffReport {
     stdout: OutAnalysis,
     err_log: MessageAnalysis,
@@ -72,9 +72,14 @@ impl DiffReport {
         propagate_msg(&mut self.err_log, diff_result.err_diff);
         propagate_msg(&mut self.wrn_log, diff_result.wrn_diff);
         propagate_msg(&mut self.trc_log, diff_result.trc_diff);
-        self.stdout.insert(name.clone(), diff_result.stdout_diff);
+        if !diff_result.stdout_diff.is_empty() {
+            self.stdout
+                .insert(name.clone(), diff_result.stdout_diff.into_iter().collect());
+        }
         let fails = diff_result.fail_cnt;
-        self.fail_cnt.insert(name.clone(), fails);
+        if fails > 0 {
+            self.fail_cnt.insert(name.clone(), fails);
+        }
         self.total_failures += fails;
     }
 
@@ -147,7 +152,11 @@ fn print_report(report: DiffReport, verbosity: ReportVerbosity) {
     }
 }
 
-pub fn report(reports: Vec<PathBuf>, verbosity: ReportVerbosity) -> Result<(), Report> {
+pub fn report(
+    reports: Vec<PathBuf>,
+    verbosity: ReportVerbosity,
+    output_file: Option<PathBuf>,
+) -> Result<(), Report> {
     let verbosity = match verbosity {
         ReportVerbosity::Auto => {
             if reports.len() == 1 {
@@ -204,7 +213,16 @@ pub fn report(reports: Vec<PathBuf>, verbosity: ReportVerbosity) -> Result<(), R
         report.add(diff_result?, repo_name);
     }
 
-    print_report(report, verbosity);
+    print_report(report.clone(), verbosity);
+
+    if output_file.is_some() {
+        let mut file = File::create(output_file.unwrap())?;
+        file.write_all(
+            serde_json::to_string_pretty(&report)?
+                .into_bytes()
+                .as_slice(),
+        )?;
+    }
 
     Ok(())
 }

@@ -112,7 +112,9 @@ type ErrLog = CompLog;
 type WarnLog = CompLog;
 type TraceLog = CompLog;
 
-#[derive(Debug, Serialize, Deserialize, Default, Hash, Eq, PartialEq, Clone, Copy)]
+#[derive(
+    Debug, Serialize, Deserialize, Default, Hash, Eq, PartialEq, Clone, Copy, Ord, PartialOrd,
+)]
 pub struct Diff<T> {
     pub result_a: T,
     pub result_b: T,

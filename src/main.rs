@@ -76,6 +76,9 @@ enum Command {
         /// Path to the report file
         #[arg(num_args = 1..)]
         report_paths: Vec<PathBuf>,
+        /// Where to save the combined report
+        #[arg(long, short)]
+        output_file: Option<PathBuf>,
     },
 }
 
@@ -140,8 +143,9 @@ async fn main() -> Result<(), Report> {
         Command::Report {
             verbosity,
             report_paths,
+            output_file,
         } => {
-            report(report_paths, verbosity)?;
+            report(report_paths, verbosity, output_file)?;
         }
     }
     Ok(())
