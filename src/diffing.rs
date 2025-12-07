@@ -31,11 +31,16 @@ mod parsing {
         Regex::new(r"--extra-deprecated-features (?<feature_name>[\w-]+)\b").unwrap()
     });
 
+    static PLACEHOLDER_RE: LazyLock<Regex> =
+        LazyLock::new(|| Regex::new(r"\[35;1m.+?\[0m").unwrap());
+
     fn simplify_msg(msg: Message) -> Message {
         let m = DEP_FINDER_RE.captures(msg.as_str());
         match m {
             Some(name) => "Deprecated Feature: ".to_string() + name["feature_name"].as_ref(),
-            None => msg,
+            None => PLACEHOLDER_RE
+                .replace_all(msg.as_str(), "@placeholder@")
+                .to_string(),
         }
     }
 
