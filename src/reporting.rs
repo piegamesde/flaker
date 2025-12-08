@@ -42,11 +42,11 @@ impl DiffResult {
 }
 
 /// repo -> stdout_diffs
-type OutAnalysis = HashMap<String, BTreeSet<Diff<Message>>>;
+type OutAnalysis = BTreeMap<String, BTreeSet<Diff<Message>>>;
 /// Message -> (repo -> positions)
-type MessageAnalysis = HashMap<Message, HashMap<String, Diff<BTreeSet<Position>>>>;
+type MessageAnalysis = HashMap<Message, BTreeMap<String, Diff<BTreeSet<Position>>>>;
 /// repo -> (file -> crash dump)
-type CrashAnalysis = HashMap<String, Diff<BTreeMap<Position, String>>>;
+type CrashAnalysis = BTreeMap<String, Diff<BTreeMap<Position, String>>>;
 
 #[derive(Default, Debug, Serialize, Deserialize, Clone)]
 struct DiffReport {
