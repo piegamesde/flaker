@@ -2,7 +2,7 @@ use crate::diffing::{Diff, DiffResult, Message, MessageOccurrences, Position};
 use clap::ValueEnum;
 use rootcause::{bail, Report};
 use serde::{Deserialize, Serialize};
-use std::collections::{BTreeSet, HashMap};
+use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fs::File;
 use std::io::{Read, Write};
 use std::path::PathBuf;
@@ -45,10 +45,13 @@ impl DiffResult {
 type OutAnalysis = HashMap<String, BTreeSet<Diff<Message>>>;
 /// Message -> (repo -> positions)
 type MessageAnalysis = HashMap<Message, HashMap<String, Diff<BTreeSet<Position>>>>;
+/// repo -> (file -> crash dump)
+type CrashAnalysis = HashMap<String, Diff<BTreeMap<Position, String>>>;
 
 #[derive(Default, Debug, Serialize, Deserialize, Clone)]
 struct DiffReport {
     stdout: OutAnalysis,
+    crash_log: CrashAnalysis,
     err_log: MessageAnalysis,
     wrn_log: MessageAnalysis,
     trc_log: MessageAnalysis,
@@ -75,6 +78,11 @@ impl DiffReport {
         if !diff_result.stdout_diff.is_empty() {
             self.stdout
                 .insert(name.clone(), diff_result.stdout_diff.into_iter().collect());
+        }
+        if !diff_result.crash_diff.result_a.is_empty()
+            || !diff_result.crash_diff.result_b.is_empty()
+        {
+            self.crash_log.insert(name.clone(), diff_result.crash_diff);
         }
         let fails = diff_result.fail_cnt;
         if fails > 0 {

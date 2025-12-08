@@ -3,7 +3,7 @@ use indicatif::ProgressStyle;
 use rootcause::prelude::ResultExt;
 use rootcause::Report;
 use serde::{Deserialize, Serialize};
-use std::collections::{HashMap, HashSet};
+use std::collections::{BTreeMap, HashMap, HashSet};
 use std::path::{Path, PathBuf};
 use std::process::Stdio;
 use tracing::Instrument;
@@ -59,33 +59,50 @@ mod parsing {
         hm
     }
 
-    pub fn split_stderr(stderr: String, file: &Path) -> (ErrLog, WarnLog, TraceLog) {
+    pub fn split_stderr(
+        stderr: String,
+        file: &Path,
+    ) -> (Option<Message>, ErrLog, WarnLog, TraceLog) {
+        let mut crash = None;
         let mut errmsgs: Vec<LogEntry> = vec![];
         let mut warnmsgs: Vec<LogEntry> = vec![];
         let mut tracemsgs: Vec<LogEntry> = vec![];
         let mut logs: Vec<LogEntry> = vec![];
         let re = Regex::new(r"\n").unwrap();
-        re.split(stderr.as_str()).for_each(|line| {
-            match line.get(0..4) {
-                Some("@nix") => {
-                    //throw away the @nix part, otherwise its invalid json
-                    let j = line.get(5..).unwrap();
-                    match serde_json::from_str::<LogEntry>(j) {
-                        Ok(v) => {
-                            if v.action != "msg" {
-                                todo!("new action type: {}", v.action);
-                            }
-                            logs.push(v)
+        for line in re.split(stderr.as_str()) {
+            if line.is_empty() {
+                continue;
+            } else if line.starts_with("@nix") {
+                /* log-format=json messages start with @nix followed by a json object */
+                //throw away the @nix part, otherwise it's invalid json
+                let j = line.get(5..).unwrap();
+                match serde_json::from_str::<LogEntry>(j) {
+                    Ok(v) => {
+                        if v.action != "msg" {
+                            todo!("new action type: {}", v.action);
                         }
-                        Err(e) => tracing::error!("error parsing json: {}; {}", e, j),
+                        logs.push(v)
                     }
+                    Err(e) => tracing::error!("error parsing json: {}; {}", e, j),
                 }
-                Some(t) => {
-                    todo!("new type: {}", t)
-                }
-                None => {}
+            } else if line.starts_with("Lix crashed") {
+                /* Lix crashed. Take the line plus the remaining lines as an attached crash report */
+                let crash_message = stderr
+                    .get(unsafe {
+                        // SAFETY: line is a substring of stderr
+                        line.as_ptr().offset_from(stderr.as_ptr()) as usize..
+                    })
+                    .unwrap();
+                crash = Some(crash_message.to_string());
+                break;
+            } else {
+                dbg!(&stderr);
+                panic!(
+                    "Don't know how to handle line in '{}': '{line}'",
+                    file.display()
+                );
             }
-        });
+        }
         for log in logs {
             if log.level == 0 {
                 errmsgs.push(log);
@@ -96,6 +113,7 @@ mod parsing {
             }
         }
         (
+            crash,
             dedup_log(errmsgs, file),
             dedup_log(warnmsgs, file),
             dedup_log(tracemsgs, file),
@@ -133,6 +151,8 @@ struct ParserDiff {
     exit_eq: Option<Diff<Option<i32>>>,
     both_exit_nonzero: bool,
     stdout_eq: Option<Diff<Message>>,
+    // Always Some if both sides crashed because no two crashes are the same
+    crash_eq: Option<(Position, Diff<Message>)>,
     err_eq: Option<Diff<ErrLog>>,
     warn_eq: Option<Diff<WarnLog>>,
     trace_eq: Option<Diff<TraceLog>>,
@@ -179,20 +199,30 @@ fn diff_stderr(
     err_b: String,
     file: &Path,
 ) -> (
+    Option<(Position, Diff<Message>)>,
     Option<Diff<ErrLog>>,
     Option<Diff<WarnLog>>,
     Option<Diff<TraceLog>>,
 ) {
     if err_a != err_b {
-        let (err_a, wrn_a, trc_a) = parsing::split_stderr(err_a, file);
-        let (err_b, wrn_b, trc_b) = parsing::split_stderr(err_b, file);
+        let (crash_a, err_a, wrn_a, trc_a) = parsing::split_stderr(err_a, file);
+        let (crash_b, err_b, wrn_b, trc_b) = parsing::split_stderr(err_b, file);
         (
-            (err_a != err_b).then_some(Diff::from(err_a, err_b)),
-            (wrn_a != wrn_b).then_some(Diff::from(wrn_a, wrn_b)),
-            (trc_a != trc_b).then_some(Diff::from(trc_a, trc_b)),
+            (crash_a.is_some() || crash_b.is_some()).then(|| {
+                (
+                    file.display().to_string(),
+                    Diff {
+                        result_a: crash_a.unwrap_or_default(),
+                        result_b: crash_b.unwrap_or_default(),
+                    },
+                )
+            }),
+            (err_a != err_b).then(|| Diff::from(err_a, err_b)),
+            (wrn_a != wrn_b).then(|| Diff::from(wrn_a, wrn_b)),
+            (trc_a != trc_b).then(|| Diff::from(trc_a, trc_b)),
         )
     } else {
-        (None, None, None)
+        (None, None, None, None)
     }
 }
 
@@ -232,7 +262,7 @@ async fn diff_file(file: &Path, nix_a: &Path, nix_b: &Path) -> Result<Option<Par
         let pass = result_a.status.success() && result_b.status.success();
         let exit = result_a.status == result_b.status;
         let stdout = result_a.stdout == result_b.stdout;
-        let (err, warn, trace) = diff_stderr(
+        let (crash, err, warn, trace) = diff_stderr(
             String::from_utf8(result_a.stderr)?,
             String::from_utf8(result_b.stderr)?,
             file,
@@ -252,6 +282,7 @@ async fn diff_file(file: &Path, nix_a: &Path, nix_b: &Path) -> Result<Option<Par
                 result_a: String::from_utf8(result_a.stdout)?,
                 result_b: String::from_utf8(result_b.stdout)?,
             }),
+            crash_eq: crash,
             err_eq: err,
             warn_eq: warn,
             trace_eq: trace,
@@ -263,6 +294,7 @@ async fn diff_file(file: &Path, nix_a: &Path, nix_b: &Path) -> Result<Option<Par
             exit_eq: None,
             both_exit_nonzero: true,
             stdout_eq: None,
+            crash_eq: None,
             err_eq: None,
             warn_eq: None,
             trace_eq: None,
@@ -278,6 +310,7 @@ pub type MessageOccurrences = HashMap<Message, Diff<HashSet<Position>>>;
 #[derive(Default, Debug, Serialize, Deserialize)]
 pub struct DiffResult {
     pub stdout_diff: HashSet<Diff<Message>>,
+    pub crash_diff: Diff<BTreeMap<Position, String>>,
     pub err_diff: MessageOccurrences,
     pub wrn_diff: MessageOccurrences,
     pub trc_diff: MessageOccurrences,
@@ -315,6 +348,22 @@ impl DiffResult {
 
         if let (Some(diff_eq), true) = (diff.stdout_eq, diff.pass_eq.is_none()) {
             self.stdout_diff.insert(diff_eq.clone());
+        }
+
+        if let Some((
+            pos,
+            Diff {
+                result_a: crash_a,
+                result_b: crash_b,
+            },
+        )) = diff.crash_eq
+        {
+            if !crash_a.is_empty() {
+                self.crash_diff.result_a.insert(pos.clone(), crash_a);
+            }
+            if !crash_b.is_empty() {
+                self.crash_diff.result_b.insert(pos, crash_b);
+            }
         }
 
         self.err_diff.add_log(diff.err_eq);
