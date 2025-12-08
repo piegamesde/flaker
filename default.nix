@@ -6,6 +6,11 @@
 # nix-build -A reports.\"https://github.com/nixos/nixpkgs\" --keep-going \
 #     --arg nixA /path/to/lix/repo \
 #     --arg nixB '{ url = "file://path/to/lix"; ref = "2.94.0";}'
+#
+# nix-build -A lixA \
+#     --arg nixA '{ url = "file://path/to/lix"; rev = "0000000000000000000000000000000000000000";}'
+#
+# nix-build -A sources.\"https://github.com/nixos/nixpkgs\"
 let
   pins = import ./npins;
   pkgs = import pins.nixpkgs { };
@@ -15,14 +20,18 @@ rec {
   flaker = pkgs.callPackage ./flaker.nix { };
 
   # Call all pins with a Nixpkgs to make them proper derivations
-  sources = lib.mapAttrs (_: pin: pin { inherit pkgs; }) (import ./npins { input = ./test.json; });
+  sources = lib.mapAttrs (_: pin: pin { inherit pkgs; }) (import ./npins { input = ./index.json; });
+
+  lixA = { nixA, ... }: (import (builtins.fetchGit nixA)).default;
+  lixB = { nixB, ... }: (import (builtins.fetchGit nixB)).default;
 
   reports =
-    { nixA, nixB }:
-    let
-      lixA = (import (builtins.fetchGit nixA)).default;
-      lixB = (import (builtins.fetchGit nixB)).default;
-    in
+    {
+      nixA,
+      nixB,
+      lixACached ? lixA nixArgs,
+      lixBCached ? lixB nixArgs,
+    }@nixArgs:
     lib.mapAttrs (
       name: pin:
       pkgs.stdenvNoCC.mkDerivation {
@@ -30,15 +39,31 @@ rec {
         src = pin.outPath;
         buildInputs = [
           flaker
-          lixA
-          lixB
+          lixACached
+          lixBCached
+          pkgs.jq
         ];
+        dontConfigure = true;
         buildPhase = ''
-          flaker nix-parse . ${lixA}/bin/nix ${lixB}/bin/nix
+          flaker diff . ${lixACached}/bin/nix ${lixBCached}/bin/nix
         '';
-        installPhase = "cp report.json $out";
+        installPhase = ''
+          mkdir $out
+          cp report.json $out/report-$(echo ${lib.escapeShellArg name} | jq --raw-input --raw-output '@uri').json
+        '';
+        dontFixup = true;
       }
     ) sources;
 
-  reports-combined = { nixA, nixB }@nixArgs: pkgs.linkFarm "report-combined" (reports nixArgs);
+  reports-combined =
+    {
+      nixA,
+      nixB,
+      lixACached ? lixA nixArgs,
+      lixBCached ? lixB nixArgs,
+    }@nixArgs:
+    pkgs.symlinkJoin {
+      name = "reports-combined";
+      paths = builtins.attrValues (reports nixArgs);
+    };
 }
