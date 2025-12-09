@@ -1164,78 +1164,6 @@
       "url": null,
       "hash": "sha256-udCSZoKawLiNJKFQgikkN96tvVJggs61ihRq8sRt8tM="
     },
-    "https://github.com/NixOS/nixpkgs/tree/nixos-21.05": {
-      "type": "Git",
-      "repository": {
-        "type": "Git",
-        "url": "https://github.com/NixOS/nixpkgs"
-      },
-      "branch": "nixos-21.05",
-      "submodules": false,
-      "revision": "022caabb5f2265ad4006c1fa5b1ebe69fb0c3faf",
-      "url": null,
-      "hash": "sha256-lkA5X3VNMKirvA+SUzvEhfA7XquWLci+CGi505YFAIs="
-    },
-    "https://github.com/NixOS/nixpkgs/tree/nixos-21.11": {
-      "type": "Git",
-      "repository": {
-        "type": "Git",
-        "url": "https://github.com/NixOS/nixpkgs"
-      },
-      "branch": "nixos-21.11",
-      "submodules": false,
-      "revision": "eabc38219184cc3e04a974fe31857d8e0eac098d",
-      "url": null,
-      "hash": "sha256-hekabNdTdgR/iLsgce5TGWmfIDZ86qjPhxDg/8TlzhE="
-    },
-    "https://github.com/NixOS/nixpkgs/tree/nixos-22.05": {
-      "type": "Git",
-      "repository": {
-        "type": "Git",
-        "url": "https://github.com/NixOS/nixpkgs"
-      },
-      "branch": "nixos-22.05",
-      "submodules": false,
-      "revision": "380be19fbd2d9079f677978361792cb25e8a3635",
-      "url": null,
-      "hash": "sha256-Zffu01pONhs/pqH07cjlF10NnMDLok8ix5Uk4rhOnZQ="
-    },
-    "https://github.com/NixOS/nixpkgs/tree/nixos-22.11": {
-      "type": "Git",
-      "repository": {
-        "type": "Git",
-        "url": "https://github.com/NixOS/nixpkgs"
-      },
-      "branch": "nixos-22.11",
-      "submodules": false,
-      "revision": "ea4c80b39be4c09702b0cb3b42eab59e2ba4f24b",
-      "url": null,
-      "hash": "sha256-lHrKvEkCPTUO+7tPfjIcb7Trk6k31rz18vkyqmkeJfY="
-    },
-    "https://github.com/NixOS/nixpkgs/tree/nixos-23.05": {
-      "type": "Git",
-      "repository": {
-        "type": "Git",
-        "url": "https://github.com/NixOS/nixpkgs"
-      },
-      "branch": "nixos-23.05",
-      "submodules": false,
-      "revision": "70bdadeb94ffc8806c0570eb5c2695ad29f0e421",
-      "url": null,
-      "hash": "sha256-LWvKHp7kGxk/GEtlrGYV68qIvPHkU9iToomNFGagixU="
-    },
-    "https://github.com/NixOS/nixpkgs/tree/nixos-23.11": {
-      "type": "Git",
-      "repository": {
-        "type": "Git",
-        "url": "https://github.com/NixOS/nixpkgs"
-      },
-      "branch": "nixos-23.11",
-      "submodules": false,
-      "revision": "205fd4226592cc83fd4c0885a3e4c9c400efabb5",
-      "url": null,
-      "hash": "sha256-zwVvxrdIzralnSbcpghA92tWu2DV2lwv89xZc8MTrbg="
-    },
     "https://github.com/NixOS/nixpkgs/tree/nixos-24.05": {
       "type": "Git",
       "repository": {
@@ -1259,6 +1187,30 @@
       "revision": "50ab793786d9de88ee30ec4e4c24fb4236fc2674",
       "url": null,
       "hash": "sha256-/bVBlRpECLVzjV19t5KMdMFWSwKLtb5RyXdjz3LJT+g="
+    },
+    "https://github.com/NixOS/nixpkgs/tree/nixos-25.05": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/NixOS/nixpkgs"
+      },
+      "branch": "nixos-25.05",
+      "submodules": false,
+      "revision": "00d2457e2f608b4be6fe8b470b0a36816324b0ae",
+      "url": null,
+      "hash": "sha256-4TLFHUwXraw9Df5mXC/vCrJgb50CRr3CzUzF0Mn3CII="
+    },
+    "https://github.com/NixOS/nixpkgs/tree/nixos-25.11": {
+      "type": "Git",
+      "repository": {
+        "type": "Git",
+        "url": "https://github.com/NixOS/nixpkgs"
+      },
+      "branch": "nixos-25.11",
+      "submodules": false,
+      "revision": "d9bc5c7dceb30d8d6fafa10aeb6aa8a48c218454",
+      "url": null,
+      "hash": "sha256-y7RPKl/jJ/KAP/VKLMghMgXTlvNIJMHKskl8/Uuar7o="
     },
     "https://github.com/NoUseFreak/nix-packages": {
       "type": "Git",
@@ -12371,18 +12323,6 @@
       "revision": "a2ff51986fec4e6d6657d94cd0cf1efb99873cfb",
       "url": null,
       "hash": "sha256-DSVQSn9hVo7SdLupgMJvPhedhGzgguSKAwZgx8KtaBY="
-    },
-    "https://github.com/is-an-ai/bifrost-client": {
-      "type": "Git",
-      "repository": {
-        "type": "Git",
-        "url": "https://github.com/is-an-ai/bifrost-client"
-      },
-      "branch": "master",
-      "submodules": false,
-      "revision": "a27b66fcbac59189481c32431ff9e634cda36df4",
-      "url": null,
-      "hash": "sha256-Cc6EQ92ZTHdSY4nfoPJb1PnkmdcjazScIEhX1oSFreQ="
     },
     "https://github.com/isbecker/nix-templates": {
       "type": "Git",
